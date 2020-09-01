@@ -210,8 +210,7 @@ linux-0.01/include/linux/fs.h. You can put a shell (sh) in the bin directory.
 - The linux-0.01/include/linux/config.h file has to be edited to make 0.01 to mount its root
 file system. Use fdisk to find out the number of cylinders, sectors and heads of your hard
 disk. If fdisk shows the number of heads to be greater than 64, then bad luck, we don’t know
-what to do. The original code had restricted the number of heads to 16, but we modified it to
-64. When it is more than that, then it is not possible to use the CHS method to program the
+what to do. The original code had restricted the number of heads to 16, but we modified it to 64. When it is more than that, then it is not possible to use the CHS method to program the
 old style ide interface, because only 6 bits have been provided for specifying the number
 of heads. We did encounter such a problem and what we did was to wipe out the entire
 data on our disk, make the number of heads equal to 64 (using the advanced options in
@@ -1299,10 +1298,12 @@ to be written in assembly - why not in C ? Well, the answer is that if we put in
 we can manage to write this in C, but such “low level” coding looks more clear in assembly.
 Of course, if we want to write values into certain registers as part of the “initialization”, we
 will have to use some inline assembly statements. So more than 75% of our C code will be
-inline assembly. Why clutter C code with inline assembly rather than using assembly directly
-?
+inline assembly. Why clutter C code with inline assembly rather than using assembly directly?
+
 5.1.3. linux/init Directory
+
 5.1.3.1. The “main” Kernel - init/main.c
+
 Well, main.c contais the function main(). We jump from the code in head.s to the main in
 init/main.c. Now what does the code in main.c do ? Again, before the actual kernel starts
 running, we have to do all the “initialization” stuff like initializing the console, hard disk,
@@ -1312,8 +1313,11 @@ init process, a process for scanning the file system,a shell etc.. (details in t
 :-). After this we can say that Linux0.01 is fully “operational”. A shell is running and it will
 get scheduled once in a while. Then the commands that we type will be interpreted by the
 shell which may gain lead to another fork or exec and that continues...
+
 5.1.4. linux/kernel Directory
+
 5.1.4.1. Software int 0x80 - kernel/system_call.s
+
 The next few sections speak about files containing the kernel code that is executed when a
 process issues a system call to the kernel or the kernel gets some exception like divide by
 zero etc. This file contains the code that decides what the kernel does when it gets a software
@@ -1322,29 +1326,42 @@ interrupt 0x80. That is, basically the code that executes after the software int
 the 386. Software int $0x80 is used by all the system calls in linux. This also contains the
 code for signal handling (which is quite an interesting way oh handling signals), the code for
 fork system call, exec system call, the timer interrupt and the hard disk interrupt.
+
 5.1.4.2. System Calls - kernel/sys.c
+
 This contains the C code for a few other system calls.
+
 5.1.4.3. Exceptions - kernel/asm.s, kernel/traps.c
+
 asm.s contains code for certain exceptions, traps.c sets up the descriptors for each of these
 exceptions, sets the address of the exception vectors in asm.s in the descriptors etc. - ie it does
 the initialization part for these exceptions.
+
 5.1.4.4. Console Functions - kernel/console.c, kernel/tty_io.c
+
 Well, nothing much to say except that they are related to console handling!!
+
 5.1.4.5. Miscellaneous Files - kenel/panic.c, kernel/mktime.c, kernel/vsprintf.c,
 kernel/printk.c
 Well, these are not playing much important role in the core kernel, but of course they are very
 essential (like vsprintf.c - it gives us a “printf” function, if you don’t mind go through the
 nice comment in the beginning of vsprintf.c now itself!!). And of course, without printk.c,
 we cannot print messages from the kernel mode (printf is for use from the process level).
+
 5.1.4.6. Device Handling Code - kernel/hd.c, kernel/keyboard.s, kernel/rs_io.s
+
 Well, as the names indicate, these contain the code to handle harddisk interrupts, keyboard
 interupts and serial port (rs232) interrupts. Well, they handle all the buffering/queuing jobs
 etc that needs to be done to handle these devices!!
+
 5.1.4.7. Important System Calls - fork() & exit() - kernel/fork.c, kernel/exit.c
+
 The importance of the fork system call can never be over estimated!!! The code for fork is a
 real beauty to a person who is seeing OS code for the first time!! The exit system call is also
 important, but its code is not as beautiful as that for fork - fork is a beast of beauty :-)
+
 5.1.4.8. The “heart” of the Kernel - scheduler - os/sched.c
+
 With this file, we end the description of the files in the linux/kernel directory. Now as mentioned in one of the previous sections, after the kernel is fully functional, if the user types
 something or a mouse attached to the serial port is “moved”, then we get an interrupt and
 some function in one of the files we discussed above gets executed. If during the execution
@@ -1360,84 +1377,114 @@ readily available, so the kernel schedules another process and “wakes up” th
 the data is ready. Also, a process might issue a pause system call to temporarily suspend the
 process - then again the scheduler runs to schedule some other process! The kernel/sched.c
 also contains code for a few other system calls.
+
 5.1.5. linux/mm Directory
+
 Well, this is another directory that contains some other beautiful piece of code. This directory
 contains code for the memory management - that is paging (with respect to 0.01).
+
 5.1.5.1. Page Fault Handler - mm/page.s
+
 As we had mentioned earlier, page faults can occur due to two reasons in 0.01. One is that
 we may try to write to a page that is read only (a shared page - like code segment ??). The
 other is a “page not present” situation - here we will have to get a new page(s) and fill up the
 page table/page directory entry which is connected with the page fault. The assembly code
 in this file is executed on a page fault - it just distinguishes between the two reasons for the
 page fault and calls the C functions in memory.c to do the rest of the job.
+
 5.1.5.2. C code for Page Not Present and Page Not Writable - mm/memory.c
+
 As explained in the above section, this file contains the C code that is executed corresponding
 to the page fault exceptions for page not present and page is read only.
+
 5.1.6. linux/fs Directory
+
 Ok, the file system is one thing which we are not very much interested in and so not much
 knowledged about! So please don’t expect much from the file system explanation. We will
 organize the files in the fs directory in a “collective” fashion starting with the collection that
 performs the most “low level” operations on the fs (here by fs we basically mean the hard
 disk Minix V1 file system - 0.01 uses Minix V1).
+
 5.1.6.1. fs/super.c
-This is the starting point for the file system on the hard disk. It reads the super block, recognizes the organization of the files system and initializes kernel variables like the root inode
-etc.
-36Chapter 5. Flow of control through the Kernel
+
+This is the starting point for the file system on the hard disk. It reads the super block, recognizes the organization of the files system and initializes kernel variables like the root inode etc.
+
 5.1.6.2. fs/buffer.c
+
 This deals with the next layer above the raw read and write mechanisms - reads and writes
 are (or rather, has to be) buffered for optimum performance. So the buffers might correspond
 to disk blocks, they might have to be written back before being freed etc.. These things are
 done by the code in this file.
+
 5.1.6.3. fs/bitmap.c, fs/inode.c, fs/namei.c, fs/truncate.c
+
 The kernel first mounts the root file system (in fs/super.c) and assigns a root inode for the
 starting point of the file system. Now all further accesses to the file system will have to be
 through inodes. We may have to create new inodes, delete them, add more blocks to a file
 etc.. These operations need functions that can manipulate inodes. These four files provide
 functions for exactly that purpose.
+
 5.1.6.4. fs/block_dev.c, fs/file_dev.c, fs/char_dev.c
+
 The three types of devices supported in 0.01 are block devices (like /dev/hda), file devices
 (like /root/test.c) and character devices (like /dev/tty0). Now the code to read and write
 from each of these devices is present in the corresponding files. Finally the file_dev.c and
 block_dev.c will use common disk read/write functions, but they present different layers for
 abstraction though their end mode of operation will be the same.
+
 5.1.6.5. fs/file_table.c
-This is just an array of data related to the currently open files in the system (regardless of
-whatever the type of file - block, file or char).
+
+This is just an array of data related to the currently open files in the system (regardless of whatever the type of file - block, file or char).
+
 5.1.6.6. fs/open.c, fs/read_write.c
+
 Now this is the highest level of abstraction inside the kernel. Whatever be the file type (block,
 file or char), we have to “open” it before using it. The system call code for this is in open.c.
 Now after opening a file, we can read and write from the file using just the file descriptor. The
 code for this is in read_write.c
+
 5.1.6.7. fs/fcntl.c, fs/ioctl.c, fs/tty_ioctl.c, fs/stat.c
-These contain code for system calls that indirectly affect the operation of open/read/write etc,
-an example being changing the parameters like blocking or non blocking read.
+
+These contain code for system calls that indirectly affect the operation of open/read/write etc, an example being changing the parameters like blocking or non blocking read.
+
 5.1.6.8. fs/pipe.c
+
 This code is for the “pipe” device for IPC - ie write an one end and read from the other end.
-37Chapter 5. Flow of control through the Kernel
+
 5.1.6.9. fs/exec.c
+
 Now, this is the second most beautiful system call implementation after fork. This file contains the code that implements the exec system call. But this is more complicated than the
 fork system call - of course, the fork just needs to copy from memory whereas in exec we
 need to get a file from the disk into memory!
+
 5.1.7. linux/lib Directory
+
 Well, this code actually is not part of the kernel. It is finally bundled up as an archive for use
 by application (user level) programs. These files (for example dup.c) is the code for giving a
 system call (which finally is int 0x80) from the user level. Each file corresponds to one system
 call. There are more system calls - if we need any more, then we can just write a similar file
 with similar syntax.
+
 5.1.8. linux/include Directory
+
 As the name indicates, these are the files that are “included” by the C files. But the header
 files also contain very interesting pieces of code - like string.h containing pure assembly
 code for many string utilities like string copy. This directory has further sub directories like
 include/asm/ which contains again files with assembly code (or macros) for utilities like segment descriptor manipulation etc.
+
 5.1.9. linux/tools Directory
+
 This directory contains one file build.c. This file has code to “strip” the final object code that
 we get (the format depending on the compiler we use - like ELF, a.out etc..) from all the
 “information” fields and make it a pure binary and append it to the code in boot.s (which by
 default the linker ld86 converts into a “pure” binary format). It is this final “pure” binary file
 that we do a sector by sector write (raw write) to the floppy disk starting from the first sector
 (occupied by the boot loader).
-38Chapter 6. Journey to the Center of the Code
+
+## Chapter 6. Journey to the Center of the Code
+
 6.1. Step Wise Refinement Of The 0.01 Kernel - Step 3
+
 So now we enter the real “Journey To The Center Of The Code”.We will try to proceed in
 the same order as that given in the above section on description of files.We will take each
 of those files and will explain in the “necessary” detail, each of the functions and pieces of
@@ -1448,17 +1495,23 @@ Hardware Bible (or any equivalent) and the 386 manuals nearby when going through
 because that will help more in increasing the grasp of the code :-) Again, since the code is
 not a very huge one like Minix, what we will do is to place our commentary inline with the
 code - so you can find code and commentary intermixed!
+
 6.1.1. linux/boot
+
 We will be giving quite a detailed explanation about the files in this directory.
+
 6.1.1.1. linux/boot/boot.s
-1 2
-So here goes boot.s
+
+```
+1 
+2 | So here goes boot.s
 3 | boot.s
 4 |
 5 | boot.s is loaded at 0x7c00 by the bios-startup
 6 | routines, and moves itself
 7 | out of the way to address 0x90000, and jumps there.
 8
+```
 * By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode.We
 don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial
 also. Now why does it move itself to 0x90000 ? Well, it cant load itself in the “lower” address regions (like
@@ -1470,30 +1523,43 @@ address range within the first Mega Byte. So refer the Hardware manual, find the
 chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do
 not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader
 is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))
-1 2
-| It then loads the system at 0x10000, using BIOS interrupts. Thereafter
+
+```
+1 
+2 | It then loads the system at 0x10000, using BIOS interrupts. Thereafter
 3
+```
+
 * Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should
 not be wiped off. So temporarily load the image at 0x10000.
+
+```
 1
-39Chapter 6. Journey to the Center of the Code
 2 | it disables all interrupts, moves the system down to 0x0000, changes
 3
+```
+
 * Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we
 want and so we choose location 0x0.
-1 2
-| to protected mode, and calls the start of system. System then must
+
+```
+1 
+2 | to protected mode, and calls the start of system. System then must
 3 | RE-initialize the protected mode in it’s own tables, and enable
 4 | interrupts as needed.
 5
+```
+
 * After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the
 bootloader boot.s. It need not be done by the bootloader, the kernel can also do it. But the boot loader should
 not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it
 just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel
 code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of
 the boot loader. so even if the kernel changes, the boot loader can be the same.
-1 2
-| NOTE! currently system is at most 8*65536 bytes long.
+
+```
+1 
+2 | NOTE! currently system is at most 8*65536 bytes long.
 3 | This should be no | problem, even in the future.
 4 | want to keep it simple. This 512 kB | kernel size
 5 | should be enough - in fact more would mean we’d have to move
@@ -1504,13 +1570,17 @@ the boot loader. so even if the kernel changes, the boot loader can be the same.
 10 | their physical addresses.
 11 |
 12
+```
+
 * More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code
 is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012
 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for
 all addresses. But for user processes,we have mentioned in the section on paging that address 0x3134 may
 correspond to “physical” address 0x200000 .
-1 2
-| NOTE1 abouve is no longer valid in it’s entirety. cache-memory is allocated
+
+```
+1 
+2 | NOTE1 abouve is no longer valid in it’s entirety. cache-memory is allocated
 3 | above the 1Mb mark as well as below. Otherwise it is mainly correct.
 4 |
 5 | NOTE 2! The boot disk type must be set at compile-time, by setting
@@ -1526,7 +1596,6 @@ correspond to “physical” address 0x200000 .
 15 | 1.2Mb disks:
 16 | sectors = 15
 17 | 720kB disks:
-40Chapter 6. Journey to the Center of the Code
 18 | sectors = 9
 19
 20 .globl begtext, begdata, begbss, endtext, enddata, endbss
@@ -1556,17 +1625,21 @@ correspond to “physical” address 0x200000 .
 44 movw
 45 jmpi go,INITSEG
 46
+```
+
 * The bootloader starts executing from entry point start because that will be the first byte on the floppy! In the
 above piece of code, the boot loader copies 512 bytes starting at BOOTSEG (0x7c00) to location INITSEG
 (0x9000). That is, the bootloader copies “itself” to 0x90000.
-1 2
-go: mov ax,cs
+
+```
+1 
+2 go: mov ax,cs
 3 mov ds,ax
 4 mov es,ax
 5 mov ss,ax
 6 mov sp,#0x400 | arbitrary value >>512
-7 8
-mov ah,#0x03 | read cursor pos
+7
+8 mov ah,#0x03 | read cursor pos
 9 xor bh,bh
 10 int 0x10
 11
@@ -1579,21 +1652,29 @@ mov ah,#0x03 | read cursor pos
 18 | ok, we’ve written the message, now
 19 | we want to load the system (at 0x10000)
 20
+```
+
 * Just to print a boot up message on the screen
-41Chapter 6. Journey to the Center of the Code
-1 2 3
-mov ax,#SYSSEG
+
+```
+1 
+2 
+3 mov ax,#SYSSEG
 4 mov es,ax | segment of 0x010000
 5 call read_it
 6 call kill_motor
-7 8
-* Here is where we read the kernel image from the floppy disk and load it to 0x10000. The routine read_it will
-be explained later.
-1 2
-| if the read went well we get current cursor position ans save it for
+7 
+8
+```
+
+* Here is where we read the kernel image from the floppy disk and load it to 0x10000. The routine read_it will be explained later.
+
+```
+1 
+2 | if the read went well we get current cursor position ans save it for
 3 | posterity.
-4 5
-mov ah,#0x03 | read cursor pos
+4 
+5 mov ah,#0x03 | read cursor pos
 6 xor bh,bh
 7 int 0x10 | save it in known place, con_init fetches
 8 mov [510],dx | it from 0x90510.
@@ -1620,26 +1701,32 @@ mov ah,#0x03 | read cursor pos
 29 j do_move
 30
 31
+```
+
 * Finally, we copy the kernel from 0x10000 to 0x0!!
-1 2
-| then we load the segment descriptors
-3 4
-end_move:
-5 6
-mov ax,cs | right, forgot this at first. didn’t work :-
-)
+
+```
+1 
+2 | then we load the segment descriptors
+3 
+4 end_move:
+5 
+6 mov ax,cs | right, forgot this at first. didn’t work :-)
 7 mov ds,ax
 8 lidt idt_48 | load idt with 0,0
 9 lgdt gdt_48 | load gdt with whatever appropriate
 10
-42Chapter 6. Journey to the Center of the Code
 11
+```
+
 * Prepare ourselves to switch to the protected mode. For this, GDT and IDT has to be initialized. We have a
 dummy IDT and GDT called idt_48 and gdt_48 respectively which enables us to jump to the protected mode.
-1 2
-| that was painless, now we enable A20
-3 4
-call empty_8042
+
+```
+1 
+2 | that was painless, now we enable A20
+3 
+4 call empty_8042
 5 mov al,#0xD1 | command write
 6 out #0x64,al
 7 call empty_8042
@@ -1648,6 +1735,8 @@ call empty_8042
 10 call empty_8042
 11
 12
+```
+
 * Refer to the hardware Manual about this A20 (Address Line 20) line controlled by the Keyboard controller.
 Actually, the A20 line is used in real mode in 32 bit systems to get access to more memory even when in
 real mode - the key board controller can be made to drive this Address Line 20 high in order to access more
@@ -1657,6 +1746,8 @@ any answer to this as of now (We will add something here if we get to know the a
 that this A20 extension will allow the “extra” memory to be accessed only as data and not as an executable
 memory area because it is NOT the processor who is driving the A20 line, but it is the keyboard controller
 who has to be programmed via I/O registers to drive the A20.
+
+```
 1 2
 | well, that went ok, I hope. Now we have to reprogram the interrupts :-(
 3 | we put them right after the intel-reserved hardware interrupts, at
@@ -1695,12 +1786,13 @@ who has to be programmed via I/O registers to drive the A20.
 35 out #0xA1,al
 36
 37 | well, that certainly wasn’t fun :-(. Hopefully it works, and we don’t
-38 | need no steenking BIOS anyway (except for the initial loading :-
-).
+38 | need no steenking BIOS anyway (except for the initial loading :-).
 39 | The BIOS-routine wants lots of unnecessary data, and it’s less
 40 | "interesting" anyway. This is how REAL programmers do it.
 41 |
 42
+```
+
 * Well, we know that the IBM PC series uses the Intel 8259 interrupt controller which can handle upto 8 (or
 15 in cascaded mode) interrupts with varios forms of priority etc. On getting an interrupt from 8259, the x86
 identifies the source of the interrupt be reading a value from one of the registers of 8259. If that value is say
@@ -1708,17 +1800,21 @@ xy, then the x86 issues a software interrupt “int xy” to execute the ISR for
 32 bite x86 series, the first 32 software interrupts are “reserved” by Intel for uses like excepetions such as
 divide by zero (not very sure, refer the Intel manual). So we program the 8259 with values starting from 0x20
 (ie 32) corresponding to interrupt line 0 on the 8259.
+
+```
 1 2
 | Well, now’s the time to actually move into protected mode. To make
 3 | things as simple as possible, we do no register set-up or anything,
 4 | we let the gnu-compiled 32-bit programs do that. We just jump to
 5 | absolute address 0x00000, in 32-bit protected mode.
-6 7
-mov ax,#0x0001 | protected mode (PE) bit
+6 
+7 mov ax,#0x0001 | protected mode (PE) bit
 8 lmsw ax | This is it!
 9 jmpi 0,8 | jmp offset 0 of segment 8 (cs)
 10
 11
+```
+
 * And finally, we move to protected mode by setting the bit 0 of the concerned register (name we forgot!!) using
 the lmsw instruction. Also, the Intel manual states that the transition to protected mode will be complete only
 with a jump instruction following that! So we jump to offset 0 in Code Segment number 8 which has been set
@@ -1726,6 +1822,8 @@ to start from absolute physical address 0x0 (again, note that all this code is p
 running from 0x90000). Now what does this mean ? What is the code at 0x0 ? It is the 0.01 Kernel Code!!!!!
 So we finally start executing the kernel code and we never come back to the bootloader code unless we do a
 reset and the kernel has to be loaded again :-(
+
+```
 1 2
 | This routine checks that the keyboard command queue is empty
 3 | No timeout is used - if this hangs there is something wrong with
@@ -1749,6 +1847,8 @@ reset and the kernel has to be loaded again :-(
 20 | (originally 18, for a 1.44Mb drive)
 21 |
 22
+```
+
 * This particular piece of code below seems to appear complicated to many - so let us give a pseudo language
 description of the control transfer that happens below. /* We copy the kernel using es:[bx] indexing mode.
 We start with es = 0x0 and bx = 0x0, we go on incrementing bx till bx = 0xffff. Then we add 0x1000 es and
@@ -1774,6 +1874,8 @@ one question is “even if there is space left in the current segment, ie bx 0xf
 left in the current segment is not enough to hold one sector of data ?”. The answer is that such a situation
 will not arise because the sector size is 512 bytes and the segment size is a multiple of 512. Now we will give
 short comments in between where things are not clear.
+
+```
 1 2
 sread: .word 1 | sectors read of current track
 3 head: .word 0 | current head
@@ -1789,21 +1891,28 @@ sread: .word 1 | sectors read of current track
 13 jb ok1_read
 14 ret
 15
-45Chapter 6. Journey to the Center of the Code
+```
+
 * How do we find out ENDSEG ? Well, what we used to do was to compile an image with some value for
 SYSSIZE (ENDSEG = SYSSEG + SYSSIZE) and after compilation, see what the size of the image is and
 calculate SYSSIZE accordingly and recompile!! Well, this is possible because the compilation time is too
 less. What would be done is to find out the location in the image where this SYSSIZE is used and just use
 some small C program to overwrite that location with the value of the SYSSIZE calculated from the final
 image.
-1 2
-ok1_read:
+
+```
+1 
+2 ok1_read:
 3 mov ax,#sectors
 4 sub ax,sread
 5 mov cx,ax
 6 shl cx,#9
 7
+```
+
 * shl cx,#9 multiplies cx by 512 - the size of the sector.
+
+```
 1 2
 add cx,bx
 3 jnc ok2_read
@@ -1811,12 +1920,19 @@ add cx,bx
 5 xor ax,ax
 6 sub ax,bx
 7
-* We want to find how many bytes are “left” in the current segment. For this, what we should do is 0x10000 -
-bx which is effectively 0x0 - bx !!!
+```
+
+* We want to find how many bytes are “left” in the current segment. For this, what we should do is 0x10000 - bx which is effectively 0x0 - bx !!!
+
+```
 1 2
 shr ax,#9
 3
+```
+
 * Convert bytes to sectors
+
+```
 1 2
 ok2_read:
 3 call read_track
@@ -1839,14 +1955,17 @@ ok2_read:
 20 mov ax,es
 21 add ax,#0x1000
 22 mov es,ax
-46Chapter 6. Journey to the Center of the Code
 23 xor bx,bx
 24 jmp rp_read
 25
 26
+```
+
 * Rest of the code above can be directly mapped to what we have written in the pseudo code.
-1 2
-read_track:
+
+```
+1 
+2 read_track:
 3 push ax
 4 push bx
 5 push cx
@@ -1904,6 +2023,8 @@ read_track:
 56 .word 0x00C0 | granularity=4096, 386
 57
 58
+```
+
 * This is the “dummy” gdts that we were speaking about. This just maps the lower 8Mb of addresses to the
 lower 8Mb of physical memory (by setting base address = 0x0 and limit = 8Mb). We create two gdt entries
 one for code segment and one for data segment as we can find from the read/exec and read/write attributes.
@@ -1911,43 +2032,59 @@ The code segment is entry number 1 (assuming to start from 0), but with the firs
 descriptor for indicating priority level etc.., the code segment will be actually 8 when it gets loaded into cs.
 Again, refer to the intel manual to find out how exactly the entry number 1 becomes 8 when loaded into cs.
 Similarly, you can find out what will be the value of a segment descriptor for the data segment, the data
-segment entry being number 2. The exact layout of the hex values can be understood only by reading the Intel
-manuals.
+segment entry being number 2. The exact layout of the hex values can be understood only by reading the Intel manuals.
+
+```
 1 2
 idt_48:
 3 .word 0 | idt limit=0
 4 .word 0,0 | idt base=0L
 5 6
+```
+
 * We believe the interrupts are disabled as of now and so we don’t need a proper IDT. That explains all
 the zeroes in idt_48 above. The values in idt_48 are loaded into the register pointing to the IDT using lidt
-instruction. Again, what each of those zeroes mean will have to be understood by going through the Intel
-Manual.
+instruction. Again, what each of those zeroes mean will have to be understood by going through the Intel Manual.
+
+```
 1 2
 gdt_48:
 3 .word 0x800 | gdt limit=2048, 256 GDT entries
 4 .word gdt,0x9 | gdt base = 0X9xxxx
 5 6
+```
+
 * This is for presenting all gdt related info in the fashion expected by the lgdt instruction.
+
+```
 1 2
 msg1:
 3 .byte 13,10
 4 .ascii "Loading system ..."
 5 .byte 13,10,13,10
 6 7
+```
+
 * Modify the above to print your own message :0)
+
+```
 1 2
 .text
 3 endtext:
 4 .data
 5 enddata:
-48Chapter 6. Journey to the Center of the Code
 6 .bss
 7 endbss:
 8
+```
+
 6.1.1.2. linux/boot/head.s
+
 Now let us look into head.s. This file contains code for three main items before the kernel can
 start functioning as a fully multitasking one. The GDT, IDT and paging has to be initialized.
 So here goes...
+
+```
 1 2
 /*
 3 * head.s contains the 32-bit startup code.
@@ -1957,10 +2094,14 @@ So here goes...
 7 * the page directory.
 8 */
 9
+```
+
 * We jump to startup_32 from boot.s. The comment says that the “startup” code will be overwritten by the
 page tables - what does that mean ? The code below to setup the GDT and IDT are not needed after the setup
 is done. So after that code is executed, four pages of memory starting from 0x0 are used for paging purposes
 as page directory and page tables. That is what we mean by “overwriting” the code.
+
+```
 1 2
 .text
 3 .globl _idt,_gdt,_pg_dir
@@ -1972,20 +2113,31 @@ as page directory and page tables. That is what we mean by “overwriting” the
 9 mov %ax,%fs
 10 mov %ax,%gs
 11
+```
+
 * Till this point, we are relying on the GDT which was setup in boot.s (direct memory mapping). 0x10 is the
 Data Segment.
+
+```
 1 2
 lss _stack_start,%esp
 3
+```
+
 * We will need stacks for function calls. So we setup the ess and esp using values from the structure stack_start
 which is declared in kernel/sched.c. Again, the format of the structure will be understood only by looking into
 the intel manual and seeing what is the format of the argument for lss and what lss does!
+
+```
 1 2
 call setup_idt
 3 call setup_gdt
 4
-49Chapter 6. Journey to the Center of the Code
+```
+
 * Now setup IDT and GDT according to the preferences of the kernel.
+
+```
 1 2
 movl $0x10,%eax # reload all the segment registers
 3 mov %ax,%ds # after changing gdt. CS was already
@@ -1994,9 +2146,13 @@ movl $0x10,%eax # reload all the segment registers
 6 mov %ax,%gs
 7 lss _stack_start,%esp
 8
+```
+
 * Again modify the segment registers to reflect the “new” values in the GDT and IDT.
-1 2
-xorl %eax,%eax
+
+```
+1 
+2 xorl %eax,%eax
 3 1: incl %eax # check that A20 really IS enabled
 4 movl %eax,0x000000
 5 cmpl %eax,0x100000
@@ -2009,10 +2165,15 @@ xorl %eax,%eax
 12 1: movl %eax,%cr0
 13 jmp after_page_tables
 14
+```
+
 * Now the “jmp after_page_tables”. All the memory till the label after_page_tables will be used for paging
 and will be over written.
-1 2 3
-/*
+
+```
+1 
+2 
+3 /*
 4 * setup_idt
 5 *
 6 * sets up a idt with 256 entries pointing to
@@ -2042,10 +2203,14 @@ and will be over written.
 29 ret
 30
 31
+```
+
 * The comments by Linus for this function are pretty self evident. The IDT with 256 entries is represented
 by the variable _idt. Now after initializing _idt with “ignore_int” (the actual interrupts will be initialized
 later at various points), the lidt instruction is used with idt_descr as parameter, whose format again can be
 understood by looking into the manual.
+
+```
 1 2
 /*
 3 * setup_gdt
@@ -2073,6 +2238,8 @@ understood by looking into the manual.
 25 # to use it.
 26 .org 0x4000
 27
+```
+
 * Let us explain a bit about the page directory and the page tables. The Intel architecture uses two levels of
 paging - one page directory and 1024 page tables. The page directory starts from 0x0 and extends till 0x1000
 (4K). In 0.01, we use two page tables which start at 0x10000 (pg0) and 0x20000 (pg1) respectively. These
@@ -2081,21 +2248,25 @@ memory that can be mapped by two page tables is 2 * 1024 pages = 8Mb (one page =
 table starting at 0x30000 till 0x40000 (pg2) is not in use in 0.01.Again, one point to be noted is that these
 page directory/tables are for use ONLY by the kernel. Each process will have to setup its’ own page directory
 and page tables (TODO:not very sure, will correct/confirm this later)
-1 2
-after_page_tables:
-3 pushl $0 # These are the parameters to main :-
-)
+
+```
+1 
+2 after_page_tables:
+3 pushl $0 # These are the parameters to main :-)
 4 pushl $0
 5 pushl $0
 6 pushl $L6 # return address for main, if it decides to.
-51Chapter 6. Journey to the Center of the Code
 7 pushl $_main
 8 jmp setup_paging
 9 L6:
 10 jmp L6 # main should never return here, but
 11 # just in case, we know what happens.
 12
+```
+
 * After setting up paging, we jump to main, where the actual “C” code for the kernel starts.
+
+```
 1 2 3
 /* This is the default interrupt "handler" :-) */
 4 .align 2
@@ -2136,29 +2307,41 @@ after_page_tables:
 39 xorl %edi,%edi /* pg_dir is at 0x000 */
 40 cld;rep;stosl
 41
+```
+
 * Fill the page directory, pg0 and pg1 with zeroes!!
+
+```
 1 2
 movl $pg0+7,_pg_dir /* set present bit/user r/w */
 52Chapter 6. Journey to the Center of the Code
 3 movl $pg1+7,_pg_dir+4 /* --------- " " -------
 -- */
 4
+```
+
 * Fill the first two entries of the page directory with pointers to pg0 and pg1 and the necessary bits for paging
 (which again can be found from the manuals).
-1 2
-movl $pg1+4092,%edi
+
+```
+1 
+2 movl $pg1+4092,%edi
 3 movl $0x7ff007,%eax /* 8Mb - 4096 + 7 (r/w user,p) */
 4 std
 5 1: stosl /* fill pages backwards - more efficient :-) */
 6 subl $0x1000,%eax
 7 jge 1b
 8
+```
+
 * Now the page tables has to be filled with the physical address corresponding to the virtual address that the
 page table entry represents. For example, the value in the last entry of the second page table pg1 should
 represent the starting address of the “last” page in the physical memory whose starting address is 8Mb -
 4096 (one page = 4096 bytes). Again, the second last entry of pg1 should be the starting address of the
 second last physical memory page = 8Mb - 4096 -4096. (4096 = 0x10000). Again, the necessary bits for
 paging purposes (7 = r/w user, p) are also added to the address - refer manuals.
+
+```
 1 2
 xorl %eax,%eax /* pg_dir is at 0x0000 */
 3 movl %eax,%cr3 /* cr3 - page directory start */
@@ -2167,7 +2350,11 @@ xorl %eax,%eax /* pg_dir is at 0x0000 */
 6 movl %eax,%cr0 /* set paging (PG) bit */
 7 ret /* this also flushes prefetch-queue */
 8
+```
+
 * Set the Kernel page directory to start at 0x0 and then turn on paging!
+
+```
 1 2
 .align 2
 3 .word 0
@@ -2189,18 +2376,25 @@ xorl %eax,%eax /* pg_dir is at 0x0000 */
 19 .quad 0x0000000000000000 /* TEMPORARY - don’t use */
 20 .fill 252,8,0 /* space for LDT’s and TSS’s etc */
 21
-53Chapter 6. Journey to the Center of the Code
+```
+
 * The GDT has at present, just three entries. The NULL descriptor, the Code Segment and the Data Segment
 - these two segments are for use by the kernel and so it covers the entire address from 0x0 to 8Mb which is
 again directly mapped to the first 8Mb of phyisical memory by the kernel page tables.
+
 6.1.2. linux/kernel
+
 We will not be explaining all files in this directory. Some files like asm.s are not having any
 serious content to be explained, and for some files like keyboard.s and console.c, we never
 had the patience enough to go through and understand what was happening inside them.
+
 6.1.2.1. linux/kernel/system_call.s
+
 This is a very crucial file.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * system_call.s contains the system-call low-level handling routines.
 4 * This also contains the timer-interrupt handler, as some of the code is
 5 * the same. The hd-interrupt is also here.
@@ -2226,11 +2420,15 @@ This is a very crucial file.
 25 * 2C(%esp) - %oldss
 26 */
 27
+```
+
 * Note that the code in this file will be running on a kernel stack - why is that ? That is because the system
 call causes the process to switch from priority 3 to priority 0. And the 386 architecture recommends different
 stacks for different priority levels. Now each process has its own separate memory area for kernel stack
 which is created when we fork a process. We will see that in fork.c Also, registers ess, esp, eflags and cs are
 automatically pushed onto the kernel stack by 386 when it changes privilege level
+
+```
 1 2 3
 SIG_CHLD = 17
 4 EAX = 0x00
@@ -2269,15 +2467,23 @@ SIG_CHLD = 17
 36 .align 2
 37 _system_call:
 38
+```
+
 * You come here (_system_call) when the user level process gives an int 0x86. How is that - of course, we have
 set the corresponding IDT entry to point to _system_call.
+
+```
 1 2
 cmpl $nr_system_calls-1,%eax
 3 ja bad_sys_call
 4
+```
+
 * The system call number (which identifies what system call code to be executed in response to int 0x86) is
 passed as parameter in register eax (we will see this later when we discuss files in lib/ directory). See if the
 system call number is in the valid range.
+
+```
 1 2
 push %ds
 3 push %es
@@ -2286,22 +2492,33 @@ push %ds
 6 pushl %ecx # push %ebx,%ecx,%edx as parameters
 7 pushl %ebx # to the system call
 8
+```
+
 * Note that now we have to push only eax (which is done a few instructions below) to get the stack layout
 mentioned in the comments above.
-55Chapter 6. Journey to the Center of the Code
+
+```
 1 2
 movl $0x10,%edx # set up ds,es to kernel space
 3 mov %dx,%ds
 4 mov %dx,%es
 5 movl $0x17,%edx # fs points to local data space
 6
+```
+
 * Remember that fs points to the “user space”. will use fs heavily to access data in user space.
+
+```
 1 2
 mov %dx,%fs
 3 call _sys_call_table(,%eax,4)
 4
+```
+
 * This is how we map the system call number to the actual function that needs to be executed. _sys_call_table
 is defined in include/linux/sys.h
+
+```
 1 2
 pushl %eax
 3 movl _current,%eax
@@ -2310,13 +2527,19 @@ pushl %eax
 6 cmpl $0,counter(%eax) # counter
 7 je reschedule
 8
+```
+
 * The task (process) related information for each process is stored in a structure. The address of that structure
 for the currently running process (task) is stored in the variable current. Depending on certain information
 in that structure, decide whether it is time to schedule another process (preemption). We will see more about
 this is sched.c
-1 2
-ret_from_sys_call:
+
+```
+1 
+2 ret_from_sys_call:
 3
+```
+
 * Now this is one part of the code where we (our code) were stuck up a bit without knowing what is happening.
 Finally when we came to know about it and fixed the issue to get signals working properly, it was a great joy.
 In this implementation, we handle signals to a process just before we return from a system call that is made
@@ -2330,8 +2553,10 @@ process to execute a signal handler ? This was where we were stuck up. Our proce
 handler allright, but it would crash after handling the signal. This part we will explain at the point where it
 is done in the code (again, a few instructions later). Except for that part, the explanation above explains rest
 of the code below.
-1 2
-movl _current,%eax # task[0] cannot have signals
+
+```
+1 
+2 movl _current,%eax # task[0] cannot have signals
 3 cmpl _task,%eax
 4 je 3f
 5 movl CS(%esp),%ebx # was old code segment supervisor
@@ -2341,8 +2566,12 @@ movl _current,%eax # task[0] cannot have signals
 8 cmpw $0x17,OLDSS(%esp) # was stack segment = 0x17 ?
 9 jne 3f
 10
+```
+
 * Check whether we originally came from “user mode”. But we don’t know why this is done - kernel code does
 not use system calls. So how can anybody other than the process mode task get here ?
+
+```
 1 2
 2: movl signal(%eax),%ebx # signals (bitmap, 32 signals)
 3 bsfl %ebx,%ecx # %ecx is signal nr, return if none
@@ -2356,12 +2585,18 @@ not use system calls. So how can anybody other than the process mode task get he
 11 movl $0,sig_fn(%eax,%ecx,4) # reset signal handler address
 12 incl %ecx
 13
+```
+
 * A little idea of the signal API in unix will make the above piece of code obvious
+
+```
 1 2
 xchgl %ebx,EIP(%esp) # put new return address on stack
 3 subl $28,OLDESP(%esp)
 4 movl OLDESP(%esp),%edx # push old return address on stack
 5
+```
+
 * Now what is the trick to make the process execute the signal handler ? How does the execution get back
 to the place in the process where the system call was issued ? This happens when the EIP value stored on
 the kernel stack is popped during the privilege level change that occurs during an iret instruction. So what
@@ -2377,32 +2612,41 @@ top of the process stack so that when the signal handler finishes executing, thi
 Also, we are passing 5 parameters to restorer which come below the address of the restorer (which is on the
 stack top). Below that comes the actual EIP where we have to continue executing. So totally, we increase the
 size of the stack by 1 + 5 + 1 = 7 entries = 7*4 = 28 bytes.
-1 2
-pushl %eax # but first check that it’s ok.
+
+```
+1 
+2 pushl %eax # but first check that it’s ok.
 3 pushl %ecx
 4 pushl $28
 5 pushl %edx
 6 call _verify_area
 7 popl %edx
 8 addl $4,%esp
-57Chapter 6. Journey to the Center of the Code
 9 popl %ecx
 10 popl %eax
 11
+```
+
 * Why are the above instructions needed ? We are going to increase the size of the stack. Also we should not
 get a page fault from the kernel. So which means, if we increase the process stack size by 28, there should
 actually be a “physical” page corresponding to that address - if no page is there correspoding to that address
 and the kernel tries to write something there, then the kernel will get a page fault and crash. So to prevent
 this, we call verify_area which checks whether there is a physical page corresponding to that address, if no
 page is there, it gets one page and puts it there corresponding to that address.
-1 2
-movl restorer(%eax),%eax
+
+```
+1 
+2 movl restorer(%eax),%eax
 3 movl %eax,%fs:(%edx) # flag/reg restorer
 4
+```
+
 * Put the address of restorer on top of the process stack so that after the signal handler executes and returns,
 the restorer starts executing.
-1 2
-movl %ecx,%fs:4(%edx) # signal nr
+
+```
+1 
+2 movl %ecx,%fs:4(%edx) # signal nr
 3 movl EAX(%esp),%eax
 4 movl %eax,%fs:8(%edx) # old eax
 5 movl ECX(%esp),%eax
@@ -2412,11 +2656,19 @@ movl %ecx,%fs:4(%edx) # signal nr
 9 movl EFLAGS(%esp),%eax
 10 movl %eax,%fs:20(%edx) # old eflags
 11
+```
+
 * The 5 parameters to restorer.
+
+```
 1 2
 movl %ebx,%fs:24(%edx) # old return addr
 3
+```
+
 * The original return address where the process has to continue.
+
+```
 1 2
 3: popl %eax
 3 popl %ebx
@@ -2427,11 +2679,15 @@ movl %ebx,%fs:24(%edx) # old return addr
 8 pop %ds
 9 iret
 10
+```
+
 * This iret pops the EIP and starts using the process stack (ESP saved on the kernel stack). The EIP has been
 modified to be the signal handler address. The process stack has been increased in size by 28 (and the ESP
 has been subtracted by 28 to reflect that) and the top of the process stack is the restorer address.
-1 2
-58Chapter 6. Journey to the Center of the Code
+
+```
+1 
+2
 3 default_signal:
 4 incl %ecx
 5 cmpl $SIG_CHLD,%ecx
@@ -2442,6 +2698,8 @@ has been subtracted by 28 to reflect that) and the top of the process stack is t
 10 jmp 3b
 11
 12
+```
+
 * Default signal will kill the process!! A few more words about the restorer - where does the kernel get the
 address of the restorer from ? - it is passed in register dx when the process issues a system call and the
 kernel stores it in the restorer field of the task structure. This happens in function sys_signal in sched.c. So
@@ -2455,8 +2713,10 @@ most of them does is to just setup a stack frame and call a C routine. The stack
 to the C routine. Note that in the timer interrupt also, we are jumping to ret_from_sys_call which means that
 after each timer interrupt, the signals for the “current” process (that is, the process which was executing
 while the timer interrupt came) will get serviced.
-1 2
-.align 2
+
+```
+1 
+2 .align 2
 3 _timer_interrupt:
 4 push %ds # save ds,es and put kernel data space
 5 push %es # into them. %fs is used by _system_call
@@ -2534,11 +2794,15 @@ while the timer interrupt came) will get serviced.
 76 iret
 77
 78
-60Chapter 6. Journey to the Center of the Code
+```
+
 6.1.2.2. linux/kernel/fork.c
+
 This file uses many functions from the mm/ directory which will be explained later.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * ’fork.c’ contains the help-routines for the ’fork’ system call
 4 * (see also system_call.s), and some misc functions (’verify_area’).
 5 * Fork is rather simple, once you get the hang of it, but the memory
@@ -2570,6 +2834,8 @@ This file uses many functions from the mm/ directory which will be explained lat
 31 }
 32 }
 33
+```
+
 * The purpose of the above function is to check whether there is a “physical” page corresponding to the
 virtual address range of addr to addr+size. Some address adjustment is done to page align the address and
 the corresponding size of the area is also increased accordingly. Note that the address (addr) passed to the
@@ -2588,14 +2854,15 @@ there is a “physical” page corresponding to that virtual address. If no “p
 “physical” page corresponding to that virtual address. The function write_verify will be explained in mm/.
 Also, see more comments about this when you go through our comments on mm/memory.c - remember about
 the above explanation when you go through memory.c because the above explanation is not perfectly true.
-61Chapter 6. Journey to the Center of the Code
-1 2
-int copy_mem(int nr,struct task_struct * p)
+
+```
+1 
+2 int copy_mem(int nr,struct task_struct * p)
 3 {
 4 unsigned long old_data_base,new_data_base,data_limit;
 5 unsigned long old_code_base,new_code_base,code_limit;
-6 7
-code_limit=get_limit(0x0f);
+6 
+7 code_limit=get_limit(0x0f);
 8 data_limit=get_limit(0x17);
 9 old_code_base = get_base(current->ldt[1]);
 10 old_data_base = get_base(current->ldt[2]);
@@ -2613,6 +2880,8 @@ code_limit=get_limit(0x0f);
 22 return 0;
 23 }
 24
+```
+
 * The above function is used by copy_process (the below function). When we do a fork, the child has to have
 a copy of the data of the parent, but the code can be shared. So this is the purpose of the above function.
 As mentioned previously, Unix considers the whole memory range for a process as a single block of virtual
@@ -2632,8 +2901,10 @@ the kernel (page fault handler) will get a new “physical” page, copy the con
 the new page and sets its permissions as read/write. Thus fork() implements a COW - Copy On Write. More
 about memory handling code in mm/. If copy_page_tables is unsuccesful for some reason like no more free
 physical pages present, then all the pages allocated till then for the new process is deallocated.
-1 2 3
-/*
+
+```
+1 2 
+3 /*
 4 * Ok, this is the main fork-routine. It copies the system process
 5 * information (task[nr]) and sets up the necessary registers. It
 6 * also copies the data segment in it’s entirety.
@@ -2641,20 +2912,23 @@ physical pages present, then all the pages allocated till then for the new proce
 8 int copy_process(int nr,long ebp,long edi,long esi,long gs,long none,
 9 long ebx,long ecx,long edx,
 10 long fs,long es,long ds,
-62Chapter 6. Journey to the Center of the Code
 11 long eip,long cs,long eflags,long esp,long ss)
 12 {
 13
+```
+
 * This function is called from the assembly routine _sys_fork in system_call.s. But remember that _sys_fork is
 a member of sys_call_table[] and so it is called after it starts executing from _system_call in system_call.s.
 The reason we explained this much is to help the reader to understand how we got all the parameters for
 copy_process. They are all the elements on the stack before the call to copy_process.
-1 2
-struct task_struct *p;
+
+```
+1 
+2 struct task_struct *p;
 3 int i;
 4 struct file *f;
-5 6
-p = (struct task_struct *) get_free_page();
+5 
+6 p = (struct task_struct *) get_free_page();
 7 if (!p)
 8 return -EAGAIN;
 9 *p = *current; /* NOTE! this doesn’t copy the supervisor stack */
@@ -2670,17 +2944,25 @@ p = (struct task_struct *) get_free_page();
 19 p->start_time = jiffies;
 20 p->tss.back_link = 0;
 21
+```
+
 * Now we get a new page for the task structure of the child process. Then we copy all fields from the parent’s
 task structure to the child’s task structure (*p = *current) and modify the necessary fields for the child, set
 the childs TSS with the correct values of segment descriptors, register values etc.
-1 2
-p->tss.esp0 = PAGE_SIZE + (long) p;
+
+```
+1 
+2 p->tss.esp0 = PAGE_SIZE + (long) p;
 3
+```
+
 * Now the interesting part is the kernel stack. Note the line p-tss.esp0 = PAGE_SIZE + (long) p; - this means
 that the kernel stack starts from the bottom of the page allocated for the task structure. So obviously, the
 kernel stack size is maximum PAGE_SIZE - sizeof (task_struct). After that, it will overwrite the task structure.
-1 2
-p->tss.ss0 = 0x10;
+
+```
+1 
+2 p->tss.ss0 = 0x10;
 3 p->tss.eip = eip;
 4 p->tss.eflags = eflags;
 5 p->tss.eax = 0;
@@ -2691,7 +2973,6 @@ p->tss.ss0 = 0x10;
 10 p->tss.ebp = ebp;
 11 p->tss.esi = esi;
 12 p->tss.edi = edi;
-63Chapter 6. Journey to the Center of the Code
 13 p->tss.es = es & 0xffff;
 14 p->tss.cs = cs & 0xffff;
 15 p->tss.ss = ss & 0xffff;
@@ -2700,9 +2981,13 @@ p->tss.ss0 = 0x10;
 18 p->tss.gs = gs & 0xffff;
 19 p->tss.ldt = _LDT(nr);
 20
+```
+
 * The _LDT(nr) gets an entry for the LDT descriptor in the GDT and stores it in the TSS.
-1 2
-p->tss.trace_bitmap = 0x80000000;
+
+```
+1 
+2 p->tss.trace_bitmap = 0x80000000;
 3 if (last_task_used_math == current)
 4 __asm__("fnsave %0"::"m" (p->tss.i387));
 5 if (copy_mem(nr,p)) {
@@ -2710,9 +2995,13 @@ p->tss.trace_bitmap = 0x80000000;
 7 return -EAGAIN;
 8 }
 9
+```
+
 * Then it calls copy_process which was explained previously. After that it does some files/descriptor related
 things. Finally, it sets the address of the child’s TSS and the address of the child’s LDT (both are present in
 the task structure) in the GDT.
+
+```
 1 2
 for (i=0; i<NR_OPEN;i++)
 3 if (f=p->filp[i])
@@ -2724,23 +3013,30 @@ for (i=0; i<NR_OPEN;i++)
 9 set_tss_desc(gdt+(nr<<1)+FIRST_TSS_ENTRY,&(p->tss));
 10 set_ldt_desc(gdt+(nr<<1)+FIRST_LDT_ENTRY,&(p->ldt));
 11
+```
+
 * Now update the GDT entries for this child process with the address of its TSS and LDT both of which are
 present in the task structure. When a task switch occurs (by “jumping” to the TSS entry in the GDT which
 we will see later when we explain some utility macros and functions), the processor updates all the registers
 etc.. with values from the TSS.
+
+```
 1 2
 task[nr] = p; /* do this last, just in case */
 3
+```
+
 * Finally, everything is over. Now update the task[] array with the task structure address of the child.
-1 2
-return last_pid;
+
+```
+1 
+2 return last_pid;
 3 }
 4 int find_empty_process(void)
 5 {
 6 int i;
-7 8
-repeat:
-64Chapter 6. Journey to the Center of the Code
+7 
+8 repeat:
 9 if ((++last_pid)<0) last_pid=1;
 10 for(i=0 ; i<NR_TASKS ; i++)
 11 if (task[i] && task[i]->pid == last_pid) goto repeat;
@@ -2750,14 +3046,20 @@ repeat:
 15 return -EAGAIN;
 16 }
 17
+```
+
 * Pretty self explanatory.
+
 6.1.2.3. linux/kernel/sched.c
+
 Here comes the scheduler of the kernel. Somehow, we could not understand properly some
 parts of the code in the file - like why certain code was written the way it is written. So we
 are explaining our views about the code in this file, you should think more about this and try
 to understand the code yourself.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * ’sched.c’ is the main kernel file. It contains scheduling primitives
 4 * (sleep_on, wakeup, schedule etc) as well as a number of simple system
 5 * call functions (type getpid(), which just extracts a field from
@@ -2783,28 +3085,38 @@ to understand the code yourself.
 25 char stack[PAGE_SIZE];
 26 };
 27
+```
+
 * The size of the above union will be at least PAGE_SIZE.
-1 2 3
-static union task_union init_task = {INIT_TASK,};
-4 5
-long volatile jiffies=0;
+
+```
+1 
+2 
+3 static union task_union init_task = {INIT_TASK,};
+4 
+5 long volatile jiffies=0;
 6 long startup_time=0;
 7 struct task_struct *current = &(init_task.task), *last_task_used_math = NULL;
-65Chapter 6. Journey to the Center of the Code
-8 9
-struct task_struct * task[NR_TASKS] = {&(init_task.task), };
+8 
+9 struct task_struct * task[NR_TASKS] = {&(init_task.task), };
 10
 11 long user_stack [ PAGE_SIZE>>2 ] ;
 12
-* Remeber that in head.s, the user_stack was used as the kernel stack initially till all the multitasking etc.. was
-setup.
+```
+
+* Remeber that in head.s, the user_stack was used as the kernel stack initially till all the multitasking etc.. was setup.
+
+```
 1 2 3
 struct {
 4 long * a;
 5 short b;
 6 } stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };
 7
+```
 * This was also used in head.s
+
+```
 1 2
 /*
 3 * ’math_state_restore()’ saves the current math information in the
@@ -2852,11 +3164,15 @@ struct {
 43 (*p)->state=TASK_RUNNING;
 44 }
 45
+```
+
 * Check for alarms. If the alarm time has been exceeded, set the SIGALRM signal for that process. Now check
 for signals. If a signal is pending to an “Interruptible” process, then the signal is a sufficient reason for that
 process to be woken up, but if a signal is pending to a “Non Interruptible” process, then the signal is not a
 sufficient reason for the process to be woken up. When a process “sleeps”, it can be an interruptible or a non
 interruptible sleep. We will see more about this below.
+
+```
 1 2 3
 /* this is the scheduler proper: */
 4 5
@@ -2872,12 +3188,16 @@ while (1) {
 14 c = (*p)->counter, next = i;
 15 }
 16
+```
+
 * The (*p)-counter is initially assigned a value that indicates how many clock ticks the process can run
 before being preempted. If counter is zero, then that means that the process has finished its quota of execution
 time and that it has to be rescheduled. A process can go on without being preempted for the number of clock
 ticks it was initially assigned, but the scheduler might also be invoked due to reasons other than the time
 quota expiry - like a process deciding to “sleep”, a process waiting for data from hard disk etc.. So the above
 algorithm selects the process that has executed the least amount of time (higer value of counter).
+
+```
 1 2
 if (c) break;
 3 for(p = &LAST_TASK ; p > &FIRST_TASK ; --p)
@@ -2886,35 +3206,49 @@ if (c) break;
 6 (*p)->priority;
 7 }
 8
+```
+
 * The above few lines is one point where we are not very sure about the algorithm. The above lines get
 executed when all the “running” processes have their counter value equal to zero. For those processes, their
 counter becomes (reinitialized) equal to their to their priority value. But for the “not running” processes,
 their counter values are reinitialised to “double” of their existing counter plus their priority. Why is this ???
 Why are the sleeping processes given more time slot ?? So if a process goes on sleeping again and again, will
 its time quota go on increasing ? we don’t know - figure it out!!!
-67Chapter 6. Journey to the Center of the Code
+
+```
 1 2
 switch_to(next);
 3
+```
+
 * This is an assembly routine to switch context to the new process selected to be executed. We will see this
 when we discuss the “utlity” routines.
-1 2
-}
-3 4
-int sys_pause(void)
+
+```
+1 
+2 }
+3 
+4 int sys_pause(void)
 5 {
 6 current->state = TASK_INTERRUPTIBLE;
 7 schedule();
 8 return 0;
 9 }
 10
+```
+
 * This system call (pause) is used to suspend the current process till it gets a signal (type “man pause” on your
 unix shell). Since a signal should be able to get this process running, it state is marked as “interruptible”.
-1 2 3
-void sleep_on(struct task_struct **p)
+
+```
+1 2 
+3 void sleep_on(struct task_struct **p)
 4 {
 5 struct task_struct *tmp;
-6 7
+6 
+7
+```
+
 * This function (and the next one) is used by other parts of the kernel to make a process to wait (suspend);
 till a data structure (in the kernel) whose contents the process wanted to get is “ready” to be read - like say
 the process asked for some data to be read from a sector on the harddisk - that sector might be mapped to a
@@ -2927,6 +3261,8 @@ How can we do this ? - we can use a linked list in the buffer structure to which
 struct) that is waiting on the buffer. When the buffer is ready, we can go through each of the processes in the
 linked list and wake them up. Yes, yes that is one way of doing it!! But Linus has done this in a way that will
 not “click” easily for novice programmers! Now hos does Linus do it differently ? Read below :-)
+
+```
 1 2
 if (!p)
 3 return;
@@ -2935,26 +3271,39 @@ if (!p)
 6 tmp = *p;
 7 *p = current;
 8
+```
+
 * We will make the explanation short. Suppose there is already one process waiting on the buffer. A pointer to
 that task structure is sotred in a variable in the buffer structure. And the “p” that we are passed is a pointer
 to that variable which stores the address of the task structure of the process waiting on the buffer. Wht is done
 here is to copy the task structure of the process currently waiting on the buffer to “tmp”. Then we make the
-68Chapter 6. Journey to the Center of the Code
 “currently” waiting process to be the current process. Note that tmp is a local variable, so tmp will be on the
 stack. Also understand that the kernel stack is different for each process. So tmp will not be overwritten. So
 that is enough of an explanation.
-1 2
-current->state = TASK_UNINTERRUPTIBLE;
+
+```
+1 
+2 current->state = TASK_UNINTERRUPTIBLE;
 3
+```
+
 * Now make the process to be sleeping “uninterruptably”.
-1 2
-schedule();
+
+```
+1 
+2 schedule();
 3
+```
+
 * Schedule another process to run.
-1 2
-if (tmp)
+
+```
+1 
+2 if (tmp)
 3 tmp->state=0;
 4
+```
+
 * How did we reach here ? May be we got a dma interrupt saying that the buffer is ready. So the interrupt
 handler will set the state of the “currently” waiting process (the task structure address stored in the buffer
 structure) to be running. So the next time the scheduler runs, the process pointed by the buffer structure will
@@ -2966,17 +3315,24 @@ waiting on the buffer gets woken up - again, one thing we don’t understand her
 lists, then we could have woken up all the waiting processes in one shot, but here we have to wait for the
 process “after” us to get scheduled for us to be woken up though theoretically we need not wait on any other
 process since the buffer is ready. So why is this ?? We don’t know - figure it out ;-)
-1 2
-}
-3 4
-void interruptible_sleep_on(struct task_struct **p)
+
+```
+1 
+2 }
+3 
+4 void interruptible_sleep_on(struct task_struct **p)
 5 {
 6 struct task_struct *tmp;
-7 8
+7 
+8
+```
+
 * This function is almost exactly same as the above function except that the sleep is interruptible - that is the
 sleeping process can be woken up by an interrupt. What does this function do ? We are still not very clear
 about this, but what we understood is that if “ANY” one process that is in the chain of “waiting” processes
 is woken up by a signal, that process inturn causes “ALL” the waiting proceses also to be woken up!!!
+
+```
 1 2
 if (!p)
 3 return;
@@ -2985,27 +3341,37 @@ if (!p)
 6 tmp=*p;
 7 *p=current;
 8
-69Chapter 6. Journey to the Center of the Code
+```
+
 * Till this part, it is exactly same as the previous function.
-1 2
-repeat: current->state = TASK_INTERRUPTIBLE;
+
+```
+1 
+2 repeat: current->state = TASK_INTERRUPTIBLE;
 3 schedule();
 4
+```
+
 * How did we reach here (after schedule()) ? May be we were woken up by a signal ?
+
+```
 1 2
 if (*p && *p != current) {
 3 (**p).state=0;
 4
+```
+
 * What are we doing here ? We check to see if the “last” process that was waiting on the buffer is ourselves, if
 so, wake up the “last” process. Again set our state to “interruptible sleep” and go back to the sleeping state.
+
+```
 1 2
 goto repeat;
 3 }
 4 *p=NULL;
 5 if (tmp)
 6 tmp->state=0;
-7 Finally the &ldquo;top most&rdquo; process wakes up and then follows the usual sequence of waking up the &ldquo;just below&rdquo; process and the chain continues like that. What happens if the &ldquo;top most&rdqu
-cess gets changed in between ? - that is another new process starts waiting on the same buffer ? Then again, the same sequence mentioned in the previous comments will take place - the previously &ldquo;top most&rdquo; process wakes up and finds that it is not the &ldquo;top most&rdquo; anymore. So it wakes up the topmost process and goes to sleep again. Now again, th
+7 Finally the &ldquo;top most&rdquo; process wakes up and then follows the usual sequence of waking up the &ldquo;just below&rdquo; process and the chain continues like that. What happens if the &ldquo;top most&rdqu cess gets changed in between ? - that is another new process starts waiting on the same buffer ? Then again, the same sequence mentioned in the previous comments will take place - the previously &ldquo;top most&rdquo; process wakes up and finds that it is not the &ldquo;top most&rdquo; anymore. So it wakes up the topmost process and goes to sleep again. Now again, th
 derstand here - first why does the &ldquo;middle&rdquo; process (not the &ldquo;
 most process and go to sleep again ??? Why does it not continue to be &ldquo;awa
 ning). Second is why does waking up one process (by a signal) have to result in the waking up of all the other processes in the chain - one obvious reason is that the &ldquo;push/pop&rdquo; architecture necessitates that if one process is woken up, then at least all the processes &ldquo;be
@@ -3033,7 +3399,11 @@ fore) it should be woken up; but then is that the correct way of implementation 
 27 schedule();
 28 }
 29
+```
+
 * Self explanatory.
+
+```
 1 2
 int sys_alarm(long seconds)
 3 {
@@ -3096,8 +3466,12 @@ int sys_getpid(void)
 59 }
 60 }
 61
+```
+
 * Here comes the signal system call that we were discussing about in system_call.s Go through it carefully and
 see that it is indeed doing the things that we said it will do in system_call.s
+
+```
 1 2 3
 void sched_init(void)
 4 {
@@ -3124,6 +3498,8 @@ set_tss_desc(gdt+FIRST_TSS_ENTRY,&(init_task.task.tss));
 25 set_system_gate(0x80,&system_call);
 26 }
 27
+```
+
 * Initialise things related to init task (task 0), then the timer interrupt gate and system call gate. One thing we
 did not mention was the init_task. It is also called the idle task (see main.c). It runs when there is nothing else
 to run. The task structure for init_task is a predefined structure named INIT_TASK (find out which file it is
@@ -3131,10 +3507,12 @@ in!!). Go through the fields to see what it looks like. Now how do you get this 
 a fork() in main.c ?? The kernel forks just before the lines - for(;;) pause(); - in main.c. So the code that was
 running till this line as the “kernel initialisation” now starts running as an “official” task 0. This idea of
 “kernel” doing a fork might not be very clear. Think more about this and it will become clear.
-72Chapter 6. Journey to the Center of the Code
+
 6.1.2.4. linux/kernel/hd.c
+
 We will not be explaining this file in much detail since the basic code flow here is simple.
-* The basic code path is like this - the read and request to the harddisk are implemented as a FIFO linked list.
+
+*The basic code path is like this - the read and request to the harddisk are implemented as a FIFO linked list.
 But only a maximum of NR_REQUEST outstanding requests are allowed at any time. The first request on the
 head of the list (be it a request to read or write data - both are on the same linked list) is processed by writing
 the details like the head,sector,number of bytes etc.. to be read or written to a port in the harddisk controller
@@ -3148,7 +3526,9 @@ data, it issues an interrupt and then the function do_hd (which has been set to 
 from the buffer to the memory in the hd controller. Now when a new read/write request needs to be issued, we
 will check whether there can be more requests, if not then we will ask the process to “wait” (suspend) till the
 request list has a free entry. If we get a free entry, we will put that request in a “sorted” form in the list to
-improve read/write efficiency.
+improve read/write efficiency.*
+
+```
 1 2
 #include <linux/config.h>
 3 #include <linux/sched.h>
@@ -3235,19 +3615,26 @@ improve read/write efficiency.
 83 bh->b_lock=1;
 84 }
 85
+```
+
 * The buffer is “locked” when the buffer is allocated for use by a read/write request to the hard disk.
+
+```
 1 2 3
 static inline void unlock_buffer(struct buffer_head * bh)
 4 {
 5 if (!bh->b_lock)
-74Chapter 6. Journey to the Center of the Code
 6 printk("hd.c: free buffer being unlocked\n");
 7 bh->b_lock=0;
 8 wake_up(&bh->b_wait);
 9 }
 10
+```
+
 * The buffer is “unlocked” when the read/write request to the harddisk is completely processed by the hardisk
 and after the data is completely copied to/from the buffer.
+
+```
 1 2
 static inline void wait_on_buffer(struct buffer_head * bh)
 3 {
@@ -3257,8 +3644,12 @@ static inline void wait_on_buffer(struct buffer_head * bh)
 7 sti();
 8 }
 9
+```
+
 * Hmm...we have discussed the sleep_on in quite detail. The process has to sleep till the data is ready in the
 buffer, ie the lock for the buffer is released.
+
+```
 1 2 3
 void rw_hd(int rw, struct buffer_head * bh)
 4 {
@@ -3360,8 +3751,12 @@ block = bh->b_blocknr << 1;
 98 outb(cmd,++port);
 99 }
 100
+```
+
 * This function writes the command to be issued to the harddisk to the necessary ports of the hd controller.
 Also it sets the do_hd variable to the read or write handling function which will be passed as parameter.
+
+```
 1 2 3
 static int drive_busy(void)
 4 {
@@ -3438,11 +3833,15 @@ for (i = 0; i < 100000; i++)
 74 do_request();
 75 }
 76
+```
+
 * do_hd was set to read_intr when a read request was issued. This copies the data to the buffer and unlocks the
 buffer which again wakes up all the processes that were waiting to get the data from this buffer. Now that one
 request has been processed completely, we can enqueue a new request to the queue. So we also wake up all
 the processes that were waiting for a free entry on the request list. Finally, it tries to process the next request
 on the head of the request queue (do_request()).
+
+```
 1 2 3
 static void write_intr(void)
 4 {
@@ -3464,7 +3863,11 @@ static void write_intr(void)
 19 do_request();
 20 }
 21
+```
+
 * This functions exactly similar to read_intr.
+
+```
 1 2 3
 static void do_request(void)
 4 {
@@ -3477,8 +3880,7 @@ if (sorting)
 11 return;
 12 }
 13 if (this_request->cmd == WIN_WRITE) {
-14 hd_out(this_request->hd,this_request->nsector,this_request-
->
+14 hd_out(this_request->hd,this_request->nsector,this_request->
 15 sector,this_request->head,this_request->cyl,
 16 this_request->cmd,&write_intr);
 17 for(i=0 ; i<3000 && !(r=inb_p(HD_STATUS)&DRQ_STAT) ; i++)
@@ -3490,17 +3892,20 @@ if (sorting)
 23 port_write(HD_DATA,this_request->bh->b_data+
 24 512*(this_request->nsector&1),256);
 25 } else if (this_request->cmd == WIN_READ) {
-26 hd_out(this_request->hd,this_request->nsector,this_request-
->
+26 hd_out(this_request->hd,this_request->nsector,this_request->
 27 sector,this_request->head,this_request->cyl,
 28 this_request->cmd,&read_intr);
 29 } else
 30 panic("unknown hd-command");
 31 }
 32
+```
+
 * This is the function that takes the first entry on the request queue and depending on whether it is a read or
 write request, it passes read_intr or write_intr as parameter to hd_out. Now there is one interesting part -
 if(sorting) return; - that will be explained next.
+
+```
 1 2 3
 /*
 4 * add-request adds a request to the linked list.
@@ -3540,6 +3945,8 @@ if(sorting) return; - that will be explained next.
 37 }
 38 sorting=0;
 39
+```
+
 * This function is responsible for adding new requests to the request list. But remeber that the request list is
 modified by read_intr and write_intr. They set this_request to this_request-next after the currrent read/write
 is over. So naturally, we are not supposed to change these two values without blocking the harddisk interrupt.
@@ -3561,18 +3968,23 @@ soon as” that request is processed another harddisk interrupt may come (for th
 and again this_request may get modified - but this we can’t handle because we have given provision only
 for the first two entries. So what do_request does is to return without processing any requests if it finds that
 sorting is set to one.
+
+```
 1 2
 /*
 3 * NOTE! As a result of sorting, the interrupts may have died down,
 4 * as they aren’t redone due to locking with sorting=1. They might
 5 * also never have started, if this is the first request in the queue,
-80Chapter 6. Journey to the Center of the Code
 6 * so we restart them if necessary.
 7 */
 8 if (!do_hd)
 9 do_request();
 10
+```
+
 * If this was our first request, process it.
+
+```
 1 2
 }
 3 4
@@ -3605,8 +4017,12 @@ if (rw!=READ && rw!=WRITE)
 30 wait_on_buffer(bh);
 31 }
 32
+```
+
 * This is the outermost layer of the wrapper. This calls the required functions mentioned above to do a read or
 write request appropriately and waits till the lock on the buffer is released.
+
+```
 1 2 3
 void hd_init(void)
 4 {
@@ -3627,19 +4043,28 @@ for (i=0 ; i<NR_REQUEST ; i++) {
 18 outb(inb_p(0xA1)&0xbf,0xA1);
 19 }
 20
+```
+
 6.1.2.5. linux/kernel/exit.c
+
 We are not explaining this file because there is nothing complicated in this file. sys_exit just
 frees the page tables allocated for the process, marks the process as a “ZOMBIE” and sends
 a SIGCHLD to the parent. The sys_waitpid process waits till the child with the specified pid
 has terminated!!
+
 6.1.3. linux/mm
+
 This directory contains the minimal support needed for virtual memory support. The code
 here is basically to handle a page fault because of the two reasons - no “page present” and
 “page is read only”.
+
 6.1.3.1. linux/mm/page.s
+
 Refer the Intel manual to see how to identify the “cause” of a page fault. All that the below
 function does is to identify the cause of the page fault and call a “no page” handling routine
 or “page read only” routine.
+
+```
 1 2
 /*
 3 * page.s contains the low-level page-exception code.
@@ -3661,21 +4086,32 @@ _page_fault:
 19 mov %dx,%fs
 20 movl %cr2,%edx
 21
+```
+
 * Get the “virtual” address that caused the page fault.
+
+```
 1
-82Chapter 6. Journey to the Center of the Code
 2 pushl %edx
 3 pushl %eax
 4 testl $1,%eax
 5 jne 1f
 6
+```
+
 * Find out the cause of the page fault.
-1 2
-call _do_no_page
+
+```
+1 
+2 call _do_no_page
 3 jmp 2f
 4 1: call _do_wp_page
 5
+```
+
 * Call a “no page” handler or “page read only” handler depending on the cause of the page fault.
+
+```
 1 2
 2: addl $8,%esp
 3 pop %fs
@@ -3686,18 +4122,23 @@ call _do_no_page
 8 popl %eax
 9 iret
 10
+```
+
 6.1.3.2. linux/mm/memory.c
+
 The main functions in this file are for getting a free “physical” page, freeing pages in a “range”
 of virtual address and copying pages from one range of virtual address to another range.
-1 2
-#include <signal.h>
-3 4
-#include <linux/config.h>
+
+```
+1 
+2 #include <signal.h>
+3 
+4 #include <linux/config.h>
 5 #include <linux/head.h>
 6 #include <linux/kernel.h>
 7 #include <asm/system.h>
-8 9
-int do_exit(long code);
+8 
+9 int do_exit(long code);
 10
 11 #define invalidate() \
 12 __asm__("movl %%eax,%%cr3"::"a" (0))
@@ -3708,9 +4149,12 @@ int do_exit(long code);
 17 #define LOW_MEM BUFFER_END
 18 #endif
 19
+```
+
 * The lower one Mb - 0x100000 is considered as a “special” area used by the kernel - that is why we have
 special macros for that!!
-83Chapter 6. Journey to the Center of the Code
+
+```
 1 2 3
 /* these are not to be changed - thay are calculated from the above */
 4 #define PAGING_MEMORY (HIGH_MEMORY - LOW_MEM)
@@ -3726,11 +4170,15 @@ special macros for that!!
 14
 15 static unsigned short mem_map [ PAGING_PAGES ] = {0,};
 16
+```
+
 * The size of the array corresponds to the number of physical pages actually present in the system. A value
 of n in mem_map[i] denotes that physical page i is being shared (used) by n processes - if n == 0, then that
 page is free for use.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * Get physical address of first (actually last :-) free page, and mark it
 4 * used. If no free pages left, return 0.
 5 */
@@ -3740,30 +4188,49 @@ page is free for use.
 9
 10 __asm__("std ; repne ; scasw\n\t"
 11
+```
+
 * Find out the first free page (count 0) using the aray mem_map.
+
+```
 1 2
 "jne 1f\n\t"
 3 "movw $1,2(%%edi)\n\t"
 4
+```
+
 * We got a page, mark the count for the page as one (1).
+
+```
 1 2
 "sall $12,%%ecx\n\t"
 3 "movl %%ecx,%%edx\n\t"
 4 "addl %2,%%edx\n\t"
 5
+```
+
 * Calculate the actual physical address for the procured free page. The page “number” is present in ecx. So
 the physical address is calculated as (4k * ecx) + 0x100000.
+
+```
 1 2
 "movl $1024,%%ecx\n\t"
 3 "leal 4092(%%edx),%%edi\n\t"
 4 "rep ; stosl\n\t"
 5
-84Chapter 6. Journey to the Center of the Code
+```
+
 * Fill the entire 4k page with zeroes!!
-1 2
-"movl %%edx,%%eax\n"
+
+```
+1 
+2 "movl %%edx,%%eax\n"
 3
+```
+
 * Return the physical address of the free page that we got!
+
+```
 1 2
 "1:"
 3 :"=a" (__res)
@@ -3794,13 +4261,17 @@ the physical address is calculated as (4k * ecx) + 0x100000.
 28 * by ’exit()’. As does copy_page_tables(), this handles only 4Mb blocks.
 29 */
 30
+```
+
 * Here we have to remember that the 386 has got a two level page heirarchy - a page directory, a page table
 and finally the actual page. So if we have to free the physical pages in a range of address, we have start from
 the page directory, see if a page table is present, if a page table is present, free all the available (present)
 pages in the page table, then free the page table too and mark the page directory entry accordingly. Repeat
 this process till the whole virtual address range is covered. Also, remember that we free only blocks of 4Mb.
-1 2
-int free_page_tables(unsigned long from,unsigned long size)
+
+```
+1 
+2 int free_page_tables(unsigned long from,unsigned long size)
 3 {
 4 unsigned long *pg_table;
 5 unsigned long * dir, nr;
@@ -3811,18 +4282,25 @@ if (from & 0x3fffff)
 10 panic("Trying to free up swapper memory space");
 11 size = (size + 0x3fffff) >> 22;
 12
-85Chapter 6. Journey to the Center of the Code
+```
+
 * Calculate the number of 4Mb blocks to be freed. This means that we calculate the number of page directory
 entries to be freed. Remeber that one page directory entry can map 4Mb. Now we mainly use this function
 while we terminate one process (exit(), exec() etc..), so freeing in 4Mb blocks of virtual address is acceptbale
 - remember that the total virtual address range assigned to one process is 64Mb!!!
-1 2
-dir = (unsigned long *) ((from>>20) & 0xffc); /* _pg_dir = 0 */
+
+```
+1 
+2 dir = (unsigned long *) ((from>>20) & 0xffc); /* _pg_dir = 0 */
 3
+```
+
 * Refer to the Intel manual if you have forgotten how to calculate the index into the page directory from the
 virtual address. Now that you have got the index into the page directory, add that to the base address of the
 page directory to get the address of the page directory entry. But again, the page directory base is 0x0 (refer
 head.s)!!!
+
+```
 1 2
 for ( ; size-->0 ; dir++) {
 3 if (!(1 & *dir))
@@ -3861,6 +4339,8 @@ for ( ; size-->0 ; dir++) {
 36 int copy_page_tables(unsigned long from,unsigned long to,long size)
 37 {
 38
+```
+
 * This function is used only by the fork() system call. That again explains why we copy in terms of 4Mb blocks!!
 The basic algorithm is like this (similar to free_page_tables) - calculate the number of page directory entries
 86Chapter 6. Journey to the Center of the Code
@@ -3874,20 +4354,26 @@ address range ? So the only thing we need to ensure is that the kernel code is c
 space also (since the fork() by the kernel and all the following code are also part of the kernel code, if the
 chil has to run, that code has to be copied). The kernel code will come well within thefirst 640kB. So when
 the task0 is forking, we copy only 640Kb.
-1 2
-unsigned long * from_page_table;
+
+```
+1 
+2 unsigned long * from_page_table;
 3 unsigned long * to_page_table;
 4 unsigned long this_page;
 5 unsigned long * from_dir, * to_dir;
 6 unsigned long nr;
-7 8
-if ((from&0x3fffff) || (to&0x3fffff))
+7 
+8 if ((from&0x3fffff) || (to&0x3fffff))
 9 panic("copy_page_tables called with wrong alignment");
 10 from_dir = (unsigned long *) ((from>>20) & 0xffc); /* _pg_dir = 0 */
 11 to_dir = (unsigned long *) ((to>>20) & 0xffc);
 12 size = ((unsigned) (size+0x3fffff)) >> 22;
 13
+```
+
 * Calculate the number of page directory entries to be copied.
+
+```
 1 2
 for( ; size-->0 ; from_dir++,to_dir++) {
 3 if (1 & *to_dir)
@@ -3898,38 +4384,61 @@ for( ; size-->0 ; from_dir++,to_dir++) {
 8 if (!(to_page_table = (unsigned long *) get_free_page()))
 9 return -1; /* Out of memory, see freeing */
 10
+```
+
 * Get a new page to be used as the destination page table.
+
+```
 1 2
 *to_dir = ((unsigned long) to_page_table) | 7;
 3 nr = (from==0)?0xA0:1024;
 4
+```
+
 * Is the task0 forking ? Then copy only 640Kb.
+
+```
 1 2
 for ( ; nr-- > 0 ; from_page_table++,to_page_table++) {
 3 this_page = *from_page_table;
 4 if (!(1 & this_page))
 5 continue;
 6
+```
+
 * Get the physical page from the source page table entry.
-87Chapter 6. Journey to the Center of the Code
+
+```
 1 2
 this_page &= ~2;
 3 *to_page_table = this_page;
 4
+```
+
 * Mark the destination as read only (this_page &= ~2).
-1 2
-if (this_page > LOW_MEM) {
+
+```
+1 
+2 if (this_page > LOW_MEM) {
 3 *from_page_table = this_page;
 4
+```
+
 * If the source page is not a kernel page, mark the source page also as “read only”. Of course, we should not
 set the kernel pages as read only - this will cause a page fault from the kernel and page faults in kernel are
 not allowed.
-1 2
-this_page -= LOW_MEM;
+
+```
+1 
+2 this_page -= LOW_MEM;
 3 this_page >>= 12;
 4 mem_map[this_page]++;
 5
+```
+
 * Again, if the source page is not a kernel page, increase the reference count to that page.
+
+```
 1 2
 }
 3 }
@@ -3968,11 +4477,17 @@ this_page -= LOW_MEM;
 35 return page;
 36 }
 37
+```
+
 * Not a very difficult function to understand.
+
+```
 1 2 3
 void un_wp_page(unsigned long * table_entry)
 4 {
 5
+```
+
 * Remeber that during a fork(), bith the source and destination pages are shared and BOTH are marked as
 read only. Now suppose the parent tries to write to the shared page. Then it gets a page fault and we reach
 here. Then we get a new page for the parent and copies the contents of the old page to the new page and sets
@@ -3980,6 +4495,8 @@ the new page as writable and decrements the reference count of the page (it beco
 child still has the old page as readonly. So when the child tries to write to the old page, it gets a page fault
 and comes here. But here the code says that if the page is referred to by only one process and still it is marked
 read only when we get a page fault, then mark the page as writable. So that solves all issues!!
+
+```
 1 2
 unsigned long old_page,new_page;
 3 4
@@ -3989,8 +4506,12 @@ old_page = 0xfffff000 & *table_entry;
 7 return;
 8 }
 9
+```
+
 * If the page reference count is only 1, it means that the other “page sharing” has already page faulted and
 got a new page, so now we are the sole owner of this page. So set the permission of the page to writable.
+
+```
 1 2
 if (!(new_page=get_free_page()))
 3 do_exit(SIGSEGV);
@@ -3999,30 +4520,39 @@ if (!(new_page=get_free_page()))
 6 *table_entry = new_page | 7;
 7 copy_page(old_page,new_page);
 8
+```
+
 * If reference count 1, get a new page, mark it as writable and copy the contents of the old page to the new
 one. Also, decrement the reference count for the old page.
-1 2
-}
-3 4
-/*
+
+```
+1 
+2 }
+3 
+4 /*
 5 * This routine handles present pages, when users try to write
 6 * to a shared page. It is done by copying the page to a new address
 7 * and decrementing the shared-page counter for the old page.
 8 */
 9 void do_wp_page(unsigned long error_code,unsigned long address)
 10 {
-89Chapter 6. Journey to the Center of the Code
 11 un_wp_page((unsigned long *)
 12 (((address>>10) & 0xffc) + (0xfffff000 &
 13 *((unsigned long *) ((address>>20) &0xffc)))));
 14
+```
+
 * Translate the virtual address to the page table entry and call un_wp_page.
+
+```
 1 2 3
 }
 4 5
 void write_verify(unsigned long address)
 6 {
 7
+```
+
 * This function sees whether the page present at the specified address (if at all a page is present) is readonly.
 If so, this puts a new page at that address and makes it writable. Now remeber the explanation that we gave
 about verify_area in fork.c ? There we mentioned that write_verify will put a new page if there is no page
@@ -4030,10 +4560,12 @@ corresponding to that address. But from the above explanation, that is not true 
 been so. In this case what will verify_area do if there is no physical page present at the mentioned virtual
 address ? It will not do anything!! So what if we access that address from the kernel space ?? Won’t we get a
 page fault ?? We don’t know - figure it out yourself ;-)
-1 2
-unsigned long page;
-3 4
-if (!( (page = *((unsigned long *) ((address>>20) & 0xffc)) )&1))
+
+```
+1 
+2 unsigned long page;
+3 
+4 if (!( (page = *((unsigned long *) ((address>>20) & 0xffc)) )&1))
 5 return;
 6 page &= 0xfffff000;
 7 page += ((address>>10) & 0xffc);
@@ -4063,7 +4595,6 @@ if (!( (page = *((unsigned long *) ((address>>20) & 0xffc)) )&1))
 31 for(i=2 ; i<1024 ; i++) {
 32 if (1&pg_dir[i]) {
 33 pg_tbl=(long *) (0xfffff000 & pg_dir[i]);
-90Chapter 6. Journey to the Center of the Code
 34 for(j=k=0 ; j<1024 ; j++)
 35 if (pg_tbl[j]&1)
 36 k++;
@@ -4072,15 +4603,20 @@ if (!( (page = *((unsigned long *) ((address>>20) & 0xffc)) )&1))
 39 }
 40 }
 41
+```
+
 6.1.4. linux/fs
+
 Well, the file system is one area where we are uncomfortable with the code. So we will be
 explaining only exec.c. The rest of the file system code we will not be explaining “file wise”
 - most of the file system code is more or less of algorithms and has nothing much to do with
 the working of the kernel. So we will give a brief idea of how the file system and the /dev/
 devices work in general and move forward to the exec.c explanation.
+
 • The lowermost part of the file system code is the code to read a specified location on the
 hard disk into a buffer in kernel space. The code for this has been discussed clearly in
 kernel/hd.c.
+
 • Now the whole of Unix works on the idea of a “root” file system. The kernel as a whole
 has a root directory and each process can have a different root directory. Now the partition
 on the harddisk which corresponds to the root file system is hard coded in the kernel by
@@ -4090,9 +4626,11 @@ the root partition. Then it reads in the superblock for the minix file system an
 location of the inode of the root directory (refer Maurice.J.Bach or Tanenbaum for details
 on inodes, directory structure etc..). Now once we get the location of the root inode, then
 it is easy to locate any other element in the file system.
+
 • Once the root inode has been located, the next level is the code to locate inodes given the
 file name. This is also a pure algorithmic task given the organisation of blocks in the file
 system.
+
 • Once the file name to block translation code is also there, then the next piece of code that
 is needed is the code which deals with open, read, write etc.. for files and devices. This is
 the place where distinctions like block device, char device, normal file, pipe device etc..
@@ -4107,16 +4645,20 @@ For example a read on a block devie will use the lower most layer of functions d
 in the beginning that just gets you the data from a specified location on the disk. But a read
 for a normal file may make use of a function that translates the file name to a disk block
 and then calls the lower layers.
+
 So with the above four categories of code, all the necessary functions for the file system can
 be implemented. Again, all the files in the fs/ directory (except exec.c) can be categorised
-91Chapter 6. Journey to the Center of the Code
 into either of the above four categories. So with that, we are stopping our discussion on file
 systems. Now let us explain exec.c
+
 6.1.4.1. linux/fs/exec.c
+
 In this file, the only function that has “system code” is the do_execve function. The rest are
 just helper functions. But the function do_execve is pretty straight forward, almost all the
 other functions are pretty complicated by the lack of explanation. So let us look into those
 functions.
+
+```
 1 2
 #include <errno.h>
 3 #include <sys/stat.h>
@@ -4138,6 +4680,8 @@ functions.
 19 */
 20 #define MAX_ARG_PAGES 32
 21
+```
+
 * We reserve 32 pages for argv, envp and the tables needed to represent them. First of all, let us explain from
 where the argv and envp comes into existence. It is very simple - when we call the execve function, we pass
 the argv and envp pointers as arguements to the function ! As simple as that. So what happens when we type a
@@ -4146,6 +4690,8 @@ it into a two dimensional array and passes it as arguements to the execve call. 
 of this ? This means that the argv and envp address that the kernel gets are in the user space (data segment) -
 so when ever the kernel needs to access that data, kernel will have to use LDT index 0x17. Or in C code, the
 kernel will have to call get_user_fs or put_user_fs.
+
+```
 1 2 3
 #define cp_block(from,to) \
 4 __asm__("pushl $0x10\n\t" \
@@ -4159,14 +4705,17 @@ kernel will have to call get_user_fs or put_user_fs.
 12 :"cx","di","si")
 13
 14
-92Chapter 6. Journey to the Center of the Code
+```
+
 * The above function does a “fast” copy by utilizing the x86 repeat instruction. In short, the rep instruction
 copies data from ds:si to es:di. So the es used should denote the user segment. That is why initially we do
 a push 0x17 and pop to es. At the end of the function, we restore es to 0x10 (kernel segment). The above
 function copies data from the kernel space to the user space. The first arguement is a kernel offset and the
 second one is a user space offset.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * read_head() reads blocks 1-6 (not 0). Block 0 has already been
 4 * read for header information.
 5 */
@@ -4246,6 +4795,8 @@ second one is a user space offset.
 78 panic("Impossibly long executable");
 79 }
 80
+```
+
 * The above three functions are self explanatory. Because of the multiple indexing levels in the file system
 block organisation (We forgot the number of levels for minix v1.0, refer Tanenbaum), we need to jump to
 different levels depending on what offset into the file we are reading. Also note that the function reads from
@@ -4270,7 +4821,6 @@ So the below functions are all meant to arrange memory in this fashion. What do 
 let envp[2][] = “HOME=/home/guest”, “PATH=/bin”So argv and envp contents are laid out as below in
 memory Low memory: /bin/ls NULL -la NULL /home/guest NULL HOME=/home/guest NULL PATH=/bin
 NULL : 0x4000000 Now what do we mean by the “tables” which come after the argv and envp contents ?
-94Chapter 6. Journey to the Center of the Code
 It is for these tables that we allocated 4 out of MAX_ARG_PAGES. The tables for the above argv and envp
 will look as below. Low mem: arg_address1 arg_address2 NULL env_address1 env_address2 env_address3
 NULL - argv contents - envp contents: 0x4000000 argv_address1 is the address of the “/” in the beginning
@@ -4285,8 +4835,10 @@ order ! Suppose that the the argv and envp contents are already laid out in memo
 the address (arguement p) which is the address of “/” in /bin. Also, we are given the argc and envc count.
 Now what do we have to do ? We have to create the tables - that is the final step. Now how do we do it ? See
 below.
-1 2
-/*
+
+```
+1 
+2 /*
 3 * create_tables() parses the env- and arg-strings in new user
 4 * memory and creates the pointer tables from them, and puts their
 5 * addresses on the "stack", returning the new stack pointer value.
@@ -4299,39 +4851,66 @@ below.
 12 sp = (unsigned long *) (0xfffffffc & (unsigned long) p);
 13 sp -= envc+1;
 14
+```
+
 * Leave space for the enp table - here we store env_addres1 env_addres2
-1 2
-envp = sp;
+
+```
+1 
+2 envp = sp;
 3
+```
+
 * So this becomes the envp in main(..)
+
+```
 1 2
 sp -= argc+1;
 3
+```
+
 * Leave space for argv. Here we store env_addres1 env_addres2 env_addres3.
+
+```
 1 2
 argv = sp;
 3
+```
+
 * So this becomes the argv in main(...).
+
+```
 1 2
 put_fs_long((unsigned long)envp,--sp);
 3 put_fs_long((unsigned long)argv,--sp);
 4 put_fs_long((unsigned long)argc,--sp);
 5
-95Chapter 6. Journey to the Center of the Code
+```
+
 * Now put the values 3 argv envp in memory.
-1 2
-while (argc-->0) {
+
+```
+1 
+2 while (argc-->0) {
 3 put_fs_long((unsigned long) p,argv++);
 4 while (get_fs_byte(p++)) /* nothing */ ;
 5 }
 6
+```
+
 * Remeber that p points to the beginning of “/” in /bin. So p is the env_addres1 and we write that to address
 argv - note that argv is a user space address and so we use put_fs_long. Now the loop is self explanatory -
 we get the env_address2 and so on from the loop.
+
+```
 1 2
 put_fs_long(0,argv);
 3
+```
+
 * Put a NULL after the argv table - that is why we added a 1 while allocating space for argv table.
+
+```
 1 2
 while (envc-->0) {
 3 put_fs_long((unsigned long) p,envp++);
@@ -4339,16 +4918,24 @@ while (envc-->0) {
 5 }
 6 put_fs_long(0,envp);
 7
+```
+
 * Now after constructing argv table, construct envp table along the same lines.
-1 2
-return sp;
+
+```
+1 
+2 return sp;
 3
+```
+
 * Note that we had calculated the value of sp in the beginning and never modified it after that. sp points just
 above the argc (3). Now this address is the starting address of the stack for this process.
-1 2
-}
-3 4
-/*
+
+```
+1 
+2 }
+3 
+4 /*
 5 * count() counts the number of arguments/envelopes
 6 */
 7 static int count(char ** argv)
@@ -4363,9 +4950,12 @@ above the argc (3). Now this address is the starting address of the stack for th
 16 return i;
 17 }
 18
-96Chapter 6. Journey to the Center of the Code
+```
+
 * Given argc or envp which were passed as arguements to execve system call, find the first dimentsion
 (argc/envc) of those two-d arrays.
+
+```
 1 2 3
 /*
 4 * ’copy_string()’ copies argument/envelope strings from user
@@ -4378,6 +4968,8 @@ above the argc (3). Now this address is the starting address of the stack for th
 11 int len,i;
 12 char *tmp;
 13
+```
+
 * This is a pretty big function. What it does is this - the argument p is the amount of memory out of
 (MAX_ARG_PAGES - 4)*PAGESIZE that remains to be used for copying the contents of arguement argv (or
 envp) contents into memory. At the point where this funtion is first called, there are no pages in memory for
@@ -4389,38 +4981,59 @@ index. Also, note that we start filling the page[] array from the last index (MA
 This is because, in the end, after copying both argv and envp contents, we put these pages into memory from
 0x4000000 upwards using index MAX_ARG_PAGES to 0. ie page[MAX_ARG_PAGES] will contain the
 address of the page that will be put at address 0x4000000 (using put_page).
+
+```
 1 2 3
 while (argc-- > 0) {
 4
+```
+
 * Loop over each first dimension in the two-d array - argv[argc][..].
+
+```
 1 2
 if (!(tmp = (char *)get_fs_long(((unsigned long *) argv)+argc
 3 panic("argc is wrong");
 4
+```
+
 * Oh! We encountered a NULL in argv[argc][] before expected ?? That is a bug.
-1 2
-len=0; /* remember zero-padding */
+
+```
+1 
+2 len=0; /* remember zero-padding */
 3 do {
 4 len++;
 5 } while (get_fs_byte(tmp++));
 6
+```
+
 * So we got the second dimension address argv[argc] which points to one string like “/bin/ls”. Note
 that we are starting with argc and going down to 0. Similarly, we are proceeding from high address p
 ((MAX_ARG_PAGES - 4) * PAGESIZE) to lower address. So the last string in argv[] will be in high memory
 and the first one in low memory. So now we got the length of the string in argv[argc]
-97Chapter 6. Journey to the Center of the Code
+
+```
 1 2
 if (p-len < 0) /* this shouldn’t happen -
 128kB */
 3 return 0;
 4
+```
+
 * p - len 0 means we don’t have space to store this string :-(
+
+```
 1 2
 i = ((unsigned) (p-len)) >> 12;
 3
+```
+
 * Remember that we are proceeding backwards from MAX_ARG_PAGES to 0. So the above calculation says
 that - “hey, we have already filled memory upto address p, now we need to fill the contents of argv[argc] from
 p-len to p. So what is the page number for that ? So it gets you the page number.
+
+```
 1 2
 while (i<MAX_ARG_PAGES && !page[i]) {
 3 if (!(page[i]=get_free_page()))
@@ -4428,9 +5041,13 @@ while (i<MAX_ARG_PAGES && !page[i]) {
 5 i++;
 6 }
 7
+```
+
 * So we know that at this pont, filling has been done till address p - say page 10. now filling has to be done
 from p-len to p - say that corresponds to pages 5 to 10. So the above loop allocates kernel pages for that
 purpose.
+
+```
 1 2
 do {
 3 --p;
@@ -4440,21 +5057,28 @@ do {
 7 get_fs_byte(--tmp);
 8 } while (--len);
 9
+```
+
 * Now that we have got the necessary number of pages, fill it !! Think about the above modulo arithmetic
 and you will understand what is happening. Noe that page[p/PAGE_SIZE] contains the address got from
 _get_free_page(). This address is still a kernel address and has not been translated into a virtual address.
 That is why we are assigning to it directly without any put_fs. But the argv that we have been passed is a user
 space address. So to get the characters from it, we use get_fs_byte.
+
+```
 1 2
 }
 3 return p;
 4
+```
+
 * Now we used up some space out of ((MAX_ARG_PAGES - 4) * PAGE_SIZE) in the above process. How
 much of the total is remaining ? Return that number so that the next fellow who calls this same function can
 start from that left over space and proceed to zero.
+
+```
 1 2
 }
-98Chapter 6. Journey to the Center of the Code
 3 4
 static unsigned long change_ldt(unsigned long text_size,unsigned long * page)
 5 {
@@ -4465,45 +5089,59 @@ code_limit = text_size+PAGE_SIZE -1;
 10 code_limit &= 0xFFFFF000;
 11 data_limit = 0x4000000;
 12
+```
+
 * We give max 64Mb virtual space to each process.
-1 2
-code_base = get_base(current->ldt[1]);
+
+```
+1 
+2 code_base = get_base(current->ldt[1]);
 3 data_base = code_base;
 4 set_base(current->ldt[1],code_base);
 5 set_limit(current->ldt[1],code_limit);
 6 set_base(current->ldt[2],data_base);
 7 set_limit(current->ldt[2],data_limit);
 8
+```
+
 * Renmeber ? In fork(), we allocated new virtual address for the process. But in exec, we use the same address
 space as of the process that did the exec - that is logical because the process that called exec is going to be
 over written by the new one. So why not use its own address ? Yes, we can.
-1 2
-/* make sure fs points to the NEW data segment */
+
+```
+1 
+2 /* make sure fs points to the NEW data segment */
 3 __asm__("pushl $0x17\n\tpop %%fs"::);
-4 data_base += data_limit; for (i=MAX_ARG_PAGES-1 ; i>=0 ; i-
--) {
+4 data_base += data_limit; for (i=MAX_ARG_PAGES-1 ; i>=0 ; i--) {
 5 data_base -= PAGE_SIZE;
 6 if (page[i])
 7 put_page(page[i],data_base);
 8 }
 9
+```
+
 * Now it is here that we put the pages in the page[] array which contains the addresses of the pages containging
 argv and envp contents. Note that we start from the last page, page[MAX_ZRG_PAGES] and proceed to zero
 and we put the pages from the end of the space allocated for the task and proceed to low memory.
-1 2
-return data_limit;
+
+```
+1 
+2 return data_limit;
 3
+```
+
 * Well, data_limit has been assigned 0x4000000. So return 0x4000000.
-1 2
-}
-3 4
-/*
+
+```
+1 
+2 }
+3 
+4 /*
 5 * ’do_execve()’ executes a new program.
 6 */
 7 int do_execve(unsigned long * eip,long tmp,char * filename,
 8 char ** argv, char ** envp)
 9 {
-99Chapter 6. Journey to the Center of the Code
 10 struct m_inode * inode;
 11 struct buffer_head * bh;
 12 struct exec ex;
@@ -4512,9 +5150,13 @@ return data_limit;
 15 unsigned long p;
 16
 17
+```
+
 * Now comes the real function. This is pretty simple thanks to the other complicated functions.
-1 2
-if ((0xffff & eip[1]) != 0x000f)
+
+```
+1 
+2 if ((0xffff & eip[1]) != 0x000f)
 3 panic("execve called from supervisor mode");
 4 for (i=0 ; i<MAX_ARG_PAGES ; i++) /* clear page-table */
 5 page[i]=0;
@@ -4537,9 +5179,13 @@ if ((0xffff & eip[1]) != 0x000f)
 22 return -ENOEXEC;
 23 }
 24
+```
+
 * All the initialisations and permission checks.
-1 2
-if (!(bh = bread(inode->i_dev,inode->i_zone[0]))) {
+
+```
+1 
+2 if (!(bh = bread(inode->i_dev,inode->i_zone[0]))) {
 3 iput(inode);
 4 return -EACCES;
 5 }
@@ -4552,34 +5198,49 @@ if (!(bh = bread(inode->i_dev,inode->i_zone[0]))) {
 12 return -ENOEXEC;
 13 }
 14
+```
+
 * Read the first block of the executable and see whether it is properly ni the a.out fomat. We remember that
 this did not somehow work for us and we got frustrated and gave up to use “raw” binary format - the main()
 starts at offset 0 in the file - pretty simple :-)
-100Chapter 6. Journey to the Center of the Code
-1 2
-if (N_TXTOFF(ex) != BLOCK_SIZE)
+
+```
+1 
+2 if (N_TXTOFF(ex) != BLOCK_SIZE)
 3 panic("N_TXTOFF != BLOCK_SIZE. See a.out.h.");
 4 argc = count(argv);
 5 envc = count(envp);
 6
+```
+
 * Here is where we get the number of strings in argc and envp
-1 2
-p = copy_strings(envc,envp,page,PAGE_SIZE*MAX_ARG_PAGES-4);
+
+```
+1 
+2 p = copy_strings(envc,envp,page,PAGE_SIZE*MAX_ARG_PAGES-4);
 3 p = copy_strings(argc,argv,page,p);
 4
+```
+
 * Copy the envp and argv into memory. Note that envp is copied first. So envp comes in the highest address of
 the memory and argv comes above that.
-1 2
-if (!p) {
+
+```
+1 
+2 if (!p) {
 3 for (i=0 ; i<MAX_ARG_PAGES ; i++)
 4 free_page(page[i]);
 5 iput(inode);
 6 return -1;
 7 }
 8
+```
+
 * If we did not get enough pages, free whatever was allocated and quit exec.
-1 2
-/* OK, This is the point of no return */
+
+```
+1 
+2 /* OK, This is the point of no return */
 3 for (i=0 ; i<32 ; i++)
 4 current->sig_fn[i] = NULL;
 5 for (i=0 ; i<NR_OPEN ; i++)
@@ -4592,34 +5253,53 @@ if (!p) {
 12 last_task_used_math = NULL;
 13 current->used_math = 0;
 14
+```
+
 * Free up memories of the “going-to-die” task.
-1 2
-p += change_ldt(ex.a_text,page)-MAX_ARG_PAGES*PAGE_SIZE;
+
+```
+1 
+2 p += change_ldt(ex.a_text,page)-MAX_ARG_PAGES*PAGE_SIZE;
 3
+```
+
 * What are we doing above with += ? Till now the address p was from 0 to MAX_ARG_PAGES*PAGE_SIZE.
 Till this point we just copied the strings into memory and so we were not cared whether we used kernel
 addres or user address - we had to just get the strings into memory. But now we need the exact offset in
 memory where this is going to be copied - why ? Because we are going to construct tables below. And in
 tables, we need the actual user memory offset because the tables are going to be used by the user process. So
 we do the arithmetic above - the p += 0x4000000 - MAX_ARG_PAGES*PAGE_SIZE
-101Chapter 6. Journey to the Center of the Code
-1 2
-p = (unsigned long) create_tables((char *)p,argc,envc);
+
+```
+1 
+2 p = (unsigned long) create_tables((char *)p,argc,envc);
 3
+```
+
 * Now create the tables.
-1 2
-current->brk = ex.a_bss +
+
+```
+1 
+2 current->brk = ex.a_bss +
 3 (current->end_data = ex.a_data +
 4 (current->end_code = ex.a_text));
 5 current->start_stack = p & 0xfffff000;
 6
+```
+
 * Now whatever address is in p, assign that as the start of the stack.
-1 2
-i = read_area(inode,ex.a_text+ex.a_data);
+
+```
+1 
+2 i = read_area(inode,ex.a_text+ex.a_data);
 3
+```
+
 * Now read the whole binary into memory.
-1 2
-iput(inode);
+
+```
+1 
+2 iput(inode);
 3 if (i<0)
 4 sys_exit(-1);
 5 i = ex.a_text+ex.a_data;
@@ -4628,6 +5308,8 @@ iput(inode);
 8 eip[0] = ex.a_entry; /* eip, magic happens :-) */
 9 eip[3] = p; /* stack pointer */
 10
+```
+
 * Now the above two lines is a very important piece of code and one that will confuse the person who is
 new to the concepts of stack and arguments in C. When we call a function in C, the top most element of
 the stack is the fisrt argument to the function, the next element of the stack is the second argument and so
@@ -4649,18 +5331,28 @@ rule that if you do a call from the privileged (kernel) mode, then you push only
 some rule like that - we don’t remember. That is why we need only one long tmp as the second argument
 instead of one more tmp1 or something like that as the second arguement (oe even a long long as the second
 argument). We don’t want to use the eip pushed by the kernel.
-102Chapter 6. Journey to the Center of the Code
-1 2 3
-/* OOOPS... Dangerous */
+
+```
+1 
+2 
+3 /* OOOPS... Dangerous */
 4 exec_graph(current);
-5 6
+5 
+```
+
 * To be honest, we don’t remember what the exec_graph is :-(
-1 2
-return 0;
+
+```
+1 
+2 return 0;
 3 }
 4
+```
+
 6.2. The End
+
 6.2.1. Do try and get 0.01 up and kicking
+
 So we have come to the end of the book. Maybe if we had written the material without the
 one year or so break in between, we might have done better. The main parts like the processor
 descritpion, the description of the core kernel etc was written before the one year break when
@@ -4668,5 +5360,3 @@ the enthusiasm level was very high. Anyway, we were not at all interested in the
 code and so even if we had written it without break, we would have excluded that. We request
 the seriosuly interested readers to try bringing up the kernel by themselves - it will help you
 learn a lot.
-103Chapter 6. Journey to the Center of the Code
-104
