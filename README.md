@@ -53,9 +53,12 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 
 
 0.11
-- https://github.com/voidccc/linux0.11
-- https://github.com/huawenyu/oldlinux
-- https://github.com/bolanlaike/Linux-0.01
+- Build OK
+  - https://github.com/yuan-xy/Linux-0.11
+- Others
+  - https://github.com/voidccc/linux0.11
+  - https://github.com/huawenyu/oldlinux
+  - https://github.com/bolanlaike/Linux-0.01
 
 0.12
 - Actually Worked
