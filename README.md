@@ -55,7 +55,7 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 0.11
 - Build OK
   - https://github.com/yuan-xy/Linux-0.11
-    - download disk image file [oldlinux](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
+    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
     - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
 - Others
   - https://github.com/voidccc/linux0.11
@@ -65,6 +65,8 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 0.12
 - Actually Worked
   - https://github.com/sky-big/Linux-0.12
+    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
+    - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
 - Cannot Build
   - https://github.com/huawenyu/oldlinux
     - also has asm code for boot/
