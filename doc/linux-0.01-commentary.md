@@ -1,17 +1,20 @@
-The Linux Kernel 0.01 Commentary
-Pramode C.E
-Mobiuz Technologies
-Gopakumar C.E
-Cisco SystemsThe Linux Kernel 0.01 Commentary
-by Pramode C.E and Gopakumar C.E
+# The Linux Kernel 0.01 Commentary
+
+Pramode C.E (Mobiuz Technologies), Gopakumar C.E (Cisco Systems)
+
+
 This document describes the structure of a prehistoric Linux kernel as understood by the authors.
 Operating system newbies, hardware hackers or people with too much time in their hands than
 they would care to admit can use this document to learn more about 80386 architecture and the
 simple skeleton from which a great Operating Sytem (and a greater movement) was built.
+
 The authors are NOT kernel hackers, and as such, the document is not guaranteed to be technically
 perfect. Reports of errors will be gratefully received and, time permitting, corrections would be
 incorporated in later versions. Flames will be redirected to /dev/null.
+
 Happy Hacking!Table of Contents
+
+```
 1. Getting Started...................................................................................................................1
 1.1. Introduction...............................................................................................................1
 1.1.1. Copyright and License ...................................................................................1
@@ -53,22 +56,35 @@ Happy Hacking!Table of Contents
 6.1.4. linux/fs .........................................................................................................91
 6.2. The End.................................................................................................................103
 6.2.1. Do try and get 0.01 up and kicking............................................................103
-iiiivChapter 1. Getting Started
+```
+
+## Chapter 1. Getting Started
+
 1.1. Introduction
+
 1.1.1. Copyright and License
+
 Copyright (C) 2003 Gopakumar C.E, Pramode C.E
+
 This document is free; you can redistribute and/or modify this under the terms of the GNU
 Free Documentation License, Version 1.1 or any later version published by the Free Software
 Foundation. A copy of the license is available at www.gnu.org/copyleft/fdl.html .
+
 1.1.2. Feedback and Corrections
+
 Kindly forward feedback and corrections to gopakumar_ce@yahoo.com.
+
 1.1.3. Acknowledgements
+
 Gopakumar would like to thank the faculty and friends at the Government Engineering College, Trichur for introducing him to GNU/Linux and initiating a ‘Free Software Drive’ which
 ultimately resulted in the whole Computer Science curriculum being taught without the use
 of propreitary tools and platforms.
+
 We express our gratitude towards those countless individuals who answer our queries on Internet newsgroups and mailing lists, those people who maintain this infrastructure, the hackers who write cool code just for the fun of writing it and everyone else who is a part of the
 great Free Software movement.
+
 1.1.4. Reading 0.01 source
+
 The Linux kernel version 0.01 is a tiny program (compared to the size of the current kernel).
 A newbie is faced with a problem - whether to read and understand a part of a big, sophisticated program or whether to read and understand almost in full a smaller and MUCH less
 sophisticated version. If you have of plenty of time at hand, you can do both! We started off
@@ -78,17 +94,16 @@ know, Linus too was a newbie!), trying to compile it on our ‘modern’ Red Hat
 huge Intel manuals describing the mysteries of the 386 processor. This document might be
 useful for those sufficiently crazy folks out there (we know there would be many) who would
 like to conduct similar experiments.
+
 1.1.5. Things you must know
+
 We expect that you have/know:
-• Programming experience in any UNIX environment, familiarity with UNIX system calls.
-1Chapter 1. Getting Started
-• Simple theoretical concepts about Operating Systems - like layers of an OS, scheduling,
-memory management etc.
-• Good Knowledge of 8086 architecture, how interfacing is done etc.
-• Basic idea about 80386 architecture - like switching to protected mode, how is protection
-enforced, how is paging done, etc.
-• Basic concepts about what the output of assemblers, compilers, linkers etc will look like
-(ie their headers, symbol tables etc).
+- Programming experience in any UNIX environment, familiarity with UNIX system calls.
+- Simple theoretical concepts about Operating Systems - like layers of an OS, scheduling, memory management etc.
+- Good Knowledge of 8086 architecture, how interfacing is done etc.
+- Basic idea about 80386 architecture - like switching to protected mode, how is protection enforced, how is paging done, etc.
+- Basic concepts about what the output of assemblers, compilers, linkers etc will look like (ie their headers, symbol tables etc).
+
 Well, it is quite difficult to enumerate exactly what you have to know and how much to know.
 The only way is to proceed with this book and learn the things that you don’t know whenever
 you find it necessary. Please don’t do the reverse process of learning the required things first
@@ -103,6 +118,7 @@ this book can be found in one of the below mentioned reference material.
 4. The info and man pages (mainly on gcc, as, ld, as86, ld86)
 5. The Intel 80386 manuals
 6. The Indispensable PC Hardware Book by Hans-Peter Messmer
+
 The book 2. is extremely essential because Linus has based the design of 0.01 along the
 lines specified by the author of the book. The book 3. is needed just for reference on UNIX
 programming. You can do even without it. The book 6. is simply a must if you don’t have
@@ -114,7 +130,9 @@ is presented precisely and concisely in the manuals. Throughout the commentary, 
 mention which of the above should be referred to find something that we have not explained.
 Also, all figures are from the Intel Architecture - Software Developer’s Manual 3. That can
 be downloaded from the link http://x86.ddj.com/intel.doc/386manuals.htm.
+
 1.1.6. How to read this document
+
 We have tried to present sections in this document in the order that gives you a block-building
 approach to learning the .01 code. So at first, proceed with the chapters linearly. Later on you
 can adopt the random-walk approach. Again, going by the UNIX principles, we assume that
@@ -125,12 +143,15 @@ need not be mentioned that reading without experimenting will not help you any m
 watching “Babie’s Day Out”. Well, finally the disclaimer - this book is a collection of our
 ideas. We are learning, so you will find mistakes. If following the instructions here leads to
 consequences which are not very pleasing to speculate - dont blame us.
-2Chapter 1. Getting Started
+
 Notes
+
 1. http://x86.ddj.com/intel.doc/386manuals.htm
-3Chapter 1. Getting Started
-4Chapter 2. Building Kernel 0.01
+
+## Chapter 2. Building Kernel 0.01
+
 2.1. Getting 0.01 Up And Running
+
 To get .01 running, it took us almost two weeks - going through various info and man pages
 and finally fixing that terrible trouble caused by the NT flag of the 386. The process by itself
 was highly educative. So don’t be in a hurry and carefully understand what you are doing.
@@ -138,15 +159,18 @@ Though we have provided a working version of 0.01, it would be good if you start
 original code and make modifications on your own and consult what we have written below
 only when you are really in trouble. We don’t know whether we could have done things more
 easily, but ours’ does work. We describe what we have done, briefly.
-• From what Linus has written, we conjecture that the previous versions of gcc used to prefix
+
+- From what Linus has written, we conjecture that the previous versions of gcc used to prefix
 an underscore (’_’) to all the variable names declared in the program. So in the assembly
 files linked with the C code, those variables are accessed with the _xxx type of names.
 But the present gcc compilers doesn’t do such things. So you have to go through all the
 assembly files, some header files and also portions where inline assembly is used and just
 delete the leading underscore from the variable name. Which files to be looked into will be
 known at the time of linking.
-• Another minor change is the change of comment symbol from ’|’ in boot/boot.s to ’;’.
-• The options to the old linkers, assemblers etc are not the same as those for the new ones.
+
+- Another minor change is the change of comment symbol from ’|’ in boot/boot.s to ’;’.
+
+- The options to the old linkers, assemblers etc are not the same as those for the new ones.
 So the Makefiles in all the directories had to be modified. Please read the original Makefiles
 and the ones that we have supplied and note the difference. The only difference is in the
 options to LD, AS, GCC etc. The only change that requires clarification is the -r and -T
@@ -169,19 +193,21 @@ to 0x0. More information on the options to linkers, assemblers, compilers etc ca
 in the info pages. Information on as86 and ld86 can be got from the man pages. We did’nt
 find man pages for as86 and ld86 in our RedHat 5.2 installation, but it was there in the 6.2
 version. The changes in the other Makefiles are minor and no clarification is needed.
-• We have modified the linux-0.01/tools/build.c file. The original code was responsible for
+
+- We have modified the linux-0.01/tools/build.c file. The original code was responsible for
 removing the headers of the object file produced by assembling boot.s, removing the headers of the ’system’ file and generating a boot block and appending ’system’ to it. But since
 our Makefiles tell the assemblers and linkers to produce raw binary output, we don’t need
 another program to do it. So our tools/build.c simply produces a boot block of 512 bytes.
 The final ’Image’ is produced by simply joining the boot block and ’system’ with a ’cat’.
-5Chapter 2. Building Kernel 0.01
-• The 0.01 uses a minix version 1 file system as its root file system. So make a primary partition in your hard disk. Set its type to 80 (Old Minix) using the fdisk in your Linux system.
+
+- The 0.01 uses a minix version 1 file system as its root file system. So make a primary partition in your hard disk. Set its type to 80 (Old Minix) using the fdisk in your Linux system.
 Suppose your partition is hda4. Then format the partition using the command ’mkfs.minix
 /dev/hda4 -n 14’. The -n 14 option specifies the maximum filename length to be 14 characters, which is what 0.01 assumes. Now create the directories bin and dev in the minix
 file system. Also create nodes corresponding to your root partition (hda4 in our example)
 and the console tty0. The major and minor numbers for these devices are present in the file
 linux-0.01/include/linux/fs.h. You can put a shell (sh) in the bin directory.
-• The linux-0.01/include/linux/config.h file has to be edited to make 0.01 to mount its root
+
+- The linux-0.01/include/linux/config.h file has to be edited to make 0.01 to mount its root
 file system. Use fdisk to find out the number of cylinders, sectors and heads of your hard
 disk. If fdisk shows the number of heads to be greater than 64, then bad luck, we don’t know
 what to do. The original code had restricted the number of heads to 16, but we modified it to
@@ -212,23 +238,26 @@ primary master which corresponds to the first structure. The WPCOM, LANDZ parame
 can be got from your BIOS settings. We don’t know whether they have any significance in
 the present day harddisks. We made CTL 8 when we read the comment provided above the
 structures. Again, we don’t know whether it has any significance.
-• In the file linux-0.01/include/string.h, many variables have been declared as register type
+
+- In the file linux-0.01/include/string.h, many variables have been declared as register type
 __res __asm__(..), which the gcc compiler does not permit. So we simply changed it to
 type __res. We don’t know whether it has any serious implications in the performance of
 the code.
-• In the file linux-0.01/include/asm/segment.h, the value to be returned from a function is
+
+- In the file linux-0.01/include/asm/segment.h, the value to be returned from a function is
 assigned via an arbitrary register specifier (=r). But gcc complains about that and so we
 have changed it to (=a), ie the ax register itself. We have also changed a few other (=r)
 specifications to (=a).
-• In the file linux-0.01/kernel/hd.c, we have changed a register variable declaration to an ordinary declaration. Again the symbol NR_HD has been defined by us to be 1, the definition
+
+- In the file linux-0.01/kernel/hd.c, we have changed a register variable declaration to an ordinary declaration. Again the symbol NR_HD has been defined by us to be 1, the definition
 for NR_HD present in the original code gives it a value of 2 because the HD_TYPE sym-
-6Chapter 2. Building Kernel 0.01
 bol is defined to be the two harddisk info structures in config.h. Again we assume here that
 our minix partition is present in the primary master ide disk. Also as we mentioned before,
 we have commented out one line in the hd_out() function to get it working on our 10Gb
 harddisk. Also we have changed the original head 15 check in the hd_out() function to
 hd63 to accommodate for 64 head harddisks.
-• The 0.01 assumes an a.out format for executables, but giving options to gcc to produce
+
+- The 0.01 assumes an a.out format for executables, but giving options to gcc to produce
 the a.out format doesn’t seem to work. So what we do is to compile our C program for the
 0.01 (maybe a shell or anything we want to run in 0.01) and use ld to produce a raw binary
 output of the compiled code. Then we wrote a small piece of C code that reads the size
@@ -244,7 +273,8 @@ does the job of linking the application program to the printf library and the sy
 archives. One thing that has to be taken care of while writing applications and producing
 binary using mkbin is that the main() function should be the first function to be defined in
 the application code.
-• Finally we come to one of the two problems that left us clueless for almost two full
+
+- Finally we come to one of the two problems that left us clueless for almost two full
 days. As we mentioned before, we had run the 0.01 on different machines in our lab - not
 with the intention of testing it on different machines, but because no single machine was
 permanently available for use for this purpose; whichever machine was free, we would
@@ -259,7 +289,8 @@ reset the NT flag before the kernel started, but the BIOS in the Pentium I machi
 do it. So when the kernel did the first iret instruction (maybe in the move_to_user_mode()),
 the x86 thought that it is a task switch was to a previous task - but whose link was set to
 NULL when the task structure of each process was initialized.
-• The second problem was that the kernel created a protection fault inside the fork system
+
+- The second problem was that the kernel created a protection fault inside the fork system
 call (we think so, don’t remember exactly). Reading the objdump of the area where the
 protection fault was generated identified the problem with the get_base code in linux-
 0.01/include/linux/sched.h file. The code generated the base address of a process in the
@@ -272,16 +303,20 @@ value, leading to a protection fault. Again after rummaging through the info pag
 can find info on inline asm under the C extensions section of gcc info) we changed the =d
 (__base) declaration present in the original code to =&d (__base) and this again solved the
 problem.
-7Chapter 2. Building Kernel 0.01
-8Chapter 3. Processor Architecture
+
+## Chapter 3. Processor Architecture
+
 3.1. The 386 Architecture
+
 In this chapter, we deal with the architecture of the 386 processor. As we had mentioned in
 the introduction, this is not a full description of 386, it is intended only to help the reader to
 cope up with the rigor of the 386 manuals. So Keep the manuals nearby and start reading this
 chapter. We avoid explanations on basic things like register set, instruction set etc and present
 oly matter relevant to understanding the 0.01 code. Supplement this by referring the manuals
 whenever necessary.
+
 3.1.1. Segmentation in 386
+
 As in 8086, we can divide our programs into segments with a base address and also a limit -
 the limit feature being absent in 8086. In 8086, the base address is generated by multiplying
 the segment register contents by 16. Then the offset is added to it to get the absolute address.
@@ -302,7 +337,9 @@ Well, what is done in the 386 is also similar to this. The programmer should cre
 fill it entries with base addresses of the segment values that are used in the program. Such a
 table is called a Descriptor Table in the 386 nomenclature and the ’segment value’ is formally
 known as the ’selector’. Now let us see in more detail about the descriptor tables.
+
 3.1.1.1. The descriptor tables.
+
 As in the 8086, the segment selector in 386 is also of 16 bit length (because the segment
 registers are 16 bit in length). But the interpretation of the contents of the segment registers
 is different in 386. The bits 0, 1 and 2 have special meanings. We will explain that later.
@@ -370,9 +407,11 @@ One table entry of a descriptor table is simply called a descriptor. Note that t
 different from the descriptor. The selector is a 16 bit value present in a segment register. It is
 used to index into a descriptor table that contains 8 byte ’descriptors’ containing base address
 and limit related information about he segment referred to by the selector.
+
 3.1.1.2. LDT/GDT Descriptor Format
+
 The format of the 8 byte descriptor is shown in the figure below.
-11Chapter 3. Processor Architecture
+
 The order in which the bytes are stored in memory is as follows. The first 32 bits (limit(16
 bits) + base(16 bits)) occupy the first 4 contiguous bytes in memory starting with the first
 byte (bits 0 to 7) of the limit in the lowest memory location. The fifth contiguous byte stored
@@ -418,7 +457,9 @@ LDTs using the LGDT/LLDT instruction. Also, we can see that by specifying a limi
 each segment, we enforce protection. Whenever the address used as offset with a particular
 selector exceeds the limit of the segment represented by the selector, the 386 generates a fault.
 For further information on LDTs and GDTs, refer the Intel manuals.
+
 3.1.2. Paging in 386
+
 The complete addressing mechanism in the 386 consists of the segmentation unit plus the
 paging unit. We had mentioned about how segmentation is done in 386. Now let us move on
 to paging. Actually, paging is not a must in 386. It can be enabled/disabled via a bit in the cr0
@@ -433,7 +474,9 @@ input to the paging unit). So that was quite a dry and uninteresting explanation
 Also, the idea about paging and its necessity will not be clear until we read a working code
 that employs paging. So based on what we have read in the 0.01 code, let us explain about
 paging and its power briefly.
+
 3.1.2.1. Using full 32 bits for addresses.
+
 We know that the address bus in 386 is of 32 bit width. So we can attach maximum of 2^{32}
 = 4Gb of physical memory to the 386. But we all know that normally, we won’t have that
 much of memory in our PCs. Suppose we have only 16 Mb of memory in our PC. So that
@@ -460,7 +503,9 @@ used descriptor to a particular base address. But here we will not map all addre
 use to physical address. What we do is we divide our used address range into pages of the
 same size as we mentioned before (4Kb) and then map each of these pages to some page in
 the physical memory pages. The example below will simplify the concept.
+
 3.1.2.1.1. Example.
+
 Since we have 16Mb of memory, we divide it into pages of 4Kb. So the starting addresses
 of our physical pages will be 0x0, 0x1000, 0x2000, 0x3000,...., 0xfff000. That is we have
 0xfff = 4K pages of 4 Kilo byte size each. Now suppose the virtual address that we use in our
@@ -499,7 +544,9 @@ an entry in the map table is etc. This will be explained in a later section. But
 explanation that we have provided above does not correspond exactly to the paging mechanism of the 3886. A small difference is that the 386 uses two levels of map tables (note
 the term ’two levels’ and not ’two pages’ as in segmentation). This is explained in the next
 section.
+
 3.1.2.2. Two levels of paging in 386
+
 Now let us see how exactly is paging done in the 386. The basic idea is as explained above.
 When the user program generates an address, the 386 consults a mapping table entry corresponding to that address. If only a single level of paging was used, the address in that entry
 would give us the physical address of the actual (physical) page in memory corresponding
@@ -528,8 +575,9 @@ also gives us the physical PAGE address corresponding to our virtual address. So
 using only 20 bits. So why the extra 12 bits ?. Well their purpose will be explained in the
 next section. Also the next section will explain how the 386 knows where the programmer
 has kept the tables and things like that.
-15Chapter 3. Processor Architecture
+
 3.1.2.3. Page table entry Format and more..
+
 We mentioned about two levels of indexing in the 386 model of paging. The table used for the
 first level of indexing is called the page directory. As mentioned previously, it is one page in
 size and its address is stored in the cr3 register of the 386. The entries in the page directory are
@@ -562,7 +610,9 @@ directories and page tables and so different processes can share the same virtua
 using different page directory/tables for different processes. It is not done in the kernel 0.01.
 All processes have the same page directory.
 17Chapter 3. Processor Architecture
+
 3.1.3. Interrupts and Exceptions.
+
 Now let us move on to the idea of interrupts and exceptions in 386. Again, this topic alone can
 encompass a whole book, so we discuss only those parts that are essential to understand the
 0.01 kernel. The working of interrupts in 386 is not much different from that in the 8086. The
@@ -586,7 +636,9 @@ to the PIC byte. So simple!. The last instruction of this procedure will be an I
 a RET as with usual procedures. So before the kernel becomes fully functional, it has to set
 the various entries in the IDT with the addresses of the routines in the kernel to handle the
 corresponding hardware interrupts like hard disk, serial port, key board, timer etc.
+
 3.1.3.2. Exceptions
+
 As we saw in the sections on segmentation and paging, we can set various bits in the descriptors to indicate whether the segment is read only, whether a page is present or not, whether
 a segment contains code or data etc and umpteen more bits to indicate various other things.
 Now what is the use of setting these bits ? Suppose that we have specified a segment as read
@@ -612,7 +664,9 @@ to the OS. This is how exceptions are treated as a positive feature rather than 
 types of exceptions - faults, traps, aborts etc. Again, what is the size of an entry of the IDT ?
 You guessed it this time - it is 8 bytes. So the next section will be a brief description of the
 IDT descriptor format.
+
 3.1.3.3. IDT Descriptor Format
+
 As with GDT, the IDT is also a table kept in memory whose entries are 8 byte descriptors.
 The format of the LIDT instruction is also the same as that of the LGDT instruction. Also the
 descriptor stored in an IDT is a system descriptor which can be of type task gates, interrupt
@@ -643,7 +697,9 @@ of the IDT will have 0x60 as its selector field and 0x3040 as its offset field. 
 interrupt comes, the 386 automatically looks up the GDT to find the segment corresponding
 to the selector 0x60, adds 0x200 to the base address of that segment and starts executing from
 that location. So this was a quick tour about interrupts and exceptions.
+
 3.1.4. Tasks in 386
+
 The 386 processor has been so designed as to give the Operating System as much hardware
 support as possible. The concept of tasks in 386 is one such. The implementation of multiple
 processes in UNIX can be done very easily using this feature of the 386. Suppose a particular
@@ -658,7 +714,9 @@ via routines in the kernel that save these things in some memory location belong
 Considering this factor, the 386 designers introduced the concept of a task so that saving and
 restoring of task related data can be done in hardware using instructions specially designed
 for that purpose. The following sections briefly describe how that is done.
+
 3.1.4.1. The Task Table
+
 The task table is again a contiguous area of memory that is used to save the information
 relating to the task that is currently executing. The information that 386 stores in this table
 automatically at the time of a task switch are the contents of ALL the registers of the 386
@@ -673,7 +731,9 @@ An example is the contents of the registers of the math co processor (if any) th
 store in the task table. This can be done very quickly by using specialized instructions for
 this purpose. The task table is called the Task State Structure(TSS) in the 386 literature. The
 detailed information regarding the TSS can be had from the Intel manuals.
+
 3.1.4.2. Task switching
+
 Each task must have an associated TSS. The details related to the TSS are similar to that
 of the LDT. As with LDT, the TSS also should be identified by a descriptor containing the
 base address and limit of the TSS. Also the type of the descriptor is either 0x9 or 0xB. The
@@ -692,9 +752,9 @@ a CALL or an INT instruction is used to initiate a task switch, the following th
 Here the two types for the TSS descriptor comes into view. A TSS that is not busy has
 type 0x9 and one that is busy has type 0xB. So initially, when we create a new TSS, its
 descriptor will be given a type of 0x9, since it is not busy initially.
-2. The back link field of the new TSS is is set to the selector corresponding to the old
-TSS.
+2. The back link field of the new TSS is is set to the selector corresponding to the old TSS.
 3. The NT bit of the new task gets set.
+
 Now we are in a position to explain in more detail the role of the NT bit which we vaguely
 mentioned in the section on compiling the kernel 0.01. As we saw above, the NT bit gets set
 on a task switch via a CALL or an INT (hardware or software INT). Now the IRET instruction
@@ -715,7 +775,6 @@ register will get popped with the IRET instruction of the handler. So another IR
 to cause a task switch can effect a task switch if the NT flag is set.
 Phew :-(, that was a rather complicated process. Luckily, the kernel 0.01 does not cause those
 complications. There is no need for a chain of tasks in 0.01 and so there is no need to ’return’
-21Chapter 3. Processor Architecture
 to the previous task in the chain via an IRET instruction and so there is no reason why we
 should be cared about the NT bit. We (0.01) would prefer that the NT bit is always off. Don’t
 misunderstand that we are using only one task in the 0.01 and that is why we don’t want a
@@ -733,7 +792,9 @@ thus making the new TSS active - that is all. This is the method of task switchi
 in 0.01. So now, the concept of task switching should be clear and that takes us very close to
 the technique used in scheduling processes. Refer the manuals for any further details that you
 would like to know.
+
 3.1.5. Privilege Levels And The Stack
+
 Till now, we have been extremely unfair on two bits that popped up every now and then in
 segment selectors and descriptors. Well, these two bits are used for conveying privilege level
 information. The 386 has four privilege levels (and so two bits). The privilege level 0 (00
@@ -756,7 +817,9 @@ rules are not as simple as it is stated above. It is extremely complicated and j
 the various rules, we will never come to understand their purpose or their requirement. Only
 when we come across a need for a particular protection feature while programming, can we
 understand perfectly the rules about privilege given in the manuals.
+
 3.1.5.1. Privilege Levels Used In 0.01
+
 The 0.01 uses only two levels of privilege - 0 and 3, ie the most privileged and the least
 privileged levels. Also since the 0.01 does not make use of any complex facilities provided
 by the 386, the privilege rules that need to be kept in mind while reading the 0.01 kernel are
@@ -765,8 +828,8 @@ very simple (thank God). We shall briefly state how the various privilege levels
 22Chapter 3. Processor Architecture
 descriptors. The general rule use in the 0.01 is that for all the selectors and descriptors related
 to the kernel, make the two bits 00, ie a privilege level of 0. For all other programs (user
-programs) make the two bits of their selectors and descriptors equal to 11, ie a privilege level
-of 3.
+programs) make the two bits of their selectors and descriptors equal to 11, ie a privilege level of 3.
+
 Now as examples, the kernel related things are - the code, data and stack segment descriptors
 of the kernel code which are kept in the GDT, the code, data and stack segment selectors
 used in the kernel code, the LDT descriptor kept in the GDT, the LDT selector used to refer
@@ -788,7 +851,9 @@ the user program uses a selector to index into the GDT (which it can easily do b
 Table Indicator bit of the selector, bit 2 to 0), then the 386 processor generates a ’Protection’
 fault because the user program is at privilege level 3 and the descriptors in the GDT are at
 level 0.
+
 3.1.5.2. Stack Change With Privilege Change
+
 If we examine the fields in the TSS, we can find that there are three pairs of entires ss0:esp0,
 ss1:esp1 and ss2:esp2. Also there is the entry for the ss:esp registers also, along with the other
 registers of the 386. So totally, there are four entries for the stack register pairs. The reader can
@@ -810,7 +875,6 @@ the TSS entries corresponding to the new privilege level, and these values are l
 ss:esp registers. When the task RETurns (or IRETurns) to the lower privilege level, the stack
 registers in the lower privilege level are restored from the values stored in the higher privilege
 level stack when we switched to a higher privilege level. Also, there are a lot of other things
-23Chapter 3. Processor Architecture
 like copying of parameters from one stack to the other and so on when we use call gates. For
 our purpose of understanding the 0.01 kernel, we need not know all those details. So that was
 all we wanted to know about the relationship between stacks and privilege levels.
@@ -825,8 +889,11 @@ architecture details are made use of. Also do not spend much time on architectur
 that are not used in 0.01. The only features used are the ones that we spoke about in this
 section. So now, let us move on to our final aim - the kernel 0.01 code!! Hold your breath and
 tighten your seat belts :-).
-24Chapter 4. The Big Picture
+
+## Chapter 4. The Big Picture
+
 4.1. Step Wise Refinement Of The 0.01 Kernel - Step 1
+
 We will use the ’method of step wise refinement’ (by Niklaus Wirth) for explaining the kernel
 code. First we will describe the picture as a whole, then we will break it up into smaller and
 smaller parts until we feel that we do know what each line of code is meant for. So this book
@@ -840,7 +907,9 @@ acquainted with the full source code for each device in the kernel 0.01. Refer f
 hardware description. So let us move on to the commentary. Also, we assume that the reader
 is using the source distribution that we have provided. Well, as we mentioned before, the
 changes we have made are meager and of the grade of a few simple syntax changes.
+
 4.1.1. The Source Tree
+
 The entire kernel code consists mainly of three components - the file system, the kernel (composing of scheduler, system calls, signals etc) and the memory manager. These components
 are present in the directories linux-0.01/fs, linux-0.01/kernel and linux-0.01/mm respectively.
 The linux-0.01/init contains a single file ’main.c’ that gets the kernel working. The linux-
@@ -852,7 +921,9 @@ needed. And finally, there is the linux-0.01/lib directory. It contains code for
 that are to be called from user level programs. It is not needed to make the kernel image. But
 we have to use the object code in that directory when we write a shell or any other utility that
 uses system calls. So this is how the kernel 0.01 code is organized.
+
 4.1.2. The Makefiles
+
 A few words about the make files. The fs, kernel and mm directories have separate make
 files. These make files result in the production of relocatable object files fs.o, kernel.o and
 mm.o respectively. This is combined with main.o and head.o to get the actual kernel in the
@@ -864,14 +935,17 @@ This boot sector is combined with the kernel to generate the file ’Image’ in
 directory. This image can be copied on to a floppy in the raw form (using ’dd’, rawrite etc).
 The reader may often need to refer the Makefiles to understand which files are needed for
 what and so on.
-25Chapter 4. The Big Picture
+
 4.1.3. The Big Picture
+
 Now let us see how exactly various pieces of code are interrelated in making the kernel work.
 Only the relevant parts have been explained, the other things like printing messages onto
 the screen etc. have been simply ignored. Again, this section is a brief overview, so don’t be
 worried about the exact details of the actual code at this stage. We have an image of the kernel
 in your floppy, we insert the floppy in our drive and turn on our machine. Now what ?
+
 4.1.3.1. The Boot Sector
+
 The BIOS cares only about the contents of the first sector (512 bytes) of your floppy. If
 the bytes 511 and 512 have the values 0x55 and 0xaa respectively, the BIOS tells itself that
 the first 510 bytes contain some executable code. If the two flags are not present, the BIOS
@@ -905,13 +979,14 @@ GDT and IDT and switches to protected mode. After this our bootsector code instr
 processor to start executing from location 0x0 - which contains the 32 bit code for our kernel,
 with the initial part of the code corresponding to the linux-0.01/boot/head.s file. And with
 that our poor bootsector code has completed its mission and is no longer needed.
+
 4.1.3.2. Kernel Initialization - Phase I
+
 This phase corresponds to the code in the linux-0.01/boot/head.s file. Starting from this phase,
 the 386 is working in protected mode. To initialize the protected mode, the real mode code had
 used a rudimentary GDT and IDT. So in this phase, the actual GDT is activated and a partial
 IDT (space for IDT allocated, but its entries are all ’inactive’) is put up. We have to remember
 that the real mode code transfered control to the kernel, with the interrupts disabled (using
-26Chapter 4. The Big Picture
 ’cli’ instruction). So there is no harm in leaving the IDT ’half baked’. Also the stack that the
 kernel will be using initially is also activated. Then the paging mechanism is initialized and
 activated. After this, control is transfered to the code in the linux-0.01/init/main.c file. Well,
@@ -933,7 +1008,9 @@ may contain code for reading several parameters from the BIOS, doing some tests 
 are not done in 0.01. For example, the parameters like the type of the floppy and harddisk are
 hard coded into the kernel, which may have been read from the BIOS. Now let us move on to
 the second phase of initializations.
+
 4.1.3.3. Kernel Initialization - Phase II
+
 This phase corresponds to the code in the linux-0.01/init/main.c file. We had mentioned that
 we left the IDT incomplete in the previous phase. The main task of tis phase is to properly
 fill up the IDT entries with the handlers for various interrupts and exceptions. After that the
@@ -960,8 +1037,9 @@ using the fork-exec pair, there being a file system in which our files are resid
 happens when a system call like fork or exec is executed, or how does a new file get loaded
 into memory when the exec system call is executed ? These are the things that we are going
 to talk about further.
-27Chapter 4. The Big Picture
+
 4.1.3.4. System Calls - The Interface To The Kernel
+
 Now that we have got the kernel up and a process running (like the shell), what next ? Can the
 process do everything by itself ? By the term ’itself’, we mean the user level functions inside
 the process. For example, the process can do things like finding the values of mathematical
@@ -1012,7 +1090,6 @@ That is, we make the entry 0x80 in the IDT correspond to a particular function i
 user program), then the function in the kernel corresponding to the IDT entry gets executed.
 But does that mean that Linux has just one system call ? No, this particular function is also
 given an argument (it can have other arguments also) via the ’ax’ register to denote which
-28Chapter 4. The Big Picture
 system call we want and depending on the argument, this particular function calls different
 functions in the kernel (something like a ’switch’ on the argument). Well, it could have been
 that each system call (ie kernel procedure) was allocated a different entry in the IDT. But this
@@ -1020,6 +1097,7 @@ would take up a large number of entries in the IDT and adding a new system call 
 be cumbersome. So a system call is nothing but a usual function call. After the system call
 is executed it returns to the point that it was called, like a normal function (well, not always,
 more when we explain the actual code).
+
 Now, the whole procedure in short. After the kernel is up (by the word ’up’ we mean that the
 kernel code and data is in memory and not anything like the kernel is “running”) and a process
 starts running, the process uses system calls to temporarily switch to a higher privilege level,
@@ -1034,9 +1112,10 @@ calls by highlighting the following fact - THE KERNEL IS NOT A SEPARATE ENTITY.
 IT CANNOT “RUN” INDEPENDENTLY. WHENEVER IT RUNS, IT IS ATTACHED TO
 SOME PROCESS, THAT IS IT NEVER RUNS WITHOUT UNLESS SOME PROCESS
 MAKES IT RUN VIA SYSTEM CALLS. It is not the system calls alone that makes the
-kernel run, but also interrupts and exceptions. That will be clear only when we see the actual
-code.
+kernel run, but also interrupts and exceptions. That will be clear only when we see the actual code.
+
 4.1.3.5. Multi Tasking And The Timer Interrupt
+
 Ok guys...have you ever read a few adventures in “Sherlock Holmes” that were written by
 Watson ? This happened after Conon Doyle “killed” Sherlock Holmes in one adventure (We
 don’t remember the name). You can find a distinct difference in the writing style of “Watson”
@@ -1061,7 +1140,6 @@ suspended has not completely finished its work. So a preemptive multitasking OS 
 which many processes can run simultaneously (not exactly simultaneous, but..), but nobody is
 allowed to play the “king”. So how does the timer help in that ? There is a timer chip/circuit
 in EVERY board that has serious intentions of running an OS (not even multitasking OS).
-29Chapter 4. The Big Picture
 This chip/circuit can be programmed to emit signals periodically without the help of the
 processor. This signal is an interrupt source to the processor. If our memory is correct, the
 8251 (or compatibles) is the timer used in Intel boards. It can of course, be programmed by
@@ -1091,14 +1169,18 @@ dirty tricks) just for this purpose - to run when nobody else is ready to run. S
 interrupt, if a new process is scheduled (not necessarily), then the TSS loaded will be that of
 the new process and it will resume from the state where it was suspended previously. So this
 makes it very clear how a “timer interrupt” can ensure fairness to all processes.
+
 4.1.3.6. Other Interrupts
+
 Well, apart from the timer interrupt, we have lots of other interrupts like keyboard interrupt
 (in the PC), harddisk interrupt etc...There is nothing much to be said about these from the
 hardware perspective. They just behave like timer interrupt - they also get into the kernel
 mode, start executing their own ISRs and go back to process level (may be a different process)
 after its execution is over. But the difference is that these other interrupts are not “periodic”,
 ghosh!, we don’t want a hard disk interrupt to be periodic!
+
 4.1.3.7. TLB exceptions
+
 The two items that we discussed above namely - system calls and timer interrupt are two of the
 most important in the general category of exceptions. These two will be present in almost all
 the advanced architectures of processors. Now let us move on to the other types of exceptions
@@ -1144,9 +1226,11 @@ is called thrashing! So this is how the page faults help in implementing “virt
 - allocate as much address space as needed to various processes even though there are no
 “physical pages” corresponding to those addresses - the absence of “physical pages” will be
 taken care of by page faults + swapping etc...
-31Chapter 4. The Big Picture
-32Chapter 5. Flow of control through the Kernel
+
+## Chapter 5. Flow of control through the Kernel
+
 5.1. Step Wise Refinement Of The 0.01 Kernel - Step 2
+
 In Step 1, we have seen a BIG picture of what is happening - all in one picture. Now let us
 make the picture a bit more smaller. Here we will not explain in as great detail as we did in
 Step 1. We will briefly mention what files contain what code and what is the code sequence
@@ -1155,7 +1239,9 @@ be familiar with the flow of code from the “file name” level - that is, we w
 Ok, when an interrupt comes, the code in this file is executed, after that it goes to the code in
 this file etc... In Step 3, we will be explaining the code in each file so that we will be able to
 trace the code path by “function names” rather than “file names” :-)
+
 5.1.1. Normal Activities In a Running OS
+
 What does the OS do after booting up ? The main activities are servicing interrupts and
 exceptions - via which all the other abstract activities take place. For example, after the OS is
 up and we get a shell running, the user may type some command corresponding to which the
@@ -1164,8 +1250,11 @@ and if necessary, makes a system call (like fork or exec) which is also one form
 Or when a process is running, it might get a page fault and service it. Or it may get a timer
 interrupt as a result of which a new process might get scheduled. So again, to sum up, the
 main activities are processing interrupts and exceptions.
+
 5.1.2. linux/boot Directory
+
 5.1.2.1. Boot Up - boot/boot.s
+
 We compile the 0.01 kernel and get an image which is ready to run from address 0x00000000
 (or any other address - it is the choice of the programmer). But who will get this code loaded
 into memory from address 0x0 (or whatever is the base address) ? Here is where the boot
@@ -1193,7 +1282,9 @@ boot loader transfers control (ie jumps) to the start of the kernel code. In our
 also switches from the 8086 mode to the “protected mode” before it transfers control to the
 kernel. The code that contains the boot loader that does the tasks mentioned above is present
 in the file boot/boot.s.
+
 5.1.2.2. The “head” Of The Kernel - boot/head.s
+
 The Kernel code starts with the code in the file head.s - so it is called “head”.s :-). As we had
 mentioned in the previous section, the kernel code starts in protected mode. The boot.s sets
 up a dummy IDT,GDT, LDT etc.. before it transfers control to the kernel code. But we are
