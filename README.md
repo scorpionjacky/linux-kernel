@@ -48,10 +48,12 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
   - Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
 
 0.01
-- https://github.com/mariuz/linux-0.01
-- https://github.com/issamabd/linux-0.01-remake
-- https://github.com/liudonghua123/linux-0.01
-- https://github.com/YWHyuk/linux-kernel-0.01
+- Build OK
+  - https://github.com/YWHyuk/linux-kernel-0.01
+- Others
+  - https://github.com/mariuz/linux-0.01
+  - https://github.com/issamabd/linux-0.01-remake
+  - https://github.com/liudonghua123/linux-0.01
 
 
 0.11
