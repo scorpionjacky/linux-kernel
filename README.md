@@ -44,6 +44,8 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
   - http://gunkies.org/wiki/Linux_0.00
 - Not Tested
   - https://github.com/174high/Linux-0.00
+- Otheres
+  - Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
 
 0.01
 - https://github.com/mariuz/linux-0.01
@@ -63,19 +65,18 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
   - https://github.com/bolanlaike/Linux-0.01
 
 0.12
-- Actually Worked
+- Build OK
   - https://github.com/sky-big/Linux-0.12
     - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
     - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
 - Cannot Build
   - https://github.com/huawenyu/oldlinux
     - also has asm code for boot/
-- Other
-  - https://github.com/honyyang/Linux-0.12
   - https://github.com/ultraji/linux-0.12
+  - https://github.com/honyyang/Linux-0.12
+- Other
   - https://blog.csdn.net/qq_42138566/article/details/89765781
 
-Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
 
 http://oldlinux.org/
 
