@@ -58,12 +58,15 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 - https://github.com/bolanlaike/Linux-0.01
 
 0.12
-- https://github.com/sky-big/Linux-0.12
-- https://github.com/huawenyu/oldlinux
-  - also has asm code for boot/
-- https://github.com/honyyang/Linux-0.12
-- https://github.com/ultraji/linux-0.12
-- https://blog.csdn.net/qq_42138566/article/details/89765781
+- Actually Worked
+  - https://github.com/sky-big/Linux-0.12
+- Cannot Build
+  - https://github.com/huawenyu/oldlinux
+    - also has asm code for boot/
+- Other
+  - https://github.com/honyyang/Linux-0.12
+  - https://github.com/ultraji/linux-0.12
+  - https://blog.csdn.net/qq_42138566/article/details/89765781
 
 Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
 
