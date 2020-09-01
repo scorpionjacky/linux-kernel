@@ -63,6 +63,8 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
   - https://github.com/voidccc/linux0.11
   - https://github.com/huawenyu/oldlinux
   - https://github.com/bolanlaike/Linux-0.01
+- Info
+  - https://gunkies.org/wiki/Linux_0.11
 
 0.12
 - Build OK
@@ -76,6 +78,8 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
   - https://github.com/honyyang/Linux-0.12
 - Other
   - https://blog.csdn.net/qq_42138566/article/details/89765781
+- Info
+  - https://gunkies.org/wiki/Linux_0.12
 
 
 http://oldlinux.org/
