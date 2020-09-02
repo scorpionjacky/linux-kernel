@@ -80,10 +80,10 @@ http://oldlinux.org/
 [gcc, libstdc++, glibc, binutils](https://www.reddit.com/r/linuxquestions/comments/1tghjd/what_is_the_relationship_between_gcc_libstdc/)
 
 [GNU Tools](https://www.gnu.org/manual/manual.html)
-  - [Make] (https://www.gnu.org/software/make/manual/)
+  - [Make](https://www.gnu.org/software/make/manual/)
   - [Automake](https://www.gnu.org/software/automake/manual/)
   - [Binutils](https://sourceware.org/binutils/)
-    - [GNU `as`](https://sourceware.org/binutils/docs-2.35/as/index.html)
+    - [`as`](https://sourceware.org/binutils/docs-2.35/as/index.html) (`gas`)
       - [@github](https://github.com/gitGNU/gnu_as)
       - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
   - [GCC](https://gcc.gnu.org/) (GNU Compiler Collection)
