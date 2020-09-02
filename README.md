@@ -1,7 +1,100 @@
 # linux-kernel
 
-Linux Kernel
+- Source Code
+- Acient Code
+- [Tools](#tools)
+- [Others](#others)
+
+## Source Code
+
+Current
 - https://github.com/torvalds/linux
+
+## Acient Code
+
+http://oldlinux.org/
+
+0.12
+- Build OK
+  - https://github.com/sky-big/Linux-0.12
+    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
+    - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
+- Cannot Build
+  - https://github.com/huawenyu/oldlinux
+    - also has asm code for boot/
+  - https://github.com/ultraji/linux-0.12
+  - https://github.com/honyyang/Linux-0.12
+- Other
+  - https://blog.csdn.net/qq_42138566/article/details/89765781
+- Info
+  - https://gunkies.org/wiki/Linux_0.12
+
+0.11
+- Build OK
+  - https://github.com/yuan-xy/Linux-0.11
+    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
+    - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
+- Others
+  - https://github.com/voidccc/linux0.11
+  - https://github.com/huawenyu/oldlinux
+  - https://github.com/bolanlaike/Linux-0.01
+- Info
+  - https://gunkies.org/wiki/Linux_0.11
+
+0.01
+- Build OK
+  - https://github.com/mariuz/linux-0.01
+    - with some additional changes to 0.01 remake 3.5
+  - https://github.com/YWHyuk/linux-kernel-0.01
+    - change Makefile `Image` to:
+      - dd bs=512 count=2880 if=/dev/zero of=floppy.img
+      - dd bs=32 if=boot/boot of=floppy.img skip=1 conv=notrunc
+      - dd bs=512 if=tools/system of=floppy.img skip=8 seek=1 conv=notrunc
+      - sync
+- Others
+  - https://github.com/issamabd/linux-0.01-remake
+  - https://github.com/liudonghua123/linux-0.01
+  - [Linux 0.01 News](http://draconux.free.fr/os_dev/linux0.01_news.html) (Linux 0.01 remake)
+
+
+0.00
+- Working Examples
+  - https://github.com/Yibo-Li/linux-0.00 (tested)
+  - https://github.com/voidccc/linux0.00
+    - need to change kernel.s with the following line:
+      - `.global startup_32`
+    - `qemu-system-x86_64.exe -drive format=raw,file=C:\dev\linux_os\Image.img,index=0,if=floppy`
+- Not Working
+  - https://github.com/issamabd/linux-0.00
+    - has two branches
+    - Won't compile
+  - http://gunkies.org/wiki/Linux_0.00
+- Not Tested
+  - https://github.com/174high/Linux-0.00
+- Otheres
+  - Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
+
+
+## Tools
+
+[gcc, libstdc++, glibc, binutils](https://www.reddit.com/r/linuxquestions/comments/1tghjd/what_is_the_relationship_between_gcc_libstdc/)
+
+GNU Binutils
+  - [Home](https://www.gnu.org/software/binutils/)
+  - [Documentation Home](https://sourceware.org/binutils/)
+    - [Documentation for binutils 2.35](https://sourceware.org/binutils/docs-2.35/)
+  - GNU `as` 
+    - [@github](https://github.com/gitGNU/gnu_as)
+    - [Manual](https://sourceware.org/binutils/docs-2.35/as/index.html)
+    - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
+
+GCC
+  - [Home](https://gcc.gnu.org/)
+  
+
+## Others
+
+
 - https://www.kernel.org/doc/html/latest/
 
 [The Linux Kernel Archives](https://www.kernel.org)
@@ -54,68 +147,6 @@ https://jasonblog.github.io/note/qemu/72.html
 
 https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-with-assembly
 
-0.00
-- Working Examples
-  - https://github.com/Yibo-Li/linux-0.00 (tested)
-  - https://github.com/voidccc/linux0.00
-    - need to change kernel.s with the following line:
-      - `.global startup_32`
-    - `qemu-system-x86_64.exe -drive format=raw,file=C:\dev\linux_os\Image.img,index=0,if=floppy`
-- Not Working
-  - https://github.com/issamabd/linux-0.00
-    - has two branches
-    - Won't compile
-  - http://gunkies.org/wiki/Linux_0.00
-- Not Tested
-  - https://github.com/174high/Linux-0.00
-- Otheres
-  - Google [linux 0.00 github](https://www.google.com/search?q=linux+0.00+github&oq=linux+0.00+github)
-
-0.01
-- Build OK
-  - https://github.com/mariuz/linux-0.01
-    - with some additional changes to 0.01 remake 3.5
-  - https://github.com/YWHyuk/linux-kernel-0.01
-    - change Makefile `Image` to:
-      - dd bs=512 count=2880 if=/dev/zero of=floppy.img
-      - dd bs=32 if=boot/boot of=floppy.img skip=1 conv=notrunc
-      - dd bs=512 if=tools/system of=floppy.img skip=8 seek=1 conv=notrunc
-      - sync
-- Others
-  - https://github.com/issamabd/linux-0.01-remake
-  - https://github.com/liudonghua123/linux-0.01
-  - [Linux 0.01 News](http://draconux.free.fr/os_dev/linux0.01_news.html) (Linux 0.01 remake)
-
-
-0.11
-- Build OK
-  - https://github.com/yuan-xy/Linux-0.11
-    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
-    - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
-- Others
-  - https://github.com/voidccc/linux0.11
-  - https://github.com/huawenyu/oldlinux
-  - https://github.com/bolanlaike/Linux-0.01
-- Info
-  - https://gunkies.org/wiki/Linux_0.11
-
-0.12
-- Build OK
-  - https://github.com/sky-big/Linux-0.12
-    - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
-    - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
-- Cannot Build
-  - https://github.com/huawenyu/oldlinux
-    - also has asm code for boot/
-  - https://github.com/ultraji/linux-0.12
-  - https://github.com/honyyang/Linux-0.12
-- Other
-  - https://blog.csdn.net/qq_42138566/article/details/89765781
-- Info
-  - https://gunkies.org/wiki/Linux_0.12
-
-
-http://oldlinux.org/
 
 https://en.wikibooks.org/wiki/X86_Assembly/Bootloaders
 
@@ -133,19 +164,3 @@ VeraCrypt is a free open source disk encryption software for Windows, Mac OSX an
 GeeksOS 
 - https://www.cs.umd.edu/~hollings/cs412/s03/prog1/
 
-## Tools
-
-[gcc, libstdc++, glibc, binutils](https://www.reddit.com/r/linuxquestions/comments/1tghjd/what_is_the_relationship_between_gcc_libstdc/)
-
-GNU Binutils
-  - [Home](https://www.gnu.org/software/binutils/)
-  - [Documentation Home](https://sourceware.org/binutils/)
-    - [Documentation for binutils 2.35](https://sourceware.org/binutils/docs-2.35/)
-  - GNU `as` 
-    - [@github](https://github.com/gitGNU/gnu_as)
-    - [Manual](https://sourceware.org/binutils/docs-2.35/as/index.html)
-    - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
-
-GCC
-  - [Home](https://gcc.gnu.org/)
-  
