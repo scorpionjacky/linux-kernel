@@ -4,6 +4,7 @@ Linux Kernel
 - https://github.com/torvalds/linux
 - https://www.kernel.org/doc/html/latest/
 
+[The Linux Kernel Archives](https://www.kernel.org)
 - https://www.kernel.org/doc/
 - https://www.kernel.org/doc/html/latest/
 - https://www.kernel.org/doc/Documentation/x86/
