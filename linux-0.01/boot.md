@@ -157,13 +157,13 @@ Line 36 to line 44 performs `rep movw` macroinstruction which copies memory from
 
 从下面开始， CPU 在已移动到 0x90000:go 位置处的代码中执行
 
-    Addressing in real mode is for compatibility with the 8086 processor, 8086 is a 16-bit CPU (the data width of the ALU), and the 20-bit address bus can address 1M of memory space. The addressing mode: segment base address + offset mode. The segment base address is stored in CS, DS, ES and other segment registers, which is equivalent to the upper 16 bits of addressing, and the offset is provided by the internal 16-bit bus. To the external address bus, the segment base address and offset are combined into a 20-bit address to address the 1M physical address space.
+> Addressing in real mode is for compatibility with the 8086 processor, 8086 is a 16-bit CPU (the data width of the ALU), and the 20-bit address bus can address 1M of memory space. The addressing mode: segment base address + offset mode. The segment base address is stored in CS, DS, ES and other segment registers, which is equivalent to the upper 16 bits of addressing, and the offset is provided by the internal 16-bit bus. To the external address bus, the segment base address and offset are combined into a 20-bit address to address the 1M physical address space.
 
-    Synthesis method: the segment base address is shifted left by 4 bits, and then the offset address is added. But it is not a general addition. Because the base address of the previous segment has been shifted left by 4 bits to 20 bits (the lowest 4 bits are 0), and the offset is still 16 bits, so it is actually the segment base address and offset The upper 12 bits of the sum are added, and the lower 4 bits of the offset are unchanged. For example:
-    
-    0x8880:0x0440 = 0x88800 + 0x0440 = 0x88c40 (20-bit address of external bus)
+> Synthesis method: the segment base address is shifted left by 4 bits, and then the offset address is added. But it is not a general addition. Because the base address of the previous segment has been shifted left by 4 bits to 20 bits (the lowest 4 bits are 0), and the offset is still 16 bits, so it is actually the segment base address and offset The upper 12 bits of the sum are added, and the lower 4 bits of the offset are unchanged. For example:
 
-    It can be seen that this so-called segmented memory management is not a pure base address plus offset method. It is said that Intel deceived everyone at the time.
+> 0x8880:0x0440 = 0x88800 + 0x0440 = 0x88c40 (20-bit address of external bus)
+
+> It can be seen that this so-called segmented memory management is not a pure base address plus offset method. It is said that Intel deceived everyone at the time.
 
 ```asm
 go: 
