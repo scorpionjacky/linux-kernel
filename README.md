@@ -79,18 +79,15 @@ http://oldlinux.org/
 
 [gcc, libstdc++, glibc, binutils](https://www.reddit.com/r/linuxquestions/comments/1tghjd/what_is_the_relationship_between_gcc_libstdc/)
 
-GNU Binutils
-  - [Home](https://www.gnu.org/software/binutils/)
-  - [Documentation Home](https://sourceware.org/binutils/)
-    - [Documentation for binutils 2.35](https://sourceware.org/binutils/docs-2.35/)
-  - GNU `as` 
-    - [@github](https://github.com/gitGNU/gnu_as)
-    - [Manual](https://sourceware.org/binutils/docs-2.35/as/index.html)
-    - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
-
-GCC (GNU Compiler Collection)
-  - [Home](https://gcc.gnu.org/)
-  - [@github](https://github.com/gcc-mirror/gcc) (mirror)
+[GNU Tools](https://www.gnu.org/manual/manual.html)
+  - [Make] (https://www.gnu.org/software/make/manual/)
+  - [Automake](https://www.gnu.org/software/automake/manual/)
+  - [Binutils](https://sourceware.org/binutils/)
+    - [GNU `as`](https://sourceware.org/binutils/docs-2.35/as/index.html)
+      - [@github](https://github.com/gitGNU/gnu_as)
+      - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
+  - [GCC](https://gcc.gnu.org/) (GNU Compiler Collection)
+    - [@github](https://github.com/gcc-mirror/gcc) (mirror)
 
 NASM (Netwide Assembler)
   - [Home](https://www.nasm.us/)
