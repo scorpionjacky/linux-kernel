@@ -144,6 +144,14 @@ correspond to “physical” address 0x200000 .
 46
 ```
 
+The bootloader copies “itself” from 0x07C0 to 0x90000, aka copies itself from `ds:si` to `es:di` `(e)cs` times (512 bytes).
+
+Line 36 to line 44 performs `rep movw` macroinstruction which copies memory from location `ds:si` to `es:di`, which is from 0x07C0:0x0000 to 0x9000:0x0000. `(e)cx` is the register storing the copy size (or counter) used by `rep`, which is decremented by `rep` after each microinstruction loop, till 0. #256 is word corresponding to `movw` (which is 512 bytes),. Ref of [`REP MOVE` string instruction](https://patents.justia.com/patent/7802078).
+
+`jmpi go,INITSEG` is 段间跳转（ Jump Intersegment） 。这里 INITSEG 是段地址， go 是段内偏移地址。
+
+从下面开始， CPU 在已移动到 0x90000:go 位置处的代码中执行
+
 * The bootloader starts executing from entry point start because that will be the first byte on the floppy! In the
 above piece of code, the boot loader copies 512 bytes starting at BOOTSEG (0x7c00) to location INITSEG
 (0x9000). That is, the bootloader copies “itself” to 0x90000.
