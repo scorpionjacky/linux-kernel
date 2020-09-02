@@ -1,7 +1,7 @@
 # linux-kernel
 
 - Source Code
-- Acient Code
+- Ancient Code
 - [Tools](#tools)
 - [Others](#others)
 
@@ -10,7 +10,7 @@
 Current
 - https://github.com/torvalds/linux
 
-## Acient Code
+## Ancient Code
 
 http://oldlinux.org/
 
