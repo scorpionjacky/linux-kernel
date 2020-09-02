@@ -70,6 +70,11 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 - Build OK
   - https://github.com/mariuz/linux-0.01
   - https://github.com/YWHyuk/linux-kernel-0.01
+    - change Makefile `Image` to:
+      - dd bs=512 count=2880 if=/dev/zero of=floppy.img
+      - dd bs=32 if=boot/boot of=floppy.img skip=1 conv=notrunc
+      - dd bs=512 if=tools/system of=floppy.img skip=8 seek=1 conv=notrunc
+      - sync
 - Others
   - https://github.com/issamabd/linux-0.01-remake
   - https://github.com/liudonghua123/linux-0.01
