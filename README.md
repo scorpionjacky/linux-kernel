@@ -84,7 +84,7 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 - Others
   - https://github.com/issamabd/linux-0.01-remake
   - https://github.com/liudonghua123/linux-0.01
-  - [Linux 0.01 News]http://draconux.free.fr/os_dev/linux0.01_news.html (Linux 0.01 remake)
+  - [Linux 0.01 News](http://draconux.free.fr/os_dev/linux0.01_news.html) (Linux 0.01 remake)
 
 
 0.11
