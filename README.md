@@ -4,7 +4,24 @@ Linux Kernel
 - https://github.com/torvalds/linux
 - https://www.kernel.org/doc/html/latest/
 
-[Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1)
+
+[Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
+- http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
+
+https://eecs.wsu.edu/~cs460/cs560/booting
+- https://eecs.wsu.edu/~cs460/cs560/booting.pdf
+
+[bootsect.s Retired since v2.6](https://tonybai.com/2006/02/08/retired-bootsect/)
+
+https://titanwolf.org/Network/Articles/Article?AID=7a69544f-e37f-4c3f-a294-842743dbd987#gsc.tab=0
+
+[Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
+
+[Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
+
+[Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
+
+https://blog.lse.epita.fr/2014/10/01/uefi-boot-stub-in-linux.html
 
 https://0xax.gitbooks.io/linux-insides/content/Booting/
 
