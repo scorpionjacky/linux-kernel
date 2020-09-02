@@ -4,6 +4,8 @@ Linux Kernel
 - https://github.com/torvalds/linux
 - https://www.kernel.org/doc/html/latest/
 
+[Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1)
+
 https://0xax.gitbooks.io/linux-insides/content/Booting/
 
 https://en.wikipedia.org/wiki/Linux_kernel
