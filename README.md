@@ -88,9 +88,17 @@ GNU Binutils
     - [Manual](https://sourceware.org/binutils/docs-2.35/as/index.html)
     - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
 
-GCC
+GCC (GNU Compiler Collection)
   - [Home](https://gcc.gnu.org/)
-  
+  - [@github](https://github.com/gcc-mirror/gcc) (mirror)
+
+NASM (Netwide Assembler)
+  - [Home](https://www.nasm.us/)
+  - [@github](https://github.com/netwide-assembler/nasm)
+
+MGW (Minimalist GNU for Windows)
+  - [Home](http://www.mingw.org/)
+
 
 ## Others
 
