@@ -74,6 +74,7 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 0.01
 - Build OK
   - https://github.com/mariuz/linux-0.01
+    - with some additional changes to 0.01 remake 3.5
   - https://github.com/YWHyuk/linux-kernel-0.01
     - change Makefile `Image` to:
       - dd bs=512 count=2880 if=/dev/zero of=floppy.img
@@ -83,6 +84,7 @@ https://50linesofco.de/post/2018-02-28-writing-an-x86-hello-world-bootloader-wit
 - Others
   - https://github.com/issamabd/linux-0.01-remake
   - https://github.com/liudonghua123/linux-0.01
+  - [Linux 0.01 News]http://draconux.free.fr/os_dev/linux0.01_news.html (Linux 0.01 remake)
 
 
 0.11
