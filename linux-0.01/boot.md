@@ -165,6 +165,24 @@ Line 36 to line 44 performs `rep movw` macroinstruction which copies memory from
 
 > It can be seen that this so-called segmented memory management is not a pure base address plus offset method. It is said that Intel deceived everyone at the time.
 
+>> **The addressing problem of 8086/8088**
+>>
+>> ===============
+>>
+>> 　　Both 8088 and 80286 are 16-bit CPUs. Why did Intel warn IBM and Gates? In the end what happened?
+>>
+>> 　　To understand what happened, we have to look at the inside of the processor and we will see huge differences. First, you find a piece of 8088 CPU, grind the packaging, grind it to the CPU silicon wafer, put it under the microscope, you will see the internal structure of 8086/88, it is not a new design at all, but two 8085 running in parallel (8 bits) There are a little more microprocessors.
+>>
+>> 　　Each 8085 has its own 8-bit data and 16-bit addressing capabilities. Combining two 8-bit data registers to pretend to be a 16-bit register is easy. In fact, there is nothing new. The RCA COSMAC microprocessor uses 16 8-bit registers, which can be used as internal 8-bit or 16-bit registers. You can have up to 16 8-bit registers or 8 16-bit registers or Any combination of the two. Now, a common IC factory in China can be easily designed.
+>>
+>> 　　Probably due to the limitation of the production process at that time, the 8088 can only have 40 feet. Intel's design "elite" left and right thought, determined 20 address lines (1M addressing space), and 16 data lines have to be 20. There are 16 multiplexes in the address line (time-sharing multiplex, that is, one will be the address line and the other will be the data line. For this, you can read the timing part of the 8088 chip manual, or read the 8052 microcontroller books, Its address lines and data lines are also multiplexed).
+>>
+>> 　　To the essence of the problem, the two 8085 in 8088 each have a set of 16-bit addressing registers, how to let them address 20-bit 1M address? In fact, it is very simple to put them together to form 32-bit addressing. If that is the case, then many of the troubles may be gone (such as A20 door), but those elites at that time may think that 32-bit addressing (4G address space) Is it nonsense, it is estimated that the earth disappeared and not use so much memory? Besides, the boss is too tight, so they use two 8085 on a piece of hardware to achieve a very good method-segmentation:
+>>
+>> 　　They divided the 1024K address space into 16-byte segments, a total of 64K segments, using a 16-bit addressing register of 8085 as the address offset register (so the length of the segment is 64K), and another 16-bit addressing register of 8085 As a segment address register for a 16-byte segment, note that he does not store the address of the 16-byte segment, but the serial number of the 16-byte segment (0, 1, ... 65535).
+>>
+>>       The advantage of this is that as long as a shifter and a 20-bit adder are added between two 8085 CPUs, 20-bit address addressing can be completed-a 8085 address register (segment address-is 16 bytes) The number of the segment) is shifted by 4 bits to the left (* 16 = the first address of the 16-byte segment), plus another address register of 8085, haha! You can pay the boss, the production cost is low, the design speed is fast, and if you have money, don't grab it is a grandson! As for the future, . . .
+      
 ```asm
 go: 
   mov ax,cs
