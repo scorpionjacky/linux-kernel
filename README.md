@@ -135,6 +135,8 @@ GeeksOS
 
 ## Tools
 
+[gcc, libstdc++, glibc, binutils](https://www.reddit.com/r/linuxquestions/comments/1tghjd/what_is_the_relationship_between_gcc_libstdc/)
+
 GNU Binutils
   - [Home](https://www.gnu.org/software/binutils/)
   - [Documentation Home](https://sourceware.org/binutils/)
@@ -144,3 +146,6 @@ GNU Binutils
     - [Manual](https://sourceware.org/binutils/docs-2.35/as/index.html)
     - [A primer on x86 assembly with GNU assembler](https://gist.github.com/AVGP/85037b51856dc7ebc0127a63d6a601fa)
 
+GCC
+  - [Home](https://gcc.gnu.org/)
+  
