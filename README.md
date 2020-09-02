@@ -4,6 +4,10 @@ Linux Kernel
 - https://github.com/torvalds/linux
 - https://www.kernel.org/doc/html/latest/
 
+- https://www.kernel.org/doc/
+- https://www.kernel.org/doc/html/latest/
+- https://www.kernel.org/doc/Documentation/x86/
+
 
 [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
 - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
