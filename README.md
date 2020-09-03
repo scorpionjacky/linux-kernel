@@ -141,6 +141,7 @@ MGW (Minimalist GNU for Windows)
   - [os-tutorial](https://github.com/cfenollosa/os-tutorial) @github
   - [JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)
   - [Bran's kernel development tutorials](http://www.osdever.net/bkerndev/index.php)
+  - [The little book about OS development](https://littleosbook.github.io/) (2005)
   - [Intel® 64 and IA-32 Architectures Software Developer Manuals](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
   - [alt.os.development](https://groups.google.com/g/alt.os.development) (Google group)
   - [osdev.org](https://wiki.osdev.org/)
