@@ -1,71 +1,57 @@
+# linux/boot/head.s
 
-6.1.1.2. linux/boot/head.s
+This file contains code for three main items before the kernel can start functioning as a fully multitasking one: *GDT*, *IDT* and *paging* has to be initialized.
 
-Now let us look into head.s. This file contains code for three main items before the kernel can
-start functioning as a fully multitasking one. The GDT, IDT and paging has to be initialized.
-So here goes...
+`head.s` contains the 32-bit startup code.
 
-```
-1 2
-/*
-3 * head.s contains the 32-bit startup code.
-4 *
-5 * NOTE!!! Startup happens at absolute address 0x00000000, which is also wher
-6 * the page directory will exist. The startup code will be overwritten by
-7 * the page directory.
-8 */
-9
-```
+NOTE!!! Startup happens at absolute address 0x00000000, which is also where the page directory will exist. The startup code will be overwritten by the page directory.
 
-* We jump to startup_32 from boot.s. The comment says that the “startup” code will be overwritten by the
-page tables - what does that mean ? The code below to setup the GDT and IDT are not needed after the setup
-is done. So after that code is executed, four pages of memory starting from 0x0 are used for paging purposes
-as page directory and page tables. That is what we mean by “overwriting” the code.
+*We jump to startup_32 from boot.s. The comment says that the “startup” code will be overwritten by the page tables - what does that mean ? The code below to setup the GDT and IDT are not needed after the setup is done. So after that code is executed, four pages of memory starting from 0x0 are used for paging purposes as page directory and page tables. That is what we mean by “overwriting” the code.*
 
-```
-1 2
+```asm
 .text
-3 .globl _idt,_gdt,_pg_dir
-4 _pg_dir:
-5 startup_32:
-6 movl $0x10,%eax
-7 mov %ax,%ds
-8 mov %ax,%es
-9 mov %ax,%fs
-10 mov %ax,%gs
-11
+.globl _idt,_gdt,_pg_dir
+_pg_dir:    ! page directory will be here
+
+startup_32:
+  movl $0x10,%eax
+  mov %ax,%ds
+  mov %ax,%es
+  mov %ax,%fs
+  mov %ax,%gs
+  lss _stack_start,%esp
+  call setup_idt   # 调用设置中断描述符表子程序
+  call setup_gdt   # 调用设置全局描述符表子程序
 ```
 
-* Till this point, we are relying on the GDT which was setup in boot.s (direct memory mapping). 0x10 is the
-Data Segment.
+*Note: 对于 GNU 汇编，每个直接操作数要以'$'开始，否则表示地址。 每个寄存器名都要以'%'开头， eax 表示是 32 位的 ax 寄存器。*
+
+*Till this point, we are relying on the GDT which was setup in boot.s (direct memory mapping). 0x10 is the Data Segment.*
+
+再次注意!! 这里已经处于 32 位运行模式，因此这里$0x10 现在是一个选择符。这里的移动指令会把相应描述符内容加载进段寄存器中。有关选择符的说明请参见第 4 章。这里$0x10 的含义是： 请求特权级为 0(位 0-1=0)、选择全局描述符表(位 2=0)、选择表中第 2 项(位 3-15=2)。它正好指向表中的数据段描述符项（描述符的具体数值参见前面 setup.s 中 575--578 行）。
+
+上面代码的含义是：设置 ds,es,fs,gs 为 setup.s 中构造的内核数据段的选择符=0x10（ 对应全局段描述符表第 3 项）， 并将堆栈放置在 stack_start 指向的 user_stack 数组区， 然后使用本程序后面定义的新中断描述符表（ 232 行） 和全局段描述表（ 234—238 行） 。 新全局段描述表中初始内容与 setup.s 中的基本一样，仅段限长从 8MB 修改成了 16MB。 stack_start 定义在 kernel/sched.c， 82--87 行。它是指向 user_stack 数组末端的一个长指针。第 23 行设置这里使用的栈，姑且称为系统栈。但在移动到任务 0 执行（ init/main.c 中 137 行）以后该栈就被用作任务 0 和任务 1 共同使用的用户栈了。
+
+> ***LDS/LES/LFS/LGS/LSS: Load Far Pointer***
+>
+> Loads a far pointer (segment selector and offset) from the second operand (source operand) into a segment register and the first operand (destination operand). The source operand specifies a 48-bit or a 32-bit pointer in memory depending on the current setting of the operand-size attribute (32 bits or 16 bits, respectively). The instruction opcode and the destination operand specify a segment register/general-purpose register pair. The 16-bit segment selector from the source operand is loaded into the segment register specified with the opcode (DS, SS, ES, FS, or GS). The 32-bit or 16-bit offset is loaded into the register specified with the destination operand.
+>
+> If one of these instructions is executed in protected mode, additional information from the segment descriptor pointed to by the segment selector in the source operand is loaded in the hidden part of the selected segment register.
+>
+> Also in protected mode, a null selector (values 0000 through 0003) can be loaded into DS, ES, FS, or GS registers without causing a protection exception. (Any subsequent reference to a segment whose corresponding segment register is loaded with a null selector, causes a generalprotection exception (#GP) and no memory reference to the segment occurs.)
+
+*We will need stacks for function calls. So we setup the ess and esp using values from the structure stack_start which is declared in kernel/sched.c. Again, the format of the structure will be understood only by looking into the intel manual and seeing what is the format of the argument for lss and what lss does!*
+
+*Then we setup IDT and GDT according to the preferences of the kernel.*
 
 ```
 1 2
-lss _stack_start,%esp
-3
-```
-
-* We will need stacks for function calls. So we setup the ess and esp using values from the structure stack_start
-which is declared in kernel/sched.c. Again, the format of the structure will be understood only by looking into
-the intel manual and seeing what is the format of the argument for lss and what lss does!
-
-```
-1 2
-call setup_idt
-3 call setup_gdt
-4
-```
-
-* Now setup IDT and GDT according to the preferences of the kernel.
-
-```
-1 2
-movl $0x10,%eax # reload all the segment registers
-3 mov %ax,%ds # after changing gdt. CS was already
-4 mov %ax,%es # reloaded in ’setup_gdt’
-5 mov %ax,%fs
-6 mov %ax,%gs
-7 lss _stack_start,%esp
+  movl $0x10,%eax # reload all the segment registers
+  mov %ax,%ds   # after changing gdt. CS was already reloaded in ’setup_gdt’
+  mov %ax,%es
+  mov %ax,%fs   # 因为修改了GDT，所以需要重新装载所有的段寄存器。
+  mov %ax,%gs   # CS代码段寄存器已经在 setup_gdt 中重新加载过了。
+  lss _stack_start,%esp
 8
 ```
 
