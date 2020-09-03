@@ -134,10 +134,10 @@ Linux Kernel Hackers' Guide.pdf
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
 - [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
+- [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html)
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
   - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
-  - [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html)
 
 [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
 - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
