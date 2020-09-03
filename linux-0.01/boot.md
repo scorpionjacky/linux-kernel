@@ -257,25 +257,20 @@ do_move:
 end_move:
 ```
 
-* Finally, we copy the kernel from 0x10000 to 0x0!!
+Finally, we copied the kernel from 0x10000 to 0x0!!
 
-```
-1 
-2 | then we load the segment descriptors
-3 
-5 
-6 mov ax,cs | right, forgot this at first. didn’t work :-)
-7 mov ds,ax
-8 lidt idt_48 | load idt with 0,0
-9 lgdt gdt_48 | load gdt with whatever appropriate
-10
-11
+Let's load the segment descriptors ...
+
+```asm
+  mov ax,cs   | right, forgot this at first. didn’t work :-)
+  mov ds,ax
+  lidt idt_48 | load idt with 0,0
+  lgdt gdt_48 | load gdt with whatever appropriate
 ```
 
-* Prepare ourselves to switch to the protected mode. For this, GDT and IDT has to be initialized. We have a
-dummy IDT and GDT called idt_48 and gdt_48 respectively which enables us to jump to the protected mode.
+* Prepare ourselves to switch to the protected mode. For this, GDT and IDT has to be initialized. We have a dummy IDT and GDT called idt_48 and gdt_48 respectively which enables us to jump to the protected mode.
 
-```
+```asm
 1 
 2 | that was painless, now we enable A20
 3 
@@ -354,18 +349,12 @@ xy, then the x86 issues a software interrupt “int xy” to execute the ISR for
 divide by zero (not very sure, refer the Intel manual). So we program the 8259 with values starting from 0x20
 (ie 32) corresponding to interrupt line 0 on the 8259.
 
-```
-1 2
-| Well, now’s the time to actually move into protected mode. To make
-3 | things as simple as possible, we do no register set-up or anything,
-4 | we let the gnu-compiled 32-bit programs do that. We just jump to
-5 | absolute address 0x00000, in 32-bit protected mode.
-6 
-7 mov ax,#0x0001 | protected mode (PE) bit
-8 lmsw ax | This is it!
-9 jmpi 0,8 | jmp offset 0 of segment 8 (cs)
-10
-11
+Well, now’s the time to actually move into protected mode. To make things as simple as possible, we do no register set-up or anything, we let the gnu-compiled 32-bit programs do that. We just jump to absolute address 0x00000, in 32-bit protected mode.
+
+```asm
+  mov ax,#0x0001 | protected mode (PE) bit
+  lmsw ax        | This is it!
+  jmpi 0,8       | jmp offset 0 of segment 8 (cs)
 ```
 
 * And finally, we move to protected mode by setting the bit 0 of the concerned register (name we forgot!!) using
