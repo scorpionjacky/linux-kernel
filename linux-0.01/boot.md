@@ -17,40 +17,31 @@ NOTE! currently system is at most 8*65536 bytes long. This should be no problem,
 
 *More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes,we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.*
 
-```
-1 
-2 | NOTE1 abouve is no longer valid in it’s entirety. cache-memory is allocated
-3 | above the 1Mb mark as well as below. Otherwise it is mainly correct.
-4 |
-5 | NOTE 2! The boot disk type must be set at compile-time, by setting
-6 | the following equ. Having the boot-up procedure hunt for the right
-7 | disk type is severe brain-damage.
-8 | The loader has been made as simple as possible (had to, to get it
-9 | in 512 bytes with the code to move to protected mode), and continuos
-10 | read errors will result in a unbreakable loop. Reboot by hand. It
-11 | loads pretty fast by getting whole sectors at a time whenever possible.
-12
-13 | 1.44Mb disks:
-14 sectors = 18
-15 | 1.2Mb disks:
-16 | sectors = 15
-17 | 720kB disks:
-18 | sectors = 9
-19
-20 .globl begtext, begdata, begbss, endtext, enddata, endbss
-21 .text
-22 begtext:
-23 .data
-24 begdata:
-25 .bss
-26 begbss:
-27 .text
-28
-29 BOOTSEG = 0x07c0
-30 INITSEG = 0x9000
-31 SYSSEG = 0x1000 | system loaded at 0x10000 (65536).
-32 ENDSEG = SYSSEG + SYSSIZE
-33
+NOTE1 abouve is no longer valid in it’s entirety. cache-memory is allocated above the 1Mb mark as well as below. Otherwise it is mainly correct.
+
+NOTE 2! The boot disk type must be set at compile-time, by setting the following equ. Having the boot-up procedure hunt for the right disk type is severe brain-damage. The loader has been made as simple as possible (had to, to get it in 512 bytes with the code to move to protected mode), and continuos read errors will result in a unbreakable loop. Reboot by hand. It loads pretty fast by getting whole sectors at a time whenever possible.
+
+```asm
+! 1.44Mb disks:
+  sectors = 18
+! 1.2Mb disks:
+! sectors = 15
+! 720kB disks:
+! sectors = 9
+
+.globl begtext, begdata, begbss, endtext, enddata, endbss
+.text
+begtext:
+.data
+begdata:
+.bss
+begbss:
+.text
+
+  BOOTSEG = 0x07c0
+  INITSEG = 0x9000
+  SYSSEG = 0x1000      | system loaded at 0x10000 (65536)
+  ENDSEG = SYSSEG + SYSSIZE
 ```
 
 `entry start` marks the beginning of code bootsect.s. The first instruction starts here, which is the first byte on the floppy.
