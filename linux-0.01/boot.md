@@ -1,25 +1,24 @@
 # boot.s
 
-`boot.s` is loaded at 0x7c00 by the bios-startup routines, and moves itself out of the way to address 0x90000, and jumps there.
-
-*By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode. We don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial also. Now why does it move itself to 0x90000? Well, it cant load itself in the “lower” address regions (like 0x0?) because the BIOS might store some information like the ISR table in low memory and we need the help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be sure that the kernel does not over write the boot loader. Also, it has to be remembered that the BIOS chip has address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))*
-
-It then loads the system at 0x10000, using BIOS interrupts. Thereafter it disables all interrupts, moves the system down to 0x0000, changes to protected mode, and calls the start of system. System then must RE-initialize the protected mode in it’s own tables, and enable interrupts as needed.
-
-*Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should not be wiped off. So temporarily load the image at 0x10000.*
+`boot.s` is loaded at 0x7c00 by the bios-startup routines. It first moves itself out of the way to address 0x90000, and jumps there. It then loads the system at 0x10000, using BIOS interrupts. Thereafter it disables all interrupts, moves the system down to 0x0000, changes to protected mode, and calls the start of system. System then must RE-initialize the protected mode in its own tables, and enable interrupts as needed.
 
 
-*Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we want and so we choose location 0x0.*
+*By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode. We don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial also. Now why does it move itself to 0x90000? Well, it cant load itself in the “lower” address regions (like 0x0?) because the BIOS might store some information like the ISR table in low memory and we need the help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be sure that the kernel does not overwrite the boot loader. Also, it has to be remembered that the BIOS chip has address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))*
 
-*After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the bootloader boot.s. It need not be done by the bootloader, the kernel can also do it. But the boot loader should not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of the boot loader. so even if the kernel changes, the boot loader can be the same.*
 
-NOTE! currently system is at most 8*65536 bytes long. This should be no problem, even in the future. want to keep it simple. This 512 kB kernel size should be enough - in fact more would mean we’d have to move not just these start-up routines, but also do something about the cache- memory (block IO devices). The area left over in the lower 640 kB is meant for these. No other memory is assumed to be "physical", ie all memory over 1Mb is demand-paging. All addresses under 1Mb are guaranteed to match their physical addresses.
+*Why 0x10000? Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should not be wiped off. So temporarily load the image at 0x10000.*
 
-*More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes,we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.*
+*Now why 0x0? Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we want and so we choose location 0x0.*
 
-NOTE1 abouve is no longer valid in it’s entirety. cache-memory is allocated above the 1Mb mark as well as below. Otherwise it is mainly correct.
+*After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the bootloader boot.s. It need not be done by the bootloader, the kernel could also do it. But the boot loader should not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of the boot loader. so even if the kernel changes, the boot loader can be the same.*
 
-NOTE 2! The boot disk type must be set at compile-time, by setting the following equ. Having the boot-up procedure hunt for the right disk type is severe brain-damage. The loader has been made as simple as possible (had to, to get it in 512 bytes with the code to move to protected mode), and continuos read errors will result in a unbreakable loop. Reboot by hand. It loads pretty fast by getting whole sectors at a time whenever possible.
+NOTE! currently system is at most 8 * 65536 bytes long. This should be no problem, even in the future. want to keep it simple. This 512 kB kernel size should be enough - in fact more would mean we’d have to move not just these start-up routines, but also do something about the cache- memory (block IO devices). The area left over in the lower 640 kB is meant for these. No other memory is assumed to be "physical", ie all memory over 1Mb is demand-paging. All addresses under 1Mb are guaranteed to match their physical addresses.
+
+*More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes, we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.*
+
+NOTE 1: The above is no longer valid in its entirety. cache-memory is allocated above the 1Mb mark as well as below. Otherwise it is mainly correct.
+
+NOTE 2: The boot disk type must be set at compile-time, by setting the following equ. Having the boot-up procedure hunt for the right disk type is severe brain-damage. The loader has been made as simple as possible (had to, to get it in 512 bytes with the code to move to protected mode), and continuos read errors will result in a unbreakable loop. Reboot by hand. It loads pretty fast by getting whole sectors at a time whenever possible.
 
 ```asm
 ! 1.44Mb disks:
@@ -44,7 +43,7 @@ begbss:
   ENDSEG = SYSSEG + SYSSIZE
 ```
 
-`entry start` marks the beginning of code bootsect.s. The first instruction starts here, which is the first byte on the floppy.
+`entry start` marks the beginning of code of bootsect.s. The first instruction starts here, which is the first byte on the floppy.
 
 ```asm
 entry start
@@ -58,13 +57,12 @@ start:
   sub di,di
   rep
   movw
-  
   jmpi go,INITSEG
 ```
 
 The bootloader copies “itself”, 512 bytes, from 0x07C0 (BOOTSEG) to 0x90000 (INITSEG), aka copies itself from `ds:si` to `es:di` `(e)cs` times (512 bytes).
 
-Line 36 to line 44 performs `rep movw` macroinstruction which copies memory from location `ds:si` to `es:di`, which is from 0x07C0:0x0000 to 0x9000:0x0000. `(e)cx` is the register storing the copy size (or counter) used by `rep`, which is decremented by `rep` after each microinstruction loop, till 0. #256 is word corresponding to `movw` (which is 512 bytes),. Ref of [`REP MOVE` string instruction](https://patents.justia.com/patent/7802078).
+`rep movw` macroinstruction copies memory from location `ds:si` to `es:di`, which is from 0x07C0:0x0000 to 0x9000:0x0000. `(e)cx` is the register storing the copy size (or counter) used by `rep`, which is decremented by `rep` after each microinstruction loop, till 0. #256 is word corresponding to `movw` (which is 512 bytes),. Ref of [`REP MOVE` string instruction](https://patents.justia.com/patent/7802078).
 
 `jmpi` is an inter-segment jump instruction (段间跳转), used in x86 real mode. This instruction set `cs` (code段地址) to `INITSEG`, and `ip` to `go` (段内偏移地址), and then the instruction at address INITSEG:go will be executed.
 
