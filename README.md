@@ -116,6 +116,7 @@ MGW (Minimalist GNU for Windows)
   - https://www.kernel.org/doc/
   - https://www.kernel.org/doc/html/latest/
   - https://www.kernel.org/doc/Documentation/x86/
+- [0xAX/linux-insides](https://github.com/0xAX/linux-insides)
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
 - [Understanding the Linux Kernel, 3E]
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
