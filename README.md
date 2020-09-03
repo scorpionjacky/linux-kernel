@@ -112,11 +112,18 @@ MGW (Minimalist GNU for Windows)
 
 - https://www.kernel.org/doc/html/latest/
 
-[The Linux Kernel Archives](https://www.kernel.org)
-- https://www.kernel.org/doc/
-- https://www.kernel.org/doc/html/latest/
-- https://www.kernel.org/doc/Documentation/x86/
-
+-[The Linux Kernel Archives](https://www.kernel.org)
+  - https://www.kernel.org/doc/
+  - https://www.kernel.org/doc/html/latest/
+  - https://www.kernel.org/doc/Documentation/x86/
+- [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
+- [Understanding the Linux Kernel, 3E]
+- [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
+- [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
+- [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
+- wikipedia
+  - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
+  - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
 
 [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
 - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
@@ -128,11 +135,6 @@ https://eecs.wsu.edu/~cs460/cs560/booting
 
 https://titanwolf.org/Network/Articles/Article?AID=7a69544f-e37f-4c3f-a294-842743dbd987#gsc.tab=0
 
-[Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
-
-[Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
-
-[Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
 
 https://blog.lse.epita.fr/2014/10/01/uefi-boot-stub-in-linux.html
 
@@ -179,3 +181,4 @@ VeraCrypt is a free open source disk encryption software for Windows, Mac OSX an
 GeeksOS 
 - https://www.cs.umd.edu/~hollings/cs412/s03/prog1/
 
+https://www.howtogeek.com/howto/31632/what-is-the-linux-kernel-and-what-does-it-do/
