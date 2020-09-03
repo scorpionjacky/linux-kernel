@@ -21,12 +21,12 @@ NOTE 1: The above is no longer valid in its entirety. cache-memory is allocated 
 NOTE 2: The boot disk type must be set at compile-time, by setting the following equ. Having the boot-up procedure hunt for the right disk type is severe brain-damage. The loader has been made as simple as possible (had to, to get it in 512 bytes with the code to move to protected mode), and continuos read errors will result in a unbreakable loop. Reboot by hand. It loads pretty fast by getting whole sectors at a time whenever possible.
 
 ```asm
-! 1.44Mb disks:
+; 1.44Mb disks:
   sectors = 18
-! 1.2Mb disks:
-! sectors = 15
-! 720kB disks:
-! sectors = 9
+; 1.2Mb disks:
+; sectors = 15
+; 720kB disks:
+; sectors = 9
 
 .globl begtext, begdata, begbss, endtext, enddata, endbss
 .text
@@ -37,10 +37,10 @@ begdata:
 begbss:
 .text
 
-  BOOTSEG = 0x07c0
-  INITSEG = 0x9000
-  SYSSEG = 0x1000      | system loaded at 0x10000 (65536)
-  ENDSEG = SYSSEG + SYSSIZE
+BOOTSEG = 0x07c0
+INITSEG = 0x9000
+SYSSEG  = 0x1000      ; system loaded at 0x10000 (65536)
+ENDSEG  = SYSSEG + SYSSIZE
 ```
 
 `entry start` marks the beginning of code of bootsect.s. The first instruction starts here, which is the first byte on the floppy.
@@ -111,22 +111,22 @@ go:
 Now print a boot up message on the screen ...
 
 ```asm
-  mov ah,#0x03 | read cursor pos
+  mov ah,#0x03 ; read cursor pos
   xor bh,bh
   int 0x10
 
   mov cx,#24
-  mov bx,#0x0007 | page 0, attribute 7 (normal)
+  mov bx,#0x0007 ; page 0, attribute 7 (normal)
   mov bp,#msg1
-  mov ax,#0x1301 | write string, move cursor
+  mov ax,#0x1301 ; write string, move cursor
   int 0x10
 ```
 
 The instructions below read the kernel image from the floppy disk and load it to 0x10000 (64KB). `es` 存放 system 的段地址。 `read_it` 读磁盘上 system 模块， `es` 为输入参数。 `kill_motor` 关闭驱动器马达，这样就可以知道驱动器的状态了。The routine `read_it` and `kill_motor` will be explained later.
 
 ```asm
-  mov ax,#SYSSEG  ! 0x1000
-  mov es,ax       ! segment of 0x010000
+  mov ax,#SYSSEG  ; 0x1000
+  mov es,ax       ; segment of 0x010000
   call read_it
   call kill_motor
 ```
@@ -153,13 +153,13 @@ bootsect 引导程序会把 system 模块读入到内存 0x10000（ 64KB） 开�
   cli
 
   mov ax,#0x0000
-  cld   ! ’direction’=0, movs moves forward
+  cld   ; ’direction’=0, movs moves forward
 do_move:
-  mov es,ax | destination segment
+  mov es,ax  ; destination segment
   add ax,#0x1000
   cmp ax,#0x9000
   jz end_move
-  mov ds,ax | source segment
+  mov ds,ax  ; source segment
   sub di,di
   sub si,si
   mov cx,#0x8000
@@ -176,10 +176,10 @@ Let's prepare ourselves to switch to the protected mode. For this, GDT and IDT h
 We'll first load the segment descriptors ...
 
 ```asm
-  mov ax,cs   | right, forgot this at first. didn’t work :-)
+  mov ax,cs   ; right, forgot this at first. didn’t work :-)
   mov ds,ax
-  lidt idt_48 | load idt with 0,0
-  lgdt gdt_48 | load gdt with whatever appropriate
+  lidt idt_48 ; load idt with 0,0
+  lgdt gdt_48 ; load gdt with whatever appropriate
 ```
 
 Now we enable A20. 
@@ -190,12 +190,12 @@ Now we enable A20.
 
 ```asm
   call empty_8042
-  mov al,#0xD1      ! 0xD1 命令码-表示要写数据到8042 的 P2 端口。
-  out #0x64,al      ! P2 端口位 1 用于 A20 线的选通。
-  call empty_8042   ! 等待输入缓冲器空，看命令是否被接受。
-  mov al,#0xDF      ! A20 on! 选通 A20 地址线的参数。
-  out #0x60,al      ! 数据要写到 0x60 口。
-  call empty_8042   ! 若此时输入缓冲器为空，则表示 A20 线已经选通。
+  mov al,#0xD1      ; 0xD1 命令码-表示要写数据到8042 的 P2 端口。
+  out #0x64,al      ; P2 端口位 1 用于 A20 线的选通。
+  call empty_8042   ; 等待输入缓冲器空，看命令是否被接受。
+  mov al,#0xDF      ; A20 on! 选通 A20 地址线的参数。
+  out #0x60,al      ; 数据要写到 0x60 口。
+  call empty_8042   ; 若此时输入缓冲器为空，则表示 A20 线已经选通。
 ```
 
 * Refer to the hardware Manual about this A20 (Address Line 20) line controlled by the Keyboard controller.
@@ -221,32 +221,32 @@ PC 机使用 2 个可编程中断控制器 8259A 芯片，关于 8259A 的编程
 *Note: Linux 系统硬件中断号被设置成从 0x20 开始。参见表 3-2：硬件中断请求信号与中断号对应表。*
 
 ```asm
-  mov al,#0x11   | initialization sequence
-  out #0x20,al   | send it to 8259A-1 (8259A 主芯片)
+  mov al,#0x11   ; initialization sequence
+  out #0x20,al   ; send it to 8259A-1 (8259A 主芯片)
   .word 0x00eb,0x00eb  | jmp $+2, jmp $+2 ! '$'表示当前指令的地址，
-  out #0xA0,al   | and to 8259A-2 (8259A 从芯片)
+  out #0xA0,al   ; and to 8259A-2 (8259A 从芯片)
   .word 0x00eb,0x00eb
-  mov al,#0x20   | start of hardware int’s (0x20)
-  out #0x21,al   ! 送主芯片 ICW2 命令字，设置起始中断号，要送奇端口。
+  mov al,#0x20   ; start of hardware int’s (0x20)
+  out #0x21,al   ; 送主芯片 ICW2 命令字，设置起始中断号，要送奇端口。
   .word 0x00eb,0x00eb
-  mov al,#0x28   | start of hardware int’s 2 (0x28)
-  out #0xA1,al   ! 送从芯片 ICW2 命令字，从芯片的起始中断号。
+  mov al,#0x28   ; start of hardware int’s 2 (0x28)
+  out #0xA1,al   ; 送从芯片 ICW2 命令字，从芯片的起始中断号。
   .word 0x00eb,0x00eb
-  mov al,#0x04   | 8259-1 is master
-  out #0x21,al   ! 送主芯片 ICW3 命令字，主芯片的 IR2 连从芯片 INT。 参见代码列表后的说明。
+  mov al,#0x04   ; 8259-1 is master
+  out #0x21,al   ; 送主芯片 ICW3 命令字，主芯片的 IR2 连从芯片 INT。 参见代码列表后的说明。
   .word 0x00eb,0x00eb
-  mov al,#0x02   | 8259-2 is slave
-  out #0xA1,al   ! 送从芯片 ICW3 命令字，表示从芯片的 INT 连到主芯片的 IR2 引脚上。
+  mov al,#0x02   ; 8259-2 is slave
+  out #0xA1,al   ; 送从芯片 ICW3 命令字，表示从芯片的 INT 连到主芯片的 IR2 引脚上。
   .word 0x00eb,0x00eb
-  mov al,#0x01   | 8086 mode for both
-  out #0x21,al   ! 送主芯片 ICW4 命令字。 8086 模式；普通 EOI、非缓冲方式，需发送指令来复位。初始化结束，芯片就绪。
+  mov al,#0x01   ; 8086 mode for both
+  out #0x21,al   ; 送主芯片 ICW4 命令字。 8086 模式；普通 EOI、非缓冲方式，需发送指令来复位。初始化结束，芯片就绪。
   .word 0x00eb,0x00eb
-  out #0xA1,al   ！送从芯片 ICW4 命令字，内容同上。
+  out #0xA1,al   ; 送从芯片 ICW4 命令字，内容同上。
   .word 0x00eb,0x00eb
-  mov al,#0xFF   | mask off all interrupts for now
-  out #0x21,al   ! 屏蔽主芯片所有中断请求。
+  mov al,#0xFF   ; mask off all interrupts for now
+  out #0x21,al   ; 屏蔽主芯片所有中断请求。
   .word 0x00eb,0x00eb
-  out #0xA1,al   ！屏蔽从芯片所有中断请求。
+  out #0xA1,al   ; 屏蔽从芯片所有中断请求。
 ```
 
 Well, that certainly wasn’t fun :-(. Hopefully it works, and we don’t need no steenking BIOS anyway (except for the initial loading :-).
@@ -264,9 +264,9 @@ Well, now’s the time to actually move into protected mode. To make things as s
 下面设置并进入 32 位保护模式运行。首先加载机器状态字(lmsw-Load Machine Status Word)，也称控制寄存器 CR0，其比特位 0 置 1 将导致 CPU 切换到保护模式，并且运行在特权级 0 中，即当前特权级 CPL=0。此时段寄存器仍然指向与实地址模式中相同的线性地址处（在实地址模式下线性地址与物理内存地址相同）。在设置该比特位后，随后一条指令必须是一条段间跳转指令以用于刷新 CPU 当前指令队列。因为 CPU 是在执行一条指令之前就已从内存读取该指令并对其进行解码。然而在进入保护模式以后那些属于实模式的预先取得的指令信息就变得不再有效。而一条段间跳转指令就会刷新 CPU 的当前指令队列，即丢弃这些无效信息。另外，在 Intel 公司的手册上建议 80386 或以上 CPU 应该使用指令“mov cr0,ax”切换到保护模式。 lmsw 指令仅用于兼容以前的 286 CPU。
 
 ```asm
-  mov ax,#0x0001 | protected mode (PE) bit
-  lmsw ax        | This is it!
-  jmpi 0,8       | jmp offset 0 of segment 8 (cs)
+  mov ax,#0x0001 ; protected mode (PE) bit
+  lmsw ax        ; This is it!
+  jmpi 0,8       ; jmp offset 0 of segment 8 (cs)
 ```
 
 我们已经将 system 模块移动到 0x00000 开始的地方，所以上句中的偏移地址是 0。而段值 8 已经是保护模式下的段选择符了，用于选择描述符表和描述符表项以及所要求的特权级。段选择符长度为 16 位（ 2 字节）；位 0-1 表示请求的特权级 0--3，但 Linux 操作系统只用到两级： 0 级（内核级）和 3 级（用户级）；位 2 用于选择全局描述符表（ 0）还是局部描述符表(1)；位 3-15 是描述符表项的索引，指出选择第几项描述符。所以段选择符 8（ 0b0000,0000,0000,1000）表示请求特权级 0、使用全局描述符表 GDT 中第 2 个段描述符项，该项指出代码的基地址是 0（参见 571 行），因此这里的跳转指令就会去执行 system 中的代码。
@@ -280,9 +280,9 @@ This routine below checks that the keyboard command queue is empty. No timeout i
 ```asm
 empty_8042:
   .word 0x00eb,0x00eb
-  in al,#0x64    | 8042 status port 读 AT 键盘控制器状态寄存器。
-  test al,#2     | is input buffer full? 测试位 1，输入缓冲器满？
-  jnz empty_8042 | yes - loop
+  in al,#0x64    ; 8042 status port 读 AT 键盘控制器状态寄存器。
+  test al,#2     ; is input buffer full? 测试位 1，输入缓冲器满？
+  jnz empty_8042 ; yes - loop
   ret
 ```
 
@@ -317,20 +317,19 @@ Fall through to ok4_readok4_read: Increment the value of “track” variable. o
 goto rp_read else es = es + 0x1000; bx = 0x0; goto rp_readNow one question is “even if there is space left in the current segment, ie bx 0xffff, what happens if the space left in the current segment is not enough to hold one sector of data ?”. The answer is that such a situation will not arise because the sector size is 512 bytes and the segment size is a multiple of 512. Now we will give short comments in between where things are not clear.
 
 ```asm
-sread: .word 1   | sectors read of current track
-head:  .word 0   | current head
-track: .word 0   | current track
+sread: .word 1   ; sectors read of current track
+head:  .word 0   ; current head
+track: .word 0   ; current track
 
 read_it:
   mov ax,es
   test ax,#0x0fff
 die: 
-  jne die        | es must be at 64kB boundary
-
-  xor bx,bx      | bx is starting address within segment
+  jne die        ; es must be at 64kB boundary
+  xor bx,bx      ; bx is starting address within segment
 rp_read:
   mov ax,es
-  cmp ax,#ENDSEG | have we loaded all yet?
+  cmp ax,#ENDSEG ; have we loaded all yet?
   jb ok1_read
   ret
 ```
@@ -342,19 +341,16 @@ ok1_read:
   mov ax,#sectors
   sub ax,sread
   mov cx,ax
-  shl cx,#9  ! multiplies cx by 512 - the size of the sector
+  shl cx,#9  ; multiplies cx by 512 - the size of the sector
   add cx,bx
   jnc ok2_read
   je ok2_read
   xor ax,ax
   sub ax,bx
+  shr ax,#9
 ```
 
 *We want to find how many bytes are “left” in the current segment. For this, what we should do is 0x10000 - bx which is effectively 0x0 - bx !!!*
-
-```asm
-shr ax,#9
-```
 
 *Convert bytes to sectors*
 
@@ -369,11 +365,10 @@ ok2_read:
   sub ax,head
   jne ok4_read
   inc track
-
 ok4_read:
   mov head,ax
   xor ax,ax
-  ok3_read:
+ok3_read:
   mov sread,ax
   shl cx,#9
   add bx,cx
@@ -432,33 +427,33 @@ kill_motor:
   ret
 
 gdt:
-  .word 0,0,0,0 | dummy
+  .word 0,0,0,0 ; dummy
 
-  .word 0x07FF | 8Mb - limit=2047 (2048*4096=8Mb)
-  .word 0x0000 | base address=0
-  .word 0x9A00 | code read/exec
-  .word 0x00C0 | granularity=4096, 386
+  .word 0x07FF ; 8Mb - limit=2047 (2048*4096=8Mb)
+  .word 0x0000 ; base address=0
+  .word 0x9A00 ; code read/exec
+  .word 0x00C0 ; granularity=4096, 386
 
-  .word 0x07FF | 8Mb - limit=2047 (2048*4096=8Mb)
-  .word 0x0000 | base address=0
-  .word 0x9200 | data read/write
-  .word 0x00C0 | granularity=4096, 386
+  .word 0x07FF ; 8Mb - limit=2047 (2048*4096=8Mb)
+  .word 0x0000 ; base address=0
+  .word 0x9200 ; data read/write
+  .word 0x00C0 ; granularity=4096, 386
 ```
 
 *This is the “dummy” gdts that we were speaking about. This just maps the lower 8Mb of addresses to the lower 8Mb of physical memory (by setting base address = 0x0 and limit = 8Mb). We create two gdt entries one for code segment and one for data segment as we can find from the read/exec and read/write attributes. The code segment is entry number 1 (assuming to start from 0), but with the first few extra bits in the segment descriptor for indicating priority level etc.., the code segment will be actually 8 when it gets loaded into cs. Again, refer to the intel manual to find out how exactly the entry number 1 becomes 8 when loaded into cs. Similarly, you can find out what will be the value of a segment descriptor for the data segment, the data segment entry being number 2. The exact layout of the hex values can be understood only by reading the Intel manuals.*
 
 ```asm
 idt_48:
-  .word 0    | idt limit=0
-  .word 0,0  | idt base=0L
+  .word 0    ; idt limit=0
+  .word 0,0  ; idt base=0L
 ```
 
 *We believe the interrupts are disabled as of now and so we don’t need a proper IDT. That explains all the zeroes in idt_48 above. The values in idt_48 are loaded into the register pointing to the IDT using lidt instruction. Again, what each of those zeroes mean will have to be understood by going through the Intel Manual.*
 
 ```asm
 gdt_48:
-  .word 0x800     | gdt limit=2048, 256 GDT entries
-  .word gdt,0x9   | gdt base = 0X9xxxx
+  .word 0x800     ; gdt limit=2048, 256 GDT entries
+  .word gdt,0x9   ; gdt base = 0X9xxxx
 ```
 
 *This is for presenting all gdt related info in the fashion expected by the lgdt instruction.*
