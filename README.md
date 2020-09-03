@@ -96,6 +96,16 @@ NASM (Netwide Assembler)
 MGW (Minimalist GNU for Windows)
   - [Home](http://www.mingw.org/)
 
+## Language Reference
+
+### C
+
+- [Static Variables in C - GeeksforGeeks](https://www.geeksforgeeks.org/static-variables-in-c/)
+- http://faculty.cs.niu.edu/~freedman/241/241notes/
+  - http://faculty.cs.niu.edu/~freedman/241/241notes/241var2.htm
+- http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/
+  - [scope of static variables](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope-static.html)
+  - [extern](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope.html)
 
 ## Others
 
