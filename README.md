@@ -112,19 +112,32 @@ MGW (Minimalist GNU for Windows)
 
 - https://www.kernel.org/doc/html/latest/
 
+Linux Kernel Hackers' Guide.pdf
+
+1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
+
 -[The Linux Kernel Archives](https://www.kernel.org)
   - https://www.kernel.org/doc/
   - https://www.kernel.org/doc/html/latest/
   - https://www.kernel.org/doc/Documentation/x86/
+  - [Kernel Hacking Guides](https://www.kernel.org/doc/html/latest/kernel-hacking/index.html)
 - [0xAX/linux-insides](https://github.com/0xAX/linux-insides)
+- Packt.-.Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
+- CRC.-.The Art of Linux Kernel Design Illustrating the Operating System Design Principle and Implementation.-.(Apr 2014).-.978-1466518032
+- Apress.-.Linux Kernel Networking Implementation and Theory.-.(Dec 2013).-.978-1430261964
+- Addison-Wesley.-.Linux Kernel Development, 3ed.-.(Jul 2010).-.978-0672329463
+- OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
-- [Understanding the Linux Kernel, 3E]
+- [Understanding the Linux Kernel, 3E] (2005)
+- Prentice Hall.-.The Linux Kernel Primer A Top-Down Approach for x86 and PowerPC Architectures.-.(2005).-.978-0131181632
+- Novell.-.Linux Kernel Development, 2ed.-.(Jan 2005).-.978-0672327209
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
 - [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
   - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
+  - [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html)
 
 [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
 - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
