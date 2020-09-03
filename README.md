@@ -109,11 +109,6 @@ MGW (Minimalist GNU for Windows)
 
 ## Others
 
-
-- https://www.kernel.org/doc/html/latest/
-
-Linux Kernel Hackers' Guide.pdf
-
 1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
 
 - [The Linux Kernel Archives](https://www.kernel.org)
@@ -129,17 +124,17 @@ Linux Kernel Hackers' Guide.pdf
 - Addison-Wesley.-.Linux Kernel Development, 3ed.-.(Jul 2010).-.978-0672329463
 - Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
 - OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
-- [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23)
 - [Understanding the Linux Kernel, 3E] (2005)
 - Prentice Hall.-.The Linux Kernel Primer A Top-Down Approach for x86 and PowerPC Architectures.-.(2005).-.978-0131181632
 - Novell.-.Linux Kernel Development, 2ed.-.(Jan 2005).-.978-0672327209
-- OReilly.-.Linux Device Drivers, 3ed.-.(Feb 2005).-.978-0596005900
-  - OReilly.-.Linux Device Drivers, 2ed.-.(Jun 2001).-.978-0596000080
+- Linux Device Drivers, 3ed, OReilly (Feb 2005) 978-0596005900
+  - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080
+  - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
+- [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
-- [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
+  - [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
 - [The Linux Kernel](https://tldp.org/LDP/tlk/tlk.html) @tldp
-- Linux Device Drivers, OReilly, Feb 1998, 9781565922921
 - [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html) @tldp
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
