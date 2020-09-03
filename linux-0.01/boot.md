@@ -198,68 +198,63 @@ go:
 以上代码设置几个段寄存器，包括栈寄存器 ss 和 sp。注意段寄存器只能通过通用寄存器复制，所以需要`mov ax,cs`。栈指针 sp 只要指向远大于 512 字节偏移（即地址 0x90200） 处都可以。
 
 ```asm
-8 mov ah,#0x03 | read cursor pos
-9 xor bh,bh
-10 int 0x10
-11
-12 mov cx,#24
-13 mov bx,#0x0007 | page 0, attribute 7 (normal)
-14 mov bp,#msg1
-15 mov ax,#0x1301 | write string, move cursor
-16 int 0x10
-17
-18 | ok, we’ve written the message, now
-19 | we want to load the system (at 0x10000)
-20
+  mov ah,#0x03 | read cursor pos
+  xor bh,bh
+  int 0x10
+
+  mov cx,#24
+  mov bx,#0x0007 | page 0, attribute 7 (normal)
+  mov bp,#msg1
+  mov ax,#0x1301 | write string, move cursor
+  int 0x10
 ```
 
-* Just to print a boot up message on the screen
+* The above instructions just print a boot up message on the screen
 
-```
-1 
-2 
-3 mov ax,#SYSSEG
-4 mov es,ax | segment of 0x010000
-5 call read_it
-6 call kill_motor
-7 
-8
+```asm
+  mov ax,#SYSSEG  ! 0x1000
+  mov es,ax       ! segment of 0x010000
+  call read_it
+  call kill_motor
 ```
 
-* Here is where we read the kernel image from the floppy disk and load it to 0x10000. The routine read_it will be explained later.
+* The instructions above read the kernel image from the floppy disk and load it to 0x10000 (64KB). `es` 存放 system 的段地址。 `read_it` 读磁盘上 system 模块， `es` 为输入参数。 `kill_motor` 关闭驱动器马达，这样就可以知道驱动器的状态了。The routine `read_it` and `kill_motor` will be explained later.
 
+If the read went well we get current cursor position and save it for posterity. The BIOS interrupt get current cursor position to `dx`, and we save it to 0x9000:510. Later con_init fetches from this location.
+
+```asm
+  mov ah,#0x03
+  xor bh,bh
+  int 0x10
+  mov [510],dx
 ```
-1 
-2 | if the read went well we get current cursor position ans save it for
-3 | posterity.
-4 
-5 mov ah,#0x03 | read cursor pos
-6 xor bh,bh
-7 int 0x10 | save it in known place, con_init fetches
-8 mov [510],dx | it from 0x90510.
-9
-10 | now we want to move to protected mode ...
-11
-12 cli | no interrupts allowed !
-13
-14 | first we move the system to it’s rightful place
-15
-16 mov ax,#0x0000
-17 cld | ’direction’=0, movs moves forward
-18 do_move:
-19 mov es,ax | destination segment
-20 add ax,#0x1000
-21 cmp ax,#0x9000
-22 jz end_move
-23 mov ds,ax | source segment
-24 sub di,di
-25 sub si,si
-26 mov cx,#0x8000
-27 rep
-28 movsw
-29 j do_move
-30
-31
+
+Now we want to move to protected mode... First, diable interrups (`cli`). Then move the system to it’s rightful place.
+
+`cld` (Clear Direction Flag) clears the DF flag in the EFLAGS register. When the DF flag is set to 0, string operations increment the index registers (ESI and/or EDI).
+
+bootsect 引导程序会把 system 模块读入到内存 0x10000（ 64KB） 开始的位置。由于当时假设 system 模块最大长度不会超过 0x80000（ 512KB） ，即其末端不会超过内存地址 0x90000，所以 bootsect 会把自己移动到 0x90000 开始的地方，并把 setup 加载到它的后面。下面这段程序的用途是再把整个 system 模块移动到 0x00000 位置，即把从 0x10000 到 0x8ffff 的内存数据块（ 512KB）整块地向内存低端移动了 0x10000（ 64KB） 字节。
+
+`es:di` 是目的地址(初始为 0x0:0x0), `ds:si` 是源地址(初始为 0x1000:0x0), `cx` 移动 0x8000 字（ 64KB 字节）。
+
+```asm
+  cli
+
+  mov ax,#0x0000
+  cld   ! ’direction’=0, movs moves forward
+do_move:
+  mov es,ax | destination segment
+  add ax,#0x1000
+  cmp ax,#0x9000
+  jz end_move
+  mov ds,ax | source segment
+  sub di,di
+  sub si,si
+  mov cx,#0x8000
+  rep
+  movsw
+  j do_move
+end_move:
 ```
 
 * Finally, we copy the kernel from 0x10000 to 0x0!!
@@ -268,7 +263,6 @@ go:
 1 
 2 | then we load the segment descriptors
 3 
-4 end_move:
 5 
 6 mov ax,cs | right, forgot this at first. didn’t work :-)
 7 mov ds,ax
