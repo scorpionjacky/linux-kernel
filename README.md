@@ -116,7 +116,7 @@ Linux Kernel Hackers' Guide.pdf
 
 1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
 
--[The Linux Kernel Archives](https://www.kernel.org)
+- [The Linux Kernel Archives](https://www.kernel.org)
   - https://www.kernel.org/doc/
   - https://www.kernel.org/doc/html/latest/
   - https://www.kernel.org/doc/Documentation/x86/
