@@ -64,9 +64,10 @@ NOTE!!! Startup happens at absolute address 0x00000000, which is also where the 
 *We jump to startup_32 from boot.s. The comment says that the “startup” code will be overwritten by the page tables - what does that mean ? The code below to setup the GDT and IDT are not needed after the setup is done. So after that code is executed, four pages of memory starting from 0x0 are used for paging purposes as page directory and page tables. That is what we mean by “overwriting” the code.*
 
 ```asm
+.code32
 .text
-.globl _idt,_gdt,_pg_dir
-_pg_dir:    ! page directory will be here
+.globl idt,gdt,pg_dir,startup_32
+pg_dir:    ! page directory will be here
 
 startup_32:
   movl $0x10,%eax
@@ -74,15 +75,15 @@ startup_32:
   mov %ax,%es
   mov %ax,%fs
   mov %ax,%gs
-  lss _stack_start,%esp  # _stack_start -> ss:esp，设置系统堆栈。
+  lss stack_start,%esp  # _stack_start -> ss:esp，设置系统堆栈。
   call setup_idt   # 调用设置中断描述符表子程序
   call setup_gdt   # 调用设置全局描述符表子程序
-  movl $0x10,%eax # reload all the segment registers
+  movl $0x10,%eax  # reload all the segment registers
   mov %ax,%ds   # after changing gdt. CS was already reloaded in ’setup_gdt’
   mov %ax,%es
   mov %ax,%fs   # 因为修改了GDT，所以需要重新装载所有的段寄存器。
   mov %ax,%gs   # CS代码段寄存器已经在 setup_gdt 中重新加载过了。
-  lss _stack_start,%esp
+  lss stack_start,%esp
 ```
 
 *Note: 对于 GNU 汇编，每个直接操作数要以'$'开始，否则表示地址。 每个寄存器名都要以'%'开头， eax 表示是 32 位的 ax 寄存器。*
@@ -146,7 +147,7 @@ setup_idt:
   movw %dx,%ax      # selector = 0x0008 = cs
     # 此时 edx 含有门描述符高 4 字节的值。
   movw $0x8E00,%dx  # interrupt gate - dpl=0, present
-  lea _idt,%edi     # _idt 是中断描述符表的地址
+  lea idt,%edi     # _idt 是中断描述符表的地址
   mov $256,%ecx
 rp_sidt:
   movl %eax,(%edi)   # 将哑中断门描述符存入表中。
@@ -177,7 +178,6 @@ pg1:
 .org 0x3000
 pg2:   # This is not used yet, but if you want to
        # expand past 8 Mb, you’ll have to use it.
-.org 0x4000
 ```
 
 *Let us explain a bit about the page directory and the page tables. The Intel architecture uses two levels of paging - one page directory and 1024 page tables. The page directory starts from 0x0 and extends till 0x1000 (4K). In 0.01, we use two page tables which start at 0x10000 (pg0) and 0x20000 (pg1) respectively. These page tables are respectively the first and second entries in the page directory. So we can see that the total memory that can be mapped by two page tables is 2 * 1024 pages = 8Mb (one page = 4K). Now the page table starting at 0x30000 till 0x40000 (pg2) is not in use in 0.01. Again, one point to be noted is that these page directory/tables are for use ONLY by the kernel. Each process will have to setup its’ own page directory and page tables (TODO: not very sure, will correct/confirm this later)*
@@ -187,12 +187,13 @@ pg2:   # This is not used yet, but if you want to
 前面 3 个入栈 0 值分别表示 main 函数的参数 envp、 argv 指针和 argc，但 main()没有用到。 139 行的入栈操作是模拟调用 main 程序时将返回地址入栈的操作，所以如果 main.c 程序真的退出时，就会返回到这里的标号 L6 处继续执行下去，也即死循环。 140 行将 main.c 的地址压入堆栈，这样，在设置分页处理（ setup_paging）结束后执行'ret'返回指令时就会将 main.c 程序的地址弹出堆栈，并去执行 main.c 程序了。
 
 ```asm
+.org 0x4000
 after_page_tables:
   pushl $0   # These are the parameters to main :-)
   pushl $0   # 其中的'$'符号表示这是一个立即操作数。
   pushl $0
   pushl $L6     # return address for main, if it decides to.
-  pushl $_main  # '_main'是编译程序对 main 的内部表示方法。
+  pushl $main  # '_main'是编译程序对 main 的内部表示方法。
   jmp setup_paging
 L6:
   jmp L6  # main should never return here, but added
@@ -243,8 +244,8 @@ For those with more memory than 8 Mb - tough luck. I’ve not got it, why should
 *Fill the page directory, pg0 and pg1 with zeroes!!*
 
 ```asm
-  movl $pg0+7,_pg_dir   /* set present bit/user r/w */
-  movl $pg1+7,_pg_dir+4 /* --------- " " ---------- */
+  movl $pg0+7,pg_dir   /* set present bit/user r/w */
+  movl $pg1+7,pg_dir+4 /* --------- " " ---------- */
 ```
 
 上面 2 句设置页目录表中的项。 因为我们（内核）共有 2 个页表， 所以只需设置 2 项。 页目录项的结构与页表中项的结构一样， 4 个字节为 1 项。参见上面 113 行下的说明。 例如"$pg0+7"表示： 0x00001007，是页目录表中的第 1 项。 则第 1 个页表所在的地址 = 0x00001007 & 0xfffff000 = 0x1000； 第 1 个页表的属性标志 = 0x00001007 & 0x00000fff = 0x07，表示该页存在、用户可读写。
@@ -285,17 +286,17 @@ For those with more memory than 8 Mb - tough luck. I’ve not got it, why should
   .word 0   # 这里先空出 2 字节，这样 224 行上的长字是 4 字节对齐的
 idt_descr:
   .word 256*8-1      # idt contains 256 entries
-  .long _idt
+  .long idt
 .align 2
   .word 0
 gdt_descr:
   .word 256*8-1  # so does gdt (note that that’s any)
-  .long _gdt     # magic number, but it works for me :^)
+  .long gdt      # magic number, but it works for me :^)
 
 .align 3   # 按 8（2^3）字节方式对齐内存地址边界
-_idt: .fill 256,8,0     # idt is uninitialized # 256 项，每项 8 字节，填 0。
+idt: .fill 256,8,0     # idt is uninitialized # 256 项，每项 8 字节，填 0。
 
-_gdt:
+gdt:
   .quad 0x0000000000000000 /* NULL descriptor */
   .quad 0x00c09a00000007ff /* 8Mb */
   .quad 0x00c09200000007ff /* 8Mb */
