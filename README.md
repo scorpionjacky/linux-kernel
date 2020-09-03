@@ -136,7 +136,15 @@ MGW (Minimalist GNU for Windows)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
 - [The Linux Kernel](https://tldp.org/LDP/tlk/tlk.html) @tldp
 - [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html) @tldp
-- [Writing a Simple Operating System from Scratch](./doc/os-dev.md)
+- Tutorials
+  - [Writing a Simple Operating System from Scratch](./doc/os-dev.md)
+  - [os-tutorial](https://github.com/cfenollosa/os-tutorial) @github
+  - [JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)
+  - [Bran's kernel development tutorials](http://www.osdever.net/bkerndev/index.php)
+  - [Intel® 64 and IA-32 Architectures Software Developer Manuals](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
+  - [alt.os.development](https://groups.google.com/g/alt.os.development) (Google group)
+  - [osdev.org](https://wiki.osdev.org/)
+  - [osdever.net](http://www.osdever.net/tutorials/) (very old, up to 2003)
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
   - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
