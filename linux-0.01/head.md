@@ -202,6 +202,8 @@ L6:
 
 * After setting up paging, we jump to main, where the actual “C” code for the kernel starts.
 
+***`ret` at the end of `setup_paging` transfers program control to a return address located on the top of the stack.*** More info about ret [here](https://c9x.me/x86/html/file_module_x86_id_280.html).
+
 Below `ignore_int:` is the default interrupt "handler" :-)
 
 ```asm
