@@ -1,4 +1,4 @@
-# linux/boot/head.s
+# boot/head.s
 
 This file contains code for three main items before the kernel can start functioning as a fully multitasking one: *GDT*, *IDT* and *paging* has to be initialized.
 
