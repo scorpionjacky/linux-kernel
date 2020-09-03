@@ -136,6 +136,7 @@ MGW (Minimalist GNU for Windows)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
 - [The Linux Kernel](https://tldp.org/LDP/tlk/tlk.html) @tldp
 - [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html) @tldp
+- [Writing a Simple Operating System from Scratch](./doc/os-dev.md)
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
   - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
