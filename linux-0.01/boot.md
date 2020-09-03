@@ -1,99 +1,21 @@
 # boot.s
 
-6.1. Step Wise Refinement Of The 0.01 Kernel - Step 3
+`boot.s` is loaded at 0x7c00 by the bios-startup routines, and moves itself out of the way to address 0x90000, and jumps there.
 
-So now we enter the real “Journey To The Center Of The Code”.We will try to proceed in
-the same order as that given in the above section on description of files.We will take each
-of those files and will explain in the “necessary” detail, each of the functions and pieces of
-code present in those files. You can expect a very good coverage of all pieces of code except
-the file system - our description on file system code will be very meager as we are not much
-knowledged and interested in that.We would also advice that the reader keep a copy of the
-Hardware Bible (or any equivalent) and the 386 manuals nearby when going through the code
-because that will help more in increasing the grasp of the code :-) Again, since the code is
-not a very huge one like Minix, what we will do is to place our commentary inline with the
-code - so you can find code and commentary intermixed!
+*By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode. We don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial also. Now why does it move itself to 0x90000? Well, it cant load itself in the “lower” address regions (like 0x0?) because the BIOS might store some information like the ISR table in low memory and we need the help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be sure that the kernel does not over write the boot loader. Also, it has to be remembered that the BIOS chip has address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))*
 
-6.1.1. linux/boot
+It then loads the system at 0x10000, using BIOS interrupts. Thereafter it disables all interrupts, moves the system down to 0x0000, changes to protected mode, and calls the start of system. System then must RE-initialize the protected mode in it’s own tables, and enable interrupts as needed.
 
-We will be giving quite a detailed explanation about the files in this directory.
+*Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should not be wiped off. So temporarily load the image at 0x10000.*
 
-6.1.1.1. linux/boot/boot.s
 
-```
-1 
-2 | So here goes boot.s
-3 | boot.s
-4 |
-5 | boot.s is loaded at 0x7c00 by the bios-startup
-6 | routines, and moves itself
-7 | out of the way to address 0x90000, and jumps there.
-8
-```
-* By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode.We
-don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial
-also. Now why does it move itself to 0x90000 ? Well, it cant load itself in the “lower” address regions (like
-0x0?) because the BIOS might store some information like the ISR table in low memory and we need the
-help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into
-memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be
-sure that the kernel does not over write the boot loader. Also, it has to be remembered that the BIOS chip has
-address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS
-chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do
-not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader
-is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))
+*Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we want and so we choose location 0x0.*
 
-```
-1 
-2 | It then loads the system at 0x10000, using BIOS interrupts. Thereafter
-3
-```
+*After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the bootloader boot.s. It need not be done by the bootloader, the kernel can also do it. But the boot loader should not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of the boot loader. so even if the kernel changes, the boot loader can be the same.*
 
-* Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should
-not be wiped off. So temporarily load the image at 0x10000.
+NOTE! currently system is at most 8*65536 bytes long. This should be no problem, even in the future. want to keep it simple. This 512 kB kernel size should be enough - in fact more would mean we’d have to move not just these start-up routines, but also do something about the cache- memory (block IO devices). The area left over in the lower 640 kB is meant for these. No other memory is assumed to be "physical", ie all memory over 1Mb is demand-paging. All addresses under 1Mb are guaranteed to match their physical addresses.
 
-```
-1
-2 | it disables all interrupts, moves the system down to 0x0000, changes
-3
-```
-
-* Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we
-want and so we choose location 0x0.
-
-```
-1 
-2 | to protected mode, and calls the start of system. System then must
-3 | RE-initialize the protected mode in it’s own tables, and enable
-4 | interrupts as needed.
-5
-```
-
-* After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the
-bootloader boot.s. It need not be done by the bootloader, the kernel can also do it. But the boot loader should
-not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it
-just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel
-code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of
-the boot loader. so even if the kernel changes, the boot loader can be the same.
-
-```
-1 
-2 | NOTE! currently system is at most 8*65536 bytes long.
-3 | This should be no | problem, even in the future.
-4 | want to keep it simple. This 512 kB | kernel size
-5 | should be enough - in fact more would mean we’d have to move
-6 | not just these start-up routines, but also do something about the cache-
-7 | memory (block IO devices). The area left over in the lower 640 kB is meant
-8 | for these. No other memory is assumed to be "physical", ie all memory
-9 | over 1Mb is demand-paging. All addresses under 1Mb are guaranteed to match
-10 | their physical addresses.
-11 |
-12
-```
-
-* More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code
-is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012
-referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for
-all addresses. But for user processes,we have mentioned in the section on paging that address 0x3134 may
-correspond to “physical” address 0x200000 .
+*More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes,we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.*
 
 ```
 1 
