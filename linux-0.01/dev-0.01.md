@@ -57,19 +57,56 @@ wait.h     sys/types.h; pid_t wait(), pid_t waitpid()
 
 
 ```
-lib/*: independent
-
+lib/*:     independent
+tools/*:   independent
 mm
-memory.c  signal.h, linux(config.h,head.h,kernel.h,mm.h), asm/system.h
+memory.c  signal.h, linux/(config.h,head.h,kernel.h,mm.h), asm/system.h
 page.c    independent, assembly: .globl page_fault
-
 ```
 
-include/sys/types.h  self-complete
+```
+kernel
+asm.s       independent
+console.c   linux/sched.h, linux/tty.h, asm/(io.h, system.h)
+exit.c      errno.h, signal.h, sys/wait.h, linux/(sched.h, kernel.h, tty.h), asm/segment.h
+fork.c      errno.h, linux/(sched.h, kernel.h), asm/(segment.h, system.h)
+hd.c        linux/(config.h,sched.h,kernel.h,fs.h,hdreg.h), asm/(io.h,system.h,segment.h)
+keyboard.s  .globl keyboard_interrupt
+mktime.c    independent
+panic.c     linux/kernel.h
+printk.c    stdarg.h,stddef.h, linux/kernel.h; uses vsprintf(); uses tty_write() from tty_io.c
+rs_io.s     .globl rs1_interrupt,rs2_interrupt
+sched.c     signal.h, linux/(sched.h,kernel.h,sys.h), asm/(io.h,system.h,segment.h)
+serial.c    linux/(sched.h,tty.h), asm/(io.h,system.h)
+sys.c       errno.h, linux/(sched.h,kernel.h,tty.h), asm/segment.h, sys/(times.h,utsname.h)
+system_call.s  .globl system_call,sys_fork,timer_interrupt,hd_interrupt,sys_execve
+traps.c     string.h, linux/(sched.h,kernel.h,head.h), asm/(system.h,segment.h)
+tty_io.c    ctype.h, errno.h, signal.h, linux/(sched.h,tty.h), asm/(system.h,segment.h)
+vsprintf.c  independent; stdarg.h, string.h
+```
 
-`tools` folder is easy to compile
-
-`lib` filder is easy to compile
+```
+fs
+bitmap.c     string.h, linux/(sched.h,kernel.h)
+block_dev.c  errno.h, linux/(fs.h,kernel.h), asm/segment.h
+buffer.c     linux/(config.h,sched.h,kernel.h), asm/system.h
+char_dev.c   errno.h, linux/(sched.h,kernel.h)
+exec.c       errno.h, elf.h, sys/stat.h, linux/(sched.h,kernel.h,fs.h,mm.h), asm/segment.h
+fcntl.c      errno.h, string.h, fcntl.h, linux/(sched.h,kernel.h), asm/segment.h, sys/stat.h
+file_dev.c   errno.h, fcntl.h, linux/(sched.h,kernel.h), asm/segment.h
+file_table.c   linux/fs.h; struct file file_table[NR_FILE];
+inode.c      string.h, linux/(sched.h,kernel.h,mm.h), asm/system.h
+ioctl.c      errno.h, string.h, linux/sched.h, sys/stat.h
+namei.c      errno.h, string.h, fcntl.h, const.h, sys/stat.h, linux/(sched.h,kernel.h), asm/segment.h
+open.c       errno.h, string.h, fcntl.h, utime.h, sys/(types.h, stat.h), linux/(sched.h,kernel.h,tty.h), asm/segment.h
+pipe.c       signal.h, , linux/(sched.h,mm.h), asm/segment.h
+read_write.c  errno.h, sys/(types.h, stat.h), linux/(sched.h,kernel.h), asm/segment.h
+stat.c       errno.h, sys/stat.h, linux/(sched.h,kernel.h,fs.h), asm/segment.h
+super.c      linux/(config.h,sched.h,kernel.h)
+sys_getdents.c  errno.h, dirent.h, sys/stat.h, linux/(sched.h,kernel.h,mm.h), asm/segment.h
+truncate.c   sys/stat.h, linux/sched.h
+tty_ioctl.c  errno.h, termios.h, linux/(sched.h,kernel.h,tty.h), asm/(system.h,segment.h)
+```
 
 `boot` + `init\main.c`, with main.c clearn with empty main() and start_start glocal variable (from sched.c) is easy to compile
 
