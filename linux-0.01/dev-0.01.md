@@ -4,6 +4,8 @@ https://blogs.oracle.com/d/inline-functions-in-c
 
 https://elinux.org/Extern_Vs_Static_Inline
 
+header files
+
 ```
 include/
 const.h    indepedent
@@ -12,7 +14,8 @@ dirent.h   linux/fs.h, stdint.h; some functions [opendir, closedir, dirent]
 elf.h      stdint.h, otherwise seems independent
 errno.h    indepedent
 fcntl.h    sys/types.h, extern fun: creat/fcntl/open
-signal.h   sys/types.h, some functions [signal,raise,kill,sigaddset,sigdelset,sigemptyset,sigfillset,sigismember,sigpending,sigprocmask,sigsuspend,sigaction]
+signal.h   sys/types.h, some functions [signal,raise,kill,sigaddset,sigdelset,sigemptyset,
+                       sigfillset,sigismember,sigpending,sigprocmask,sigsuspend,sigaction]
 stdarg.h   indepedent
 stddef.h   indepedent
 stdint.h   bits/wchar.h, bits/wordsize.h
@@ -36,7 +39,8 @@ include/linux
 config.h    indepedent
 fs.h        sys/types.h, lot of extern var and func
 hdreg.h     indepedent, AT-hd-controller
-head.h      indepedent, desc_table[256], some extern: extern desc_table idt,gdt; extern unsigned long pg_dir[1024];
+head.h      indepedent, desc_table[256], extern desc_table idt,gdt; 
+                                 extern unsigned long pg_dir[1024];
 kernel.h    indepedent, verify_area(), panic(), printf(), printk(), tty_write()
 mm.h        indepedent
 sched.h     linux/head.h, linux/fs.h, linux/mm.h, externs, macros
@@ -49,13 +53,24 @@ times.h    sys/types.h; extern time_t times()
 types.h    indepedent
 utsname.h  extern int uname ()
 wait.h     sys/types.h; pid_t wait(), pid_t waitpid()
+```
+
+
+```
+lib/*: independent
+
+mm
+memory.c  signal.h, linux(config.h,head.h,kernel.h,mm.h), asm/system.h
+page.c    independent, assembly: .globl page_fault
 
 ```
 
 include/sys/types.h  self-complete
 
 `tools` folder is easy to compile
+
 `lib` filder is easy to compile
+
 `boot` + `init\main.c`, with main.c clearn with empty main() and start_start glocal variable (from sched.c) is easy to compile
 
 
