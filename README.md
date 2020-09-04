@@ -10,6 +10,15 @@
 Current
 - https://github.com/torvalds/linux
 
+LXR
+- [Missing Link Electronics](https://lxr.missinglinkelectronics.com/linux)
+- https://elixir.bootlin.com/linux/0.01/source
+- FreeBSD and Linux Kernel [Cross-Reference](http://fxr.watson.org/)
+  - [Linux 2.6](http://fxr.watson.org/fxr/source/?v=linux-2.6)
+- [Linux Cross Reference (LXR)](http://lxr.linux.no/)
+- [TOMOYO Linux Cross Reference Linux](http://tomoyo.osdn.jp/cgi-bin/lxr/source)
+
+
 ## Ancient Code
 
 http://oldlinux.org/
@@ -149,6 +158,7 @@ MGW (Minimalist GNU for Windows)
   - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080
   - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
+- [The Linux kernel](https://www.win.tue.nl/~aeb/linux/lk/lk.html) Andries Brouwer, aeb@cwi.nl 2003-02-01
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
   - [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
 - [Linux Kernel: Good beginners' tutorial](https://unix.stackexchange.com/questions/1003/linux-kernel-good-beginners-tutorial) @[unix.stackexchange](https://unix.stackexchange.com)
