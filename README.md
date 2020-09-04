@@ -107,7 +107,24 @@ MGW (Minimalist GNU for Windows)
   - [scope of static variables](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope-static.html)
   - [extern](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope.html)
 
-## Others
+## Documentation
+
+[coreboot](https://www.coreboot.org/)
+  - [System76](https://system76.com/)
+    - [Laptops with Coreboot Firmware](https://www.cyberciti.biz/open-source/modern-linux-laptops-with-coreboot-firmware-from-system76/)
+    - System76 introduces [laptops with open source BIOS coreboot](https://opensource.com/article/19/11/coreboot-system76-laptops)
+  - [Purism](https://puri.sm/)
+  
+-Startup
+  - [UEFI... The Microsoft Kill Switch](https://learnlinuxandlibreoffice.org/1-why-switch-to-linux/1-4-uefi-the-microsoft-kill-switch)
+  - [Linux startup process](https://en.wikipedia.org/wiki/Linux_startup_process)
+  - [Stages of Linux booting process](https://www.crybit.com/linux-boot-process/) (January 6, 2019)
+  - [An introduction to the Linux boot and startup processes](https://opensource.com/article/17/2/linux-boot-and-startup)
+  - [Linux Boot Process Explained in Simple Steps](https://linoxide.com/booting/boot-process-of-linux-in-detail/)
+  - [Linux Boot Process — Part 1](https://medium.com/@cloudchef/linux-boot-process-part-1-e8fea015dd66), [Part 2](https://medium.com/@cloudchef/linux-boot-process-part-2-bd7514913495)
+  - [Linux Boot Process](https://medium.com/devops-world/linux-boot-process-39b58198b791)
+  - [Understanding the Boot process — BIOS vs UEFI](https://linuxhint.com/understanding_boot_process_bios_uefi/)
+  - [GUID Partition Table](https://en.wikipedia.org/wiki/GUID_Partition_Table#Operating_System_support_of_GPT)
 
 1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
 
@@ -123,6 +140,7 @@ MGW (Minimalist GNU for Windows)
 - Apress.-.Linux Kernel Networking Implementation and Theory.-.(Dec 2013).-.978-1430261964
 - Addison-Wesley.-.Linux Kernel Development, 3ed.-.(Jul 2010).-.978-0672329463
 - Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
+- [The Linux Kernel Module Programming Guide](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/docs/lkmpg/), or [pdf](https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf) (2001, 2007−05−18 ver 2.6.4)
 - OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
 - [Understanding the Linux Kernel, 3E] (2005)
 - Prentice Hall.-.The Linux Kernel Primer A Top-Down Approach for x86 and PowerPC Architectures.-.(2005).-.978-0131181632
@@ -152,6 +170,10 @@ MGW (Minimalist GNU for Windows)
 
 [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
 - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
+
+https://linux-kernel-labs.github.io/refs/heads/master/
+
+https://www.cs.utexas.edu/users/ygz/378-03S/
 
 https://eecs.wsu.edu/~cs460/cs560/booting
 - https://eecs.wsu.edu/~cs460/cs560/booting.pdf
@@ -207,3 +229,5 @@ GeeksOS
 - https://www.cs.umd.edu/~hollings/cs412/s03/prog1/
 
 https://www.howtogeek.com/howto/31632/what-is-the-linux-kernel-and-what-does-it-do/
+
+https://www.cs.bham.ac.uk/~exr/lectures/
