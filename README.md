@@ -196,6 +196,29 @@ https://jasonblog.github.io/note/index.html
   - [Writing a 16-bit dummy kernel in C/C++](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
   - [How to develop your own Boot Loader](https://www.codeproject.com/Articles/36907/How-to-develop-your-own-Boot-Loader)
 
+[Tony Bai](https://tonybai.com)
+  - [github home](https://github.com/bigwhite)
+  - [图解git原理的几个关键概念](https://tonybai.com/2020/04/07/illustrated-tale-of-git-internal-key-concepts/)
+  - [english](https://tonybai.com/2006/04/), [and](https://tonybai.com/2006/04/page/2/), [and](https://tonybai.com/2006/04/page/3/), [and](https://tonybai.com/2006/04/page/4/)
+  - https://blog.csdn.net/myan/article/details/605113, https://tonybai.com/2006/04/page/12/
+  - [C语言也重构](https://tonybai.com/2006/03/28/c-refactoring/)
+  - [当数组作参数时](https://tonybai.com/2006/03/27/when-array-passed-as-arguments/)
+  - [如果让我面试C程序员，我会问](https://tonybai.com/2006/03/26/interview-questions-for-c-programmer/)
+  - [理解C复杂声明之'优先级规则'](https://tonybai.com/2006/03/26/understand-priority-rule-for-parse-c-declaration/)
+  - ['right-left'规则再举例](https://tonybai.com/2006/03/26/another-example-for-c-right-left-rule/)
+  - [GCC警告选项例解](https://tonybai.com/2006/03/14/explain-gcc-warning-options-by-examples/)
+  - [Kernel 'head.S'](https://tonybai.com/2006/03/02/kernel-head/)
+  - [Compressed 'head.S'](https://tonybai.com/2006/02/25/compressed-head/)
+  - [Transfer to '32-bit'](https://tonybai.com/2006/02/17/transfer-to-32bit/)
+  - [Outline 'memory layout'](https://tonybai.com/2006/02/15/outline-memory-layout/)
+  - [Begin 'setup.S'](https://tonybai.com/2006/02/13/begin-setup/)
+  - [Goto 'Bootstrap'](https://tonybai.com/2006/02/11/goto-bootstrap/)
+  - [Inside the 'i386'](https://tonybai.com/2006/02/09/inside-the-i386/)
+  - [Retired 'bootsect.S'](https://tonybai.com/2006/02/08/retired-bootsect/)
+  - [打开汇编之门](https://tonybai.com/2005/11/12/open-the-gate-to-assembly-language/)
+  - [也谈字节序问题](https://tonybai.com/2005/09/28/also-talk-about-byte-order/)
+  - [从技术到管理的对话-Tony与Alex的对话系列](https://tonybai.com/2005/06/05/tony-alex-dialog-on-from-tech-to-management/)
+  
 https://jasonblog.github.io/note/linux_kernel/index.html
 
 https://linux-kernel-labs.github.io/refs/heads/master/
