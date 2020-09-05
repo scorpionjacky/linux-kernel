@@ -48,6 +48,7 @@ http://oldlinux.org/
   - https://github.com/voidccc/linux0.11
   - https://github.com/huawenyu/oldlinux
   - https://github.com/bolanlaike/Linux-0.01
+  - https://github.com/Original-Linux/Running_Linux0.11
 - Info
   - https://gunkies.org/wiki/Linux_0.11
 
