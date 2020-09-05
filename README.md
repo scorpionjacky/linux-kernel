@@ -7,9 +7,11 @@
 
 ## Source Code
 
-Current
+Source Code
 - Source code [@github](https://github.com/torvalds/linux)
+- [Kernels @kernel.org](https://mirrors.edge.kernel.org/pub/linux/kernel/)
 - [Linux kernel version history](https://en.wikipedia.org/wiki/Linux_kernel_version_history)
+- [illumos](https://github.com/illumos/illumos-gate)
 
 LXR
 - [Missing Link Electronics](https://lxr.missinglinkelectronics.com/linux)
@@ -120,6 +122,8 @@ MGW (Minimalist GNU for Windows)
   - [extern](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope.html)
 
 ## Documentation
+
+https://wiki.gentoo.org/wiki/Main_Page
 
 https://jasonblog.github.io/note/index.html
 
