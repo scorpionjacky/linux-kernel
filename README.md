@@ -157,6 +157,7 @@ MGW (Minimalist GNU for Windows)
 - Linux Device Drivers, 3ed, OReilly (Feb 2005) 978-0596005900
   - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080
   - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
+- [Unreliable Guide To Hacking The Linux Kernel](https://www.kernel.org/doc/htmldocs/kernel-hacking)
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
 - [The Linux kernel](https://www.win.tue.nl/~aeb/linux/lk/lk.html) Andries Brouwer, aeb@cwi.nl 2003-02-01
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
@@ -174,12 +175,17 @@ MGW (Minimalist GNU for Windows)
   - [alt.os.development](https://groups.google.com/g/alt.os.development) (Google group)
   - [osdev.org](https://wiki.osdev.org/)
   - [osdever.net](http://www.osdever.net/tutorials/) (very old, up to 2003)
+- [Commentary on the Sixth Edition UNIX Operating System](http://www.lemis.com/grog/Documentation/Lions/index.php)
+- The Design of the UNIX Operating System
 - wikipedia
   - [Linux kernel](https://en.m.wikipedia.org/wiki/Linux_kernel)
   - [Linux kernel interfaces](https://en.m.wikipedia.org/wiki/Linux_kernel_interfaces)
-
-[Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
-- http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
+- xv6
+  - https://www.cs.columbia.edu/~junfeng/13fa-w4118/lectures/
+  - https://github.com/mit-pdos/xv6-public
+  - https://pdos.csail.mit.edu/6.828/2018/xv6.html
+- [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
+  - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
 
 https://linux-kernel-labs.github.io/refs/heads/master/
 
@@ -213,9 +219,6 @@ Syscalls
 - [How does a system call translate to CPU instructions?](https://stackoverflow.com/questions/5570893/how-does-a-system-call-translate-to-cpu-instructions)
 - [The Definitive Guide to Linux System Calls](ps://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/) (Apr 2016)
 
-xv6
-- https://www.cs.columbia.edu/~junfeng/13fa-w4118/lectures/
-- https://github.com/mit-pdos/xv6-public
 
 https://jasonblog.github.io/note/qemu/72.html
 
@@ -241,3 +244,5 @@ GeeksOS
 https://www.howtogeek.com/howto/31632/what-is-the-linux-kernel-and-what-does-it-do/
 
 https://www.cs.bham.ac.uk/~exr/lectures/
+
+https://www.threatstack.com/blog/c-in-the-linux-kernel
