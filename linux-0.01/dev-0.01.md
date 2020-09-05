@@ -8,7 +8,7 @@ header files
 
 *Note: '-': the same, 'N/A': not exists*, '?': check if the sname, Dep: include other headers
 
-|include/     |Dep |0.01|0.12|
+|include  |Dep |0.01|0.12|
 |--       |:--:|:--:|:--:|
 |const.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/const.h)
 |ctype.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/ctype.h)
@@ -26,7 +26,21 @@ header files
 |unistd.h | ? | ?[0.01](https://github.com/mariuz/linux-0.01/blob/master/include/unistd.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/unistd.h) |
 |utime.h  | Y | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/utime.h) |
 
-<!--
+
+|include/asm|Dep |0.01|0.12|
+|--        |:--:|:--:|:--:|
+|io.h      |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/io.h)
+|memory.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/memory.h)
+|segment.h  |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/segment.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/segment.h)
+|system.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/system.h)
+
+|include/bits|Dep |0.01|0.12|
+|--        |:--:|:--:|:--:|
+|wchar.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wchar.h) | N/A
+|wordsize.h |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wordsize.h) | N/A
+
+
+```
 include/
 const.h    indepedent
 ctype.h    indepedent
@@ -44,9 +58,7 @@ termios.h  lot of extern functions
 time.h     some functions
 unistd.h   extern int errno;  lot of unctons
 utime.h    sys/types.h, extern int utime()
--->
 
-```
 include/asm
 io.h       indepedent, outb(), inb(), outb_p(), inb_p()
 memory.h   indepedent
