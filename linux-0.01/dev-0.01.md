@@ -107,6 +107,7 @@ header files
 |Folder  |Dep |0.01|0.12|
 |--       |:--:|:--:|:--:|
 |***include***  |
+|aout.h   |   | NA | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/aout.h)
 |const.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/const.h)
 |ctype.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/ctype.h)
 |dirent.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/dirent.h) | N/A |
@@ -131,21 +132,25 @@ header files
 |wchar.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wchar.h) | N/A
 |wordsize.h |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wordsize.h) | N/A
 |***include/linux***|
-|config.h   |   | 
-|fs.h       | Y |
-|hdreg.h    |   |
-|head.h     |   |
-|kernel.h   |   |
-|mm.h       |   |
-|sched.h    | Y |
-|sys.h      |   |
-|tty.h      | Y |
+|config.h   |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/config.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/config.h)
+|fdreg.h    |   | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/fdreg.h)
+|fs.h       | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/fs.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/fs.h)
+|hdreg.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/hdreg.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/hdreg.h)
+|head.h     |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/head.h)
+|kernel.h   |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/kernel.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/kernel.h)
+|math_emu.h | Y | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/math_emu.h)
+|mm.h       |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/mm.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/mm.h)
+|sched.h    | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/sched.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/sched.h)
+|sys.h      | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/sys.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/sys.h)
+|tty.h      | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/linux/tty.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/linux/tty.h)
 |***include/sys***|
-|stat.h     | Y |
-|times.h    | Y |
-|types.h    indepedent
-|utsname.h  | ? |
-|wait.h     | Y |
+|param.h    |   | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/param.h)
+|resource.h | Y | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/resource.h)
+|stat.h     | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/stat.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/stat.h)
+|times.h    | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/times.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/times.h)
+|types.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/types.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/types.h)
+|utsname.h  | /Y| [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/utsname.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/utsname.h)
+|wait.h     | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/wait.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/wait.h)
 
 
 ```
