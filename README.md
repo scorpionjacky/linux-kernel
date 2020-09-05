@@ -8,7 +8,8 @@
 ## Source Code
 
 Current
-- https://github.com/torvalds/linux
+- Source code [@github](https://github.com/torvalds/linux)
+- [Linux kernel version history](https://en.wikipedia.org/wiki/Linux_kernel_version_history)
 
 LXR
 - [Missing Link Electronics](https://lxr.missinglinkelectronics.com/linux)
