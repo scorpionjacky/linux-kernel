@@ -8,9 +8,8 @@ header files
 
 *Note: '-': the same, 'N/A': not exists*, '?': check if the sname, Dep: include other headers
 
-|File     |Dep |0.01|0.12|
+|include/     |Dep |0.01|0.12|
 |--       |:--:|:--:|:--:|
-|include/ |
 |const.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/const.h)
 |ctype.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/ctype.h)
 |dirent.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/dirent.h) | N/A |
