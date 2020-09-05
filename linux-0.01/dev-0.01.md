@@ -6,7 +6,28 @@ https://elinux.org/Extern_Vs_Static_Inline
 
 header files
 
-```
+*Note: '-': the same, 'N/A': not exists*, '?': check if the sname, Dep: include other headers
+
+|File     |Dep |0.01|0.12|
+|--       |:--:|:--:|:--:|
+|include/ |
+|const.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/const.h)
+|ctype.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/ctype.h)
+|dirent.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/dirent.h) | N/A |
+|elf.h    | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/elf.h) | N/A |
+|errno.h  |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/errno.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/errno.h) |
+|fcntl.h  | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/fcntl.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/fcntl.h) |
+|signal.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/signal.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/signal.h) |
+|stdarg.h |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/stdarg.h) |
+|stddef.h |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/stddef/.h) |
+|stdint.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/stdint.h) | N/A |
+|string.h |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/string.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/string.h) |
+|termios.h | Y | ?[0.01](https://github.com/mariuz/linux-0.01/blob/master/include/termios.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/termios.h) |
+|time.h   | ? | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/time.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/time.h) |
+|unistd.h | ? | ?[0.01](https://github.com/mariuz/linux-0.01/blob/master/include/unistd.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/unistd.h) |
+|utime.h  | Y | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/utime.h) |
+
+<!--
 include/
 const.h    indepedent
 ctype.h    indepedent
@@ -24,7 +45,9 @@ termios.h  lot of extern functions
 time.h     some functions
 unistd.h   extern int errno;  lot of unctons
 utime.h    sys/types.h, extern int utime()
+-->
 
+```
 include/asm
 io.h       indepedent, outb(), inb(), outb_p(), inb_p()
 memory.h   indepedent
