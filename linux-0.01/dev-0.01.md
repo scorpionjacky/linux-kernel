@@ -104,8 +104,9 @@ header files
 
 *Note: '-': the same, 'N/A': not exists*, '?': check if the sname, Dep: include other headers
 
-|include  |Dep |0.01|0.12|
+|Folder  |Dep |0.01|0.12|
 |--       |:--:|:--:|:--:|
+|***include***  |
 |const.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/const.h)
 |ctype.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/ctype.h)
 |dirent.h | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/dirent.h) | N/A |
@@ -121,19 +122,30 @@ header files
 |time.h   | ? | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/time.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/time.h) |
 |unistd.h | ? | ?[0.01](https://github.com/mariuz/linux-0.01/blob/master/include/unistd.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/unistd.h) |
 |utime.h  | Y | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/utime.h) |
-
-
-|include/asm|Dep |0.01|0.12|
-|--        |:--:|:--:|:--:|
+|***include/asm***|
 |io.h      |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/io.h)
 |memory.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/memory.h)
 |segment.h  |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/segment.h) | ?[0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/segment.h)
 |system.h  |   | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/include/asm/system.h)
-
-|include/bits|Dep |0.01|0.12|
-|--        |:--:|:--:|:--:|
+|***include/bits***|
 |wchar.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wchar.h) | N/A
 |wordsize.h |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/include/asm/wordsize.h) | N/A
+|***include/linux***|
+|config.h   |   | 
+|fs.h       | Y |
+|hdreg.h    |   |
+|head.h     |   |
+|kernel.h   |   |
+|mm.h       |   |
+|sched.h    | Y |
+|sys.h      |   |
+|tty.h      | Y |
+|***include/sys***|
+|stat.h     | Y |
+|times.h    | Y |
+|types.h    indepedent
+|utsname.h  | ? |
+|wait.h     | Y |
 
 
 ```
