@@ -63,6 +63,7 @@ http://oldlinux.org/
 - Others
   - https://github.com/issamabd/linux-0.01-remake
   - https://github.com/liudonghua123/linux-0.01
+  - https://github.com/l2cup/linux-0.01
   - [Linux 0.01 News](http://draconux.free.fr/os_dev/linux0.01_news.html) (Linux 0.01 remake)
 
 
@@ -117,6 +118,8 @@ MGW (Minimalist GNU for Windows)
   - [extern](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope.html)
 
 ## Documentation
+
+https://jasonblog.github.io/note/index.html
 
 [coreboot](https://www.coreboot.org/)
   - [System76](https://system76.com/)
@@ -187,6 +190,14 @@ MGW (Minimalist GNU for Windows)
 - [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
   - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
 
+[Writing a boot loader in Assembly and C](https://www.codeproject.com/search.aspx?q=Writing+a+boot+loader+in+Assembly)
+  - [Part 1](https://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part)
+  - [Part 2](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2)
+  - [Writing a 16-bit dummy kernel in C/C++](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
+  - [How to develop your own Boot Loader](https://www.codeproject.com/Articles/36907/How-to-develop-your-own-Boot-Loader)
+
+https://jasonblog.github.io/note/linux_kernel/index.html
+
 https://linux-kernel-labs.github.io/refs/heads/master/
 
 https://www.cs.utexas.edu/users/ygz/378-03S/
@@ -246,3 +257,9 @@ https://www.howtogeek.com/howto/31632/what-is-the-linux-kernel-and-what-does-it-
 https://www.cs.bham.ac.uk/~exr/lectures/
 
 https://www.threatstack.com/blog/c-in-the-linux-kernel
+
+[How Linux's Kernel Developers 'Make C Less Dangerous'](https://developers.slashdot.org/story/18/09/01/2311248/how-linuxs-kernel-developers-make-c-less-dangerous)
+  - https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project
+
+https://barrgroup.com/Embedded-Systems/Books/Embedded-C-Coding-Standard \
+https://www.perforce.com/resources/qac/misra-c-cpp
