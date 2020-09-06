@@ -134,7 +134,7 @@ header files
 |rs_io.c    |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/rs_io.c)
 |serial.c   |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/serial.c)
 |tty_io.c   |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/tty_io.c)
-|tty_ioctl.c |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/tty_ioctl.c)
+|tty_ioctl.c |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/tty_ioctl.c)
 |***kernel/math***|
 |Makefile   |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/math/Makefile)
 |add.c      |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/math/add.c)
@@ -162,11 +162,12 @@ header files
 |open.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/open.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/open.c)
 |pipe.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/pipe.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/pipe.c)
 |read_write.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/read_write.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/read_write.c)
+|select.c  |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/select.c)
 |stat.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/stat.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/stat.c)
 |super.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/super.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/super.c)
-|sys_getdents.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/sys_getdents.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/sys_getdents.c)
+|sys_getdents.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/sys_getdents.c) | N/A
 |truncate.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/truncate.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/truncate.c)
-|tty_ioctl.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/tty_ioctl.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/fs/tty_ioctl.c)
+|tty_ioctl.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/fs/tty_ioctl.c) | <-
 |***lib***|
 |Makefile   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/lib/Makefile) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/lib/Makefile)
 |\_exit.c   |  | - | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/lib/_exit.c)
