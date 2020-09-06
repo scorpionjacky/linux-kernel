@@ -84,12 +84,43 @@ header files
 |types.h    |   | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/types.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/types.h)
 |utsname.h  | /Y| [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/utsname.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/utsname.h)
 |wait.h     | Y | [0.01](https://github.com/mariuz/linux-0.01/blob/master/sys/wait.h) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/sys/wait.h)
+|***init***|
+|main.c     |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/init/main.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/init/main.c)
 |***mm***|
 |Makefile   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/mm/Makefile) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/Makefile)
-|memory.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/mm/memory.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/memory.h)
-|page.c     |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/mm/page.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/page.h)
-|swap.c     |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/swap.h)
-
+|memory.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/mm/memory.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/memory.c)
+|page.c     |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/mm/page.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/page.c)
+|swap.c     |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/mm/swap.c)
+|***kernel***|
+|Makefile   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/Makefile) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/Makefile)
+|asm.s      |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/asm.s) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/asm.s)
+|console.c  |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/console.c) | <-
+|exit.c     |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/exit.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/exit.c)
+|fork.c     |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/fork.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/fork.c)
+|hd.c       |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/hd.c) | <-
+|keyboard.s |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/keyboard.s) | <-
+|mktime.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/mktime.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/mktime.c)
+|panic.c    |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/panic.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/panic.c)
+|printk.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/printk.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/printk.c)
+|rs_io.c    |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/rs_io.c) | <-
+|sched.c    |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/sched.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/sched.c)
+|serial.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/serial.c) | <-
+|signal.c   |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/signal.c)
+|sys.c      |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/sys.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/sys.c)
+|sys_call.s |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/system_call.s) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/sys_call.s)
+|traps.c    |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/traps.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/traps.c)
+|tty_io.c   |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/tty_io.c) | <-
+|vsprintf.c |  | [0.01](https://github.com/mariuz/linux-0.01/blob/master/kernel/vsprintf.c) | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/vsprintf.c)
+|***kernel/blk_drv***|
+|Makefile   |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/Makefile)
+|hd.c       |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/blk_drv/hd.c)
+|***kernel/chr_drv***|
+|Makefile   |  | N/A | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/Makefile)
+|console.c  |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/console.c)
+|keyboard.s |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/keyboard.s)
+|rs_io.c    |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/rs_io.c)
+|serial.c   |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/serial.c)
+|tty_io.c   |  | <- | [0.12](https://github.com/sky-big/Linux-0.12/blob/master/kernel/chr_drv/tty_io.c)
 
 ```
 include/
