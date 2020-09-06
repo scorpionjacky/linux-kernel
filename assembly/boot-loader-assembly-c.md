@@ -1,7 +1,9 @@
 # Writing a boot loader in Assembly and C
 
 [*Part 1*](https://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part), 
-[*Part 2*](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2)
+[*Part 2*](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2), 
+[*Writing a 16-bit dummy kernel in C/C++*](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
+
 
 What are registers?
 
@@ -680,8 +682,913 @@ Now DS becomes 0x7c00 (16 * AX).
 
 *Note that segment registers can be set only through general registers*
 
+## Reading data from RAM
+
+Example 1: test.S
+
+Once our program is loaded by BIOS at 0x7c00, let us try to read data from offset 3 and 4 and then print them onto the screen.
+
+```asm
+.code16                   #generate 16-bit code
+.text                     #executable code location
+     .globl _start;
+_start:                   #code entry point
+     jmp  _boot           #jump to boot code
+     data : .byte 'X'     #variable
+     data1: .byte 'Z'     #variable
+_boot:
+     movw $0x07c0, %ax    #set ax = 0x07c0
+     movw %ax    , %ds    #set ds = 16 * 0x07c0 = 0x7c00
+     #Now we will copy the data at position 3 from 0x7c00:0x0000
+     # and then print it onto the screen
+     movb 0x02   , %al    #copy the data at 2nd position to %al
+     movb $0x0e  , %ah
+     int  $0x10
+    #Now we will copy the data at position 4 from 0x7c00:0x0000
+    # and then print it onto the screen
+     movb 0x03   , %al    #copy the data at 3rd position to %al
+     movb $0x0e  , %ah
+     int  $0x10
+#infinite loop
+_freeze:
+     jmp _freeze
+     . = _start + 510     #mov to 510th byte from 0 pos
+     .byte 0x55           #append boot signature
+     .byte 0xaa           #append boot signature 
+```
+
+```bash
+as test.S –o test.o
+ld –Ttext=0x7c00 –oformat=binary boot.o –o boot.bin
+dd if=/dev/zero of=floppy.img bs=512 count=2880
+dd if=boot.bin of=floppy.img
+````
+
+Example 2: test2.S
+
+Once our program is loaded by BIOS at 0x7c00, let us read a null terminated string from offset 2 and then print it.
+
+```asm
+.code16                                     #generate 16-bit code
+.text                                       #executable code location
+     .globl _start;
+_start:                                     #code entry point
+     jmp  _boot                             #jump to boot code
+     data : .asciz "This is boot loader"    #variable
+     #calls the printString function which
+     #starts printing string from the position
+     .macro mprintString start_pos          #macro to print string
+          pushw %si
+          movw  \start_pos, %si
+          call  printString
+          popw  %si
+     .endm 
+     printString:                           #function to print string
+     printStringIn:
+          lodsb
+          orb %al   , %al
+          jz  printStringOut
+          movb $0x0e, %ah
+          int  $0x10
+          jmp  printStringIn
+     printStringOut:
+     ret
+_boot:
+     movw $0x07c0, %ax                      #set ax = 0x07c0
+     movw %ax    , %ds                      #set ds = 16 * 0x07c0 = 0x7c00
+     mprintString $0x02
+_freeze:
+     jmp _freeze
+     . = _start + 510                       #mov to 510th byte from 0 pos
+     .byte 0x55                             #append boot signature
+     .byte 0xaa                             #append boot signature  
+```
+
+## Interaction with a floppy disk
+
+As our mission in this article is to read data from a floppy disk, the only choice left to us as of now is to use BIOS Services in our program as during the boot time we are in Real Mode to interact with the floppy disk. We need to use BIOS Interrupts to achieve our task.
+
+Which interrupts are we going to use?
+- Interrupt 0x13
+- Service code 0x02
+
+How to access a floppy disk using the interrupt 0x13?
+- AH = 0x02: To request BIOS to read a sector on a floppy we use below.
+- CH = ‘N’: To request BIOS to read from the ‘N’th cylinder we use below.
+- DH = ‘N’: To request BIOS to read from the ‘N’th head we use below.
+- CL = ‘N’: To request BIOS to read ‘N’th sector we use below.
+- AL = N: To request BIOS to read ‘N’ number of sectors we use below.
+- Int 0x13: To interrupt the CPU to perform this activity we use below.
+
+## Reading data from Floppy Disk
+
+Example: test.S
+
+Let us write a program to display the labels of few sectors.
+
+```asm
+.code16                       #generate 16-bit code
+.text                         #executable code location
+.globl _start;                #code entry point
+_start:
+     jmp _boot                #jump to the boot code to start execution
+     msgFail: .asciz "something has gone wrong..." #message about erroneous operation
+      #macro to print null terminated string
+      #this macro calls function PrintString
+     .macro mPrintString str
+          leaw \str, %si
+          call PrintString
+     .endm
+     #function to print null terminated string
+     PrintString:
+          lodsb
+          orb  %al  , %al
+          jz   PrintStringOut
+          movb $0x0e, %ah
+          int  $0x10
+          jmp  PrintString
+     PrintStringOut:
+     ret
+     #macro to read a sector from a floppy disk
+     #and load it at extended segment
+     .macro mReadSectorFromFloppy num
+          movb $0x02, %ah     #read disk function
+          movb $0x01, %al     #total sectors to read
+          movb $0x00, %ch     #select cylinder zero
+          movb $0x00, %dh     #select head zero
+          movb \num, %cl      #start reading from this sector
+          movb $0x00, %dl     #drive number
+          int  $0x13          #interrupt cpu to get this job done now
+          jc   _failure       #if fails then throw error
+          cmpb $0x01, %al     #if total sectors read != 1
+          jne  _failure       #then throw error
+     .endm
+     #display the string that we have inserted as the
+     #identifier of the sector
+     DisplayData:
+     DisplayDataIn:
+          movb %es:(%bx), %al
+          orb  %al      , %al
+          jz   DisplayDataOut
+          movb $0x0e    , %ah
+          int  $0x10
+          incw %bx
+          jmp  DisplayDataIn
+     DisplayDataOut:
+     ret
+_boot:
+     movw  $0x07c0, %ax       #initialize the data segment
+     movw  %ax    , %ds       #to 0x7c00 location
+     movw  $0x9000, %ax       #set ax = 0x9000
+     movw  %ax    , %es       #set es = 0x9000 = ax
+     xorw  %bx    , %bx       #set bx = 0
+     mReadSectorFromFloppy $2 #read a sector from floppy disk
+     call DisplayData         #display the label of the sector
+     mReadSectorFromFloppy $3 #read 3rd sector from floppy disk
+     call DisplayData         #display the label of the sector
+_freeze:                      #infinite loop
+     jmp _freeze              #
+_failure:                     #
+     mPrintString msgFail     #write error message and then
+     jmp _freeze              #jump to the freezing point
+     . = _start + 510         #mov to 510th byte from 0 pos
+     .byte 0x55               #append first part of the boot signature
+     .byte 0xAA               #append last part of the boot signature
+_sector2:                     #second sector of the floppy disk
+     .asciz "Sector: 2\n\r"   #write data to the begining of the sector
+     . = _sector2 + 512       #move to the end of the second sector
+_sector3:                     #third sector of the floppy disk
+     .asciz "Sector: 3\n\r"   #write data to the begining of the sector
+     . = _sector3 + 512       #move to the end of the third sector
+```
+
+```bash
+as test.S -o test.o
+ld -Ttext=0x0000 --oformat=binary test.o -o test.bin
+dd if=test.bin of=floppy.img
+```
+
+If you open the test.bin in an hexadecimal editor you will find that I have embedded a label to sector 2 and 3.
+
+What is the purpose of setting the extended segment?
+
+First we read a sector into our program memory at 0x9000 and then start displaying the content of the sector. That is why we set the Extended segment to 0x9000.
 
 
-[Writing a boot loader in Assembly and C - Part 2](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2)
+## Writing a 16-bit dummy kernel in C/C++
 
-[Writing a 16-bit dummy kernel in C/C++](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
+[*Writing a 16-bit dummy kernel in C/C++*](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
+
+[source code](https://www.codeproject.com/KB/cpp/737545/sourcecode.rar)
+
+Part 1:
+- Write a program called kernel.c in C Language, making sure that all the extra functionality that I desired to is properly written in it.
+Compile and save the executable as kernel.bin
+- Now, copy the kernel.bin file to the bootable drive into second sector.
+
+Part 2:
+- In our boot-loader, all we can do is to load the second sector(kernel.bin) of the bootable drive into the RAM memory at address say 0x1000 and then jump to the location 0x1000 from 0x7c00 to start executing the kernel.bin file.
+
+
+## Writing a FAT boot-loader
+
+File Name: stage0.S
+
+Below is the code snippet used to execute a kernel.bin file on a FAT formatted disk.
+
+```asm
+/*********************************************************************************
+ *                                                                               *
+ *                                                                               *
+ *    Name       : stage0.S                                                      *
+ *    Date       : 23-Feb-2014                                                   *
+ *    Version    : 0.0.1                                                         *
+ *    Source     : assembly language                                             *
+ *    Author     : Ashakiran Bhatter                                             *
+ *                                                                               *
+ *    Description: The main logic involves scanning for kernel.bin file on a     *
+ *                 fat12 formatted floppy disk and then pass the control to it   *
+ *                 for its execution                                             *
+ *    Usage      : Please read the readme.txt for more information               *
+ *                                                                               *
+ *                                                                               *
+ *********************************************************************************/
+.code16
+.text
+.globl _start;
+_start:
+     jmp _boot
+     nop
+     /*bios parameter block                           description of each entity       */
+     /*--------------------                           --------------------------       */
+     .byte 0x6b,0x69,0x72,0x55,0x58,0x30,0x2e,0x31    /* oem label                     */
+     .byte 0x00,0x02                                  /* total bytes per sector        */
+     .byte 0x01                                       /* total sectors per cluster     */
+     .byte 0x01,0x00                                  /* total reserved sectors        */
+     .byte 0x02                                       /* total fat tables              */
+     .byte 0xe0,0x00                                  /* total directory entries       */
+     .byte 0x40,0x0b                                  /* total sectors                 */
+     .byte 0xf0                                       /* media description             */
+     .byte 0x09,0x00                                  /* size in of each fat table     */
+     .byte 0x02,0x01                                  /* total sectors per track       */
+     .byte 0x02,0x00                                  /* total heads per cylinder      */
+     .byte 0x00,0x00, 0x00, 0x00                      /* total hidden sectors          */
+     .byte 0x00,0x00, 0x00, 0x00                      /* total big sectors             */
+     .byte 0x00                                       /* boot drive identifier         */
+     .byte 0x00                                       /* total unused sectors          */
+     .byte 0x29                                       /* external boot signature       */
+     .byte 0x22,0x62,0x79,0x20                        /* serial number                 */
+     .byte 0x41,0x53,0x48,0x41,0x4b,0x49              /* volume label 6 bytes of 11    */
+     .byte 0x52,0x41,0x4e,0x20,0x42                   /* volume label 5 bytes of 11    */
+     .byte 0x48,0x41,0x54,0x54,0x45,0x52,0x22         /* file system type              */
+
+     /* include macro functions */
+     #include "macros.S"
+
+/* begining of main code */
+_boot:
+     /* initialize the environment */
+     initEnvironment 
+
+     /* load stage2 */
+     loadFile $fileStage2
+
+
+/* infinite loop */
+_freeze:
+     jmp _freeze
+
+/* abnormal termination of program */
+_abort:
+     writeString $msgAbort
+     jmp _freeze
+
+     /* include functions */
+     #include "routines.S"
+
+     /* user-defined variables */
+     bootDrive : .byte 0x0000
+     msgAbort  : .asciz "* * * F A T A L  E R R O R * * *"
+     #fileStage2: .ascii "STAGE2  BIN"
+     fileStage2: .ascii  "KERNEL  BIN"
+     clusterID : .word 0x0000
+
+     /* traverse 510 bytes from beginning */
+     . = _start + 0x01fe
+
+     /* append boot signature             */
+     .word BOOT_SIGNATURE
+```
+
+This is the main loader file does the following.
+- Initialize all the registers and set up the stack by calling initEnvironment macro.
+- loadFile macro is called to load the kernel.bin file into the memory at address 0x1000:0000 and then pass control to it for further execution.
+
+File Name: macros.S
+
+This is a file which contains all the predefined macros and macro functions.
+
+```asm
+/*********************************************************************************          *                                                                               *
+ *                                                                               *
+ *    Name       : macros.S                                                      *
+ *    Date       : 23-Feb-2014                                                   *
+ *    Version    : 0.0.1                                                         *
+ *    Source     : assembly language                                             *
+ *    Author     : Ashakiran Bhatter                                             *
+ *                                                                               *
+ *                                                                               *
+ *********************************************************************************/
+/* predefined macros: boot loader                         */
+#define BOOT_LOADER_CODE_AREA_ADDRESS                 0x7c00
+#define BOOT_LOADER_CODE_AREA_ADDRESS_OFFSET          0x0000
+
+/* predefined macros: stack segment                       */
+#define BOOT_LOADER_STACK_SEGMENT                     0x7c00
+
+#define BOOT_LOADER_ROOT_OFFSET                       0x0200
+#define BOOT_LOADER_FAT_OFFSET                        0x0200
+
+#define BOOT_LOADER_STAGE2_ADDRESS                    0x1000
+#define BOOT_LOADER_STAGE2_OFFSET                     0x0000 
+
+/* predefined macros: floppy disk layout                  */
+#define BOOT_DISK_SECTORS_PER_TRACK                   0x0012
+#define BOOT_DISK_HEADS_PER_CYLINDER                  0x0002
+#define BOOT_DISK_BYTES_PER_SECTOR                    0x0200
+#define BOOT_DISK_SECTORS_PER_CLUSTER                 0x0001
+
+/* predefined macros: file system layout                  */
+#define FAT12_FAT_POSITION                            0x0001
+#define FAT12_FAT_SIZE                                0x0009
+#define FAT12_ROOT_POSITION                           0x0013
+#define FAT12_ROOT_SIZE                               0x000e
+#define FAT12_ROOT_ENTRIES                            0x00e0
+#define FAT12_END_OF_FILE                             0x0ff8
+
+/* predefined macros: boot loader                         */
+#define BOOT_SIGNATURE                                0xaa55
+
+/* user-defined macro functions */
+/* this macro is used to set the environment */
+.macro initEnvironment
+     call _initEnvironment
+.endm
+/* this macro is used to display a string    */
+/* onto the screen                           */
+/* it calls the function _writeString to     */
+/* perform the operation                     */
+/* parameter(s): input string                */
+.macro writeString message
+     pushw \message
+     call  _writeString
+.endm
+/* this macro is used to read a sector into  */
+/* the target memory                         */
+/* It calls the _readSector function with    */
+/* the following parameters                  */
+/* parameter(s): sector Number               */
+/*            address to load                */
+/*            offset of the address          */
+/*            Number of sectors to read      */
+.macro readSector sectorno, address, offset, totalsectors
+     pushw \sectorno
+     pushw \address
+     pushw \offset
+     pushw \totalsectors
+     call  _readSector
+     addw  $0x0008, %sp
+.endm
+/* this macro is used to find a file in the  */
+/* FAT formatted drive                       */
+/* it calls readSector macro to perform this */
+/* activity                                  */
+/* parameter(s): root directory position     */
+/*               target address              */
+/*               target offset               */
+/*               root directory size         */
+.macro findFile file
+     /* read fat table into memory */
+     readSector $FAT12_ROOT_POSITION, $BOOT_LOADER_CODE_AREA_ADDRESS, $BOOT_LOADER_ROOT_OFFSET, $FAT12_ROOT_SIZE
+     pushw \file
+     call  _findFile
+     addw  $0x0002, %sp
+.endm
+/* this macro is used to convert the given   */
+/* cluster into a sector number              */
+/* it calls _clusterToLinearBlockAddress to  */
+/* perform this activity                     */
+/* parameter(s): cluster number              */
+.macro clusterToLinearBlockAddress cluster
+     pushw \cluster
+     call  _clusterToLinearBlockAddress
+     addw  $0x0002, %sp
+.endm
+/* this macro is used to load a target file  */
+/* into the memory                           */
+/* It calls findFile and then loads the data */
+/* of the respective file into the memory at */
+/* address 0x1000:0x0000                     */
+/* parameter(s): target file name            */
+.macro loadFile file
+     /* check for file existence */
+     findFile \file
+
+     pushw %ax
+     /* read fat table into memory */
+     readSector $FAT12_FAT_POSITION, $BOOT_LOADER_CODE_AREA_ADDRESS, $BOOT_LOADER_FAT_OFFSET, $FAT12_FAT_SIZE
+
+     popw  %ax
+     movw  $BOOT_LOADER_STAGE2_OFFSET, %bx
+_loadCluster:
+     pushw %bx
+     pushw %ax
+ 
+     clusterToLinearBlockAddress %ax
+     readSector %ax, $BOOT_LOADER_STAGE2_ADDRESS, %bx, $BOOT_DISK_SECTORS_PER_CLUSTER
+
+     popw  %ax
+     xorw %dx, %dx
+     movw $0x0003, %bx
+     mulw %bx
+     movw $0x0002, %bx
+     divw %bx
+
+     movw $BOOT_LOADER_FAT_OFFSET, %bx
+     addw %ax, %bx
+     movw $BOOT_LOADER_CODE_AREA_ADDRESS, %ax
+     movw %ax, %es
+     movw %es:(%bx), %ax
+     orw  %dx, %dx
+     jz   _even_cluster
+_odd_cluster:
+     shrw $0x0004, %ax
+     jmp  _done 
+_even_cluster:
+     and $0x0fff, %ax
+_done:
+     popw %bx
+     addw $BOOT_DISK_BYTES_PER_SECTOR, %bx
+     cmpw $FAT12_END_OF_FILE, %ax
+     jl  _loadCluster
+
+     /* execute kernel */
+     initKernel     
+.endm
+/* parameter(s): target file name            */
+/* this macro is used to pass the control of */
+/* execution to the loaded file in memory at */
+/* address 0x1000:0x0000                     */
+/* parameters(s): none                       */
+.macro initKernel
+     /* initialize the kernel */
+     movw  $(BOOT_LOADER_STAGE2_ADDRESS), %ax
+     movw  $(BOOT_LOADER_STAGE2_OFFSET) , %bx
+     movw  %ax, %es
+     movw  %ax, %ds
+     jmp   $(BOOT_LOADER_STAGE2_ADDRESS), $(BOOT_LOADER_STAGE2_OFFSET)
+.endm 
+```
+
+File Name: routines.S
+
+```asm
+/*********************************************************************************
+ *                                                                               *
+ *                                                                               *
+ *    Name       : routines.S                                                    *
+ *    Date       : 23-Feb-2014                                                   *
+ *    Version    : 0.0.1                                                         *
+ *    Source     : assembly language                                             *
+ *    Author     : Ashakiran Bhatter                                             *
+ *                                                                               *
+ *                                                                               *
+ *********************************************************************************/
+/* user-defined routines */
+/* this function is used to set-up the */
+/* registers and stack as required     */
+/* parameter(s): none                  */
+_initEnvironment:
+     pushw %bp
+     movw  %sp, %bp
+_initEnvironmentIn:
+     cli
+     movw  %cs, %ax
+     movw  %ax, %ds
+     movw  %ax, %es
+     movw  %ax, %ss
+     movw  $BOOT_LOADER_STACK_SEGMENT, %sp
+     sti
+_initEnvironmentOut:
+     movw  %bp, %sp
+     popw  %bp
+ret
+
+/* this function is used to display a string */
+/* onto the screen                           */
+/* parameter(s): input string                */
+_writeString:
+     pushw %bp
+     movw  %sp   , %bp
+     movw 4(%bp) , %si
+     jmp  _writeStringCheckByte
+_writeStringIn:
+     movb $0x000e, %ah
+     movb $0x0000, %bh
+     int  $0x0010
+     incw %si
+_writeStringCheckByte:
+     movb (%si)  , %al
+     orb  %al    , %al
+     jnz  _writeStringIn
+_writeStringOut:
+     movw %bp    , %sp
+     popw %bp
+ret
+
+/* this function is used to read a sector    */
+/* into the target memory                    */
+/* parameter(s): sector Number               */
+/*            address to load                */
+/*            offset of the address          */
+/*            Number of sectors to read      */
+_readSector:
+     pushw %bp
+     movw %sp    , %bp
+
+     movw 10(%bp), %ax
+     movw $BOOT_DISK_SECTORS_PER_TRACK, %bx
+     xorw %dx    , %dx
+     divw %bx
+
+     incw %dx
+     movb %dl    , %cl
+
+     movw $BOOT_DISK_HEADS_PER_CYLINDER, %bx
+     xorw %dx    , %dx
+     divw %bx
+
+     movb %al    , %ch
+     xchg %dl    , %dh
+
+     movb $0x02  , %ah
+     movb 4(%bp) , %al
+     movb bootDrive, %dl
+     movw 8(%bp) , %bx
+     movw %bx    , %es
+     movw 6(%bp) , %bx
+     int  $0x13
+     jc   _abort
+     cmpb 4(%bp) , %al
+     jc   _abort
+
+     movw %bp    , %sp
+     popw %bp
+ret
+
+/* this function is used to find a file in   */
+/* the FAT formatted drive                   */
+/* parameter(s): root directory position     */
+/*               target address              */
+/*               target offset               */
+/*               root directory size         */
+_findFile:
+     pushw %bp
+     movw  %sp   , %bp
+
+     movw  $BOOT_LOADER_CODE_AREA_ADDRESS, %ax
+     movw  %ax   , %es
+     movw  $BOOT_LOADER_ROOT_OFFSET, %bx
+     movw  $FAT12_ROOT_ENTRIES, %dx
+     jmp   _findFileInitValues
+
+_findFileIn:
+     movw  $0x000b  , %cx
+     movw  4(%bp)   , %si
+     leaw  (%bx)    , %di
+     repe  cmpsb
+     je    _findFileOut
+_findFileDecrementCount:
+     decw  %dx
+     addw  $0x0020, %bx
+_findFileInitValues:
+     cmpw  $0x0000, %dx
+     jne   _findFileIn
+     je    _abort
+_findFileOut:
+     addw  $0x001a  , %bx
+     movw  %es:(%bx), %ax
+     movw  %bp, %sp
+     popw  %bp
+ret
+
+/* this function is used to convert the given*/
+/* cluster into a sector number              */
+/* parameter(s): cluster number              */
+_clusterToLinearBlockAddress:
+     pushw %bp
+     movw  %sp    , %bp
+     movw  4(%bp) , %ax
+_clusterToLinearBlockAddressIn:
+     subw  $0x0002, %ax
+     movw  $BOOT_DISK_SECTORS_PER_CLUSTER, %cx
+     mulw  %cx
+     addw  $FAT12_ROOT_POSITION, %ax
+     addw  $FAT12_ROOT_SIZE, %ax
+_clusterToLinearBlockAddressOut:
+     movw  %bp    , %sp
+     popw  %bp
+ret
+```
+
+File Name: stage0.ld
+
+This file is used to link the stage0.object file during the link time.
+
+```
+/*********************************************************************************
+ *                                                                               *
+ *                                                                               *
+ *    Name       : stage0.ld                                                     *
+ *    Date       : 23-Feb-2014                                                   *
+ *    Version    : 0.0.1                                                         *
+ *    Source     : assembly language                                             *
+ *    Author     : Ashakiran Bhatter                                             *
+ *                                                                               *
+ *                                                                               *
+ *********************************************************************************/
+SECTIONS
+{
+     . = 0x7c00;
+     .text :
+     {
+          _ftext = .;
+     } = 0
+}
+```
+
+## Mini-Project - Writing a 16-bit Kernel
+
+The below file is the source code of the dummy kernel that is being introduced as part of the testing process. All we have to do is to compile the source utilizing the make file and see if it gets loaded by the bootloader or not.
+
+A splash screen with a dragon image is displayed in text and then a welcome screen followed by a command prompt is displayed for the user to type in anything.
+
+There are no commands or utilities written in there to execute but just for our testing purpose this kernel is introduced which is worth nothing as of now.
+
+File Name: kernel.c
+
+```c
+/*********************************************************************************
+ *                                                                               *
+ *                                                                               *
+ *    Name       : kernel.c                                                      *
+ *    Date       : 23-Feb-2014                                                   *
+ *    Version    : 0.0.1                                                         *
+ *    Source     : C                                                             *
+ *    Author     : Ashakiran Bhatter                                             *
+ *                                                                               *
+ *    Description: This is the file that the stage0.bin loads and passes the     *
+ *                 control of execution to it. The main functionality of this    *
+ *                 program is to display a very simple splash screen and a       *
+ *                 command prompt so that the user can type commands             *
+ *    Caution    : It does not recognize any commands as they are not programmed *
+ *                                                                               *
+ *********************************************************************************/
+/* generate 16 bit code                                                 */
+__asm__(".code16\n");
+/* jump to main function or program code                                */
+__asm__("jmpl $0x1000, $main\n");
+
+#define TRUE  0x01
+#define FALSE 0x00
+
+char str[] = "$> ";
+
+/* this function is used to set-up the */
+/* registers and stack as required     */
+/* parameter(s): none                  */
+void initEnvironment() {
+     __asm__ __volatile__(
+          "cli;"
+          "movw $0x0000, %ax;"
+          "movw %ax, %ss;"
+          "movw $0xffff, %sp;"
+          "cld;"
+     );
+
+     __asm__ __volatile__(
+          "movw $0x1000, %ax;"
+          "movw %ax, %ds;"
+          "movw %ax, %es;"
+          "movw %ax, %fs;"
+          "movw %ax, %gs;"
+     );
+}
+
+/* vga functions */
+/* this function is used to set the   */
+/* the VGA mode to 80*24              */
+void setResolution() {
+     __asm__ __volatile__(
+          "int $0x10" : : "a"(0x0003)
+     );
+}
+
+/* this function is used to clear the */
+/* screen buffer by splitting spaces  */
+void clearScreen() {
+     __asm__ __volatile__ (
+          "int $0x10" : : "a"(0x0200), "b"(0x0000), "d"(0x0000)
+     );
+     __asm__ __volatile__ (
+          "int $0x10" : : "a"(0x0920), "b"(0x0007), "c"(0x2000)
+     );
+}
+
+/* this function is used to set the   */
+/* cursor position at a given column  */
+/* and row                            */
+void setCursor(short col, short row) {
+     __asm__ __volatile__ (
+          "int $0x10" : : "a"(0x0200), "d"((row <<= 8) | col)
+     );
+}
+
+/* this function is used enable and   */
+/* disable the cursor                 */
+void showCursor(short choice) {
+     if(choice == FALSE) {
+          __asm__ __volatile__(
+               "int $0x10" : : "a"(0x0100), "c"(0x3200)
+          );
+     } else {
+          __asm__ __volatile__(
+               "int $0x10" : : "a"(0x0100), "c"(0x0007)
+          );
+     }
+}
+
+/* this function is used to initialize*/
+/* the VGA to 80 * 25 mode and then   */
+/* clear the screen and set the cursor*/
+/* position to (0,0)                  */
+void initVGA() {
+     setResolution();
+     clearScreen();
+     setCursor(0, 0);
+}
+
+/* io functions */
+/* this function is used to get a chara*/
+/* cter from keyboard with no echo     */
+void getch() {
+     __asm__ __volatile__ (
+          "xorw %ax, %ax\n"
+          "int $0x16\n"
+     );
+}
+
+/* this function is same as getch()    */
+/* but it returns the scan code and    */
+/* ascii value of the key hit on the   */
+/* keyboard                            */
+short getchar() {
+     short word;
+
+     __asm__ __volatile__(
+          "int $0x16" : : "a"(0x1000)
+     );
+
+     __asm__ __volatile__(
+          "movw %%ax, %0" : "=r"(word)
+     );
+
+     return word;
+}
+
+/* this function is used to display the*/
+/* key on the screen                   */
+void putchar(short ch) {
+     __asm__ __volatile__(
+          "int $0x10" : : "a"(0x0e00 | (char)ch)
+     );
+}
+
+/* this function is used to print the  */
+/* null terminated string on the screen*/
+void printString(const char* pStr) {
+     while(*pStr) {
+          __asm__ __volatile__ (
+               "int $0x10" : : "a"(0x0e00 | *pStr), "b"(0x0002)
+          );
+          ++pStr;
+     }
+}
+
+/* this function is used to sleep for  */
+/* a given number of seconds           */
+void delay(int seconds) {
+     __asm__ __volatile__(
+          "int $0x15" : : "a"(0x8600), "c"(0x000f * seconds), "d"(0x4240 * seconds)
+     );
+}
+
+/* string functions */
+/* this function isused to calculate   */
+/* length of the string and then return*/
+/* it                                  */
+int strlength(const char* pStr) {
+     int i = 0;
+
+     while(*pStr) {
+          ++i;
+     }
+     return i;
+}
+
+/* UI functions */
+/* this function is used to display the */
+/* logo                                 */
+void splashScreen(const char* pStr) {
+     showCursor(FALSE);
+     clearScreen();
+     setCursor(0, 9);
+     printString(pStr);
+     delay(10);
+}
+
+/* shell */
+/* this function is used to display a   */
+/* dummy command prompt onto the screen */
+/* and it automatically scrolls down if */
+/* the user hits return key             */
+void shell() {
+     clearScreen();
+     showCursor(TRUE);
+     while(TRUE) {
+          printString(str);
+          short byte;
+          while((byte = getchar())) {
+               if((byte >> 8)  == 0x1c) {
+                    putchar(10);
+                    putchar(13);
+                    break;
+               } else {
+                    putchar(byte);
+               }
+          }
+     }
+}
+
+/* this is the main entry for the kernel*/
+void main() {
+     const char msgPicture[] = 
+             "                     ..                                              \n\r"
+             "                      ++`                                            \n\r"
+             "                       :ho.        `.-/++/.                          \n\r"
+             "                        `/hh+.         ``:sds:                       \n\r"
+             "                          `-odds/-`        .MNd/`                    \n\r"
+             "                             `.+ydmdyo/:--/yMMMMd/                   \n\r"
+             "                                `:+hMMMNNNMMMddNMMh:`                \n\r"
+             "                   `-:/+++/:-:ohmNMMMMMMMMMMMm+-+mMNd`               \n\r"
+             "                `-+oo+osdMMMNMMMMMMMMMMMMMMMMMMNmNMMM/`              \n\r"
+             "                ```   .+mMMMMMMMMMMMMMMMMMMMMMMMMMMMMNmho:.`         \n\r"
+             "                    `omMMMMMMMMMMMMMMMMMMNMdydMMdNMMMMMMMMdo+-       \n\r"
+             "                .:oymMMMMMMMMMMMMMNdo/hMMd+ds-:h/-yMdydMNdNdNN+      \n\r"
+             "              -oosdMMMMMMMMMMMMMMd:`  `yMM+.+h+.-  /y `/m.:mmmN      \n\r"
+             "             -:`  dMMMMMMMMMMMMMd.     `mMNo..+y/`  .   .  -/.s      \n\r"
+             "             `   -MMMMMMMMMMMMMM-       -mMMmo-./s/.`         `      \n\r"
+             "                `+MMMMMMMMMMMMMM-        .smMy:.``-+oo+//:-.`        \n\r"
+             "               .yNMMMMMMMMMMMMMMd.         .+dmh+:.  `-::/+:.        \n\r"
+             "               y+-mMMMMMMMMMMMMMMm/`          ./o+-`       .         \n\r"
+             "              :-  :MMMMMMMMMMMMMMMMmy/.`                             \n\r"
+             "              `   `hMMMMMMMMMMMMMMMMMMNds/.`                         \n\r"
+             "                  sNhNMMMMMMMMMMMMMMMMMMMMNh+.                       \n\r"
+             "                 -d. :mMMMMMMMMMMMMMMMMMMMMMMNh:`                    \n\r"
+             "                 /.   .hMMMMMMMMMMMMMMMMMMMMMMMMh.                   \n\r"
+             "                 .     `sMMMMMMMMMMMMMMMMMMMMMMMMN.                  \n\r"
+             "                         hMMMMMMMMMMMMMMMMMMMMMMMMy                  \n\r"
+             "                         +MMMMMMMMMMMMMMMMMMMMMMMMh                      ";
+     const char msgWelcome[] = 
+             "              *******************************************************\n\r"
+             "              *                                                     *\n\r"
+             "              *        Welcome to kirUX Operating System            *\n\r"
+             "              *                                                     *\n\r"
+             "              *******************************************************\n\r"
+             "              *                                                     *\n\r" 
+             "              *                                                     *\n\r"
+             "              *        Author : Ashakiran Bhatter                   *\n\r"
+             "              *        Version: 0.0.1                               *\n\r"
+             "              *        Date   : 01-Mar-2014                         *\n\r"
+             "              *                                                     *\n\r"
+             "              ******************************************************";
+     initEnvironment(); 
+     initVGA();
+     splashScreen(msgPicture);
+     splashScreen(msgWelcome);
+
+     shell(); 
+
+     while(1);
+}
+```
