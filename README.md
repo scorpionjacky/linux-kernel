@@ -1,6 +1,7 @@
 # linux-kernel
 
 - Source Code
+- Alternatives
 - Ancient Code
 - [Tools](#tools)
 - [Others](#others)
@@ -21,6 +22,22 @@ LXR
 - [Linux Cross Reference (LXR)](http://lxr.linux.no/)
 - [TOMOYO Linux Cross Reference Linux](http://tomoyo.osdn.jp/cgi-bin/lxr/source)
 
+## Linux Alternatives
+
+https://en.wikipedia.org/wiki/Lions'_Commentary_on_UNIX_6th_Edition,_with_Source_Code
+
+FreeBSD/OpenBSD
+
+https://www.minix3.org/
+
+https://pdos.csail.mit.edu/6.828/2012/xv6.html
+
+FreeRTOS
+- https://www.freertos.org/
+- https://github.com/FreeRTOS/FreeRTOS
+
+[GNU Hurd](https://github.com/joshumax/hurd)
+  - [GNU Mach](https://github.com/flavioc/gnumach)
 
 ## Ancient Code
 
@@ -149,12 +166,16 @@ Memory
 
 1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
 
+- https://github.com/cirosantilli/linux-kernel-module-cheat
 - [The Linux Kernel Archives](https://www.kernel.org)
   - https://www.kernel.org/doc/
   - https://www.kernel.org/doc/html/latest/
   - https://www.kernel.org/doc/Documentation/x86/
   - [Kernel Hacking Guides](https://www.kernel.org/doc/html/latest/kernel-hacking/index.html)
 - [0xAX/linux-insides](https://github.com/0xAX/linux-insides)
+- [kernelnewbies](https://kernelnewbies.org/Documents)
+  - https://kernelnewbies.org/FirstKernelPatch
+  - https://kernelnewbies.org/KernelProjects
 - Packt.-.Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
 - Packt.-.Linux Device Drivers Development Develop Customized Drivers for Embedded Linux.-.(Oct 2017).-.978-1785280009
 - CRC.-.The Art of Linux Kernel Design Illustrating the Operating System Design Principle and Implementation.-.(Apr 2014).-.978-1466518032
@@ -163,11 +184,12 @@ Memory
 - Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
 - [The Linux Kernel Module Programming Guide](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/docs/lkmpg/), or [pdf](https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf) (2001, 2007−05−18 ver 2.6.4)
 - OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
-- [Understanding the Linux Kernel, 3E] (2005)
+- [Understanding the Linux Kernel, 3E] (2005), kernel 2.6
+  - Understanding the Linux Kernel, 2E (????), kernel 2.4
 - Prentice Hall.-.The Linux Kernel Primer A Top-Down Approach for x86 and PowerPC Architectures.-.(2005).-.978-0131181632
 - Novell.-.Linux Kernel Development, 2ed.-.(Jan 2005).-.978-0672327209
 - Linux Device Drivers, 3ed, OReilly (Feb 2005) 978-0596005900
-  - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080
+  - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080 [online](https://www.xml.com/ldd/chapter/book/index.html) kernel 2.4
   - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
 - [Unreliable Guide To Hacking The Linux Kernel](https://www.kernel.org/doc/htmldocs/kernel-hacking)
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
@@ -199,11 +221,16 @@ Memory
 - [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
   - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
 
-[Writing a boot loader in Assembly and C](https://www.codeproject.com/search.aspx?q=Writing+a+boot+loader+in+Assembly)
-  - [Part 1](https://www.codeproject.com/Articles/664165/Writing-a-boot-loader-in-Assembly-and-C-Part)
-  - [Part 2](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2)
-  - [Writing a 16-bit dummy kernel in C/C++](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
-  - [How to develop your own Boot Loader](https://www.codeproject.com/Articles/36907/How-to-develop-your-own-Boot-Loader)
+Interview Questions
+- https://www.careercup.com/page?pid=linux-kernel-interview-questions&sort=votes&n=2
+- https://www.careercup.com/page?pid=linux-kernel-interview-questions
+- https://play.google.com/store/apps/details?id=learn.LinuxKernelInterviewTopics&hl=en_US
+- https://www.quora.com/If-I-want-to-work-as-kernel-developer-for-Google-should-I-focus-on-contributing-to-the-Linux-kernel-and-open-source-or-focus-on-problem-solving-and-algorithms-to-pass-a-Google-interview
+  - [How can I get a job at ...](https://www.quora.com/How-can-I-get-a-job-at-Facebook-or-Google-in-6-months-I-need-a-concise-work-plan-to-build-a-good-enough-skill-set-Should-I-join-some-other-start-up-or-build-my-own-projects-start-up-Should-I-just-focus-on-practicing-data-structures-and-algorithms)
+- https://android.googlesource.com/device/generic/brillo/+/master/docs/KernelDevelopmentGuide.md
+- http://www.remword.com/kps_result/all_whole.html
+
+[How to develop your own Boot Loader](https://www.codeproject.com/Articles/36907/How-to-develop-your-own-Boot-Loader)
 
 [Tony Bai](https://tonybai.com)
   - [github home](https://github.com/bigwhite)
