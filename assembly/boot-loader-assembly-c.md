@@ -1662,6 +1662,24 @@ void main() {
 }
 ```
 
+Files
+
+```
+bin  iso  kernel  log  src
+
+../bin:
+
+../iso:
+
+../kernel:
+kernel.c  kernel.ld
+
+../log:
+
+../src:
+bochsrc.txt  macros.S  Makefile  routines.S  stage0.ld  stage0.S
+```
+
 The make file need to change to use 32bit.
 
 ```make
