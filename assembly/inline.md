@@ -9,6 +9,8 @@ GNU C compiler i.e. GCC uses AT&T syntax
 5. Memory Operands: "movl $bar, %ebx" puts the address of variable bar into register %ebx, while "movl bar, %ebx" puts the contents of variable bar into register %ebx.
 6. Indexing: Indexing or indirection is done by enclosing the index register or indirection memory cell address in parentheses. For example, "movl 8(%ebp), %eax" (moves the contents at offset 8 from the cell pointed to by %ebp into register %eax).
 
+*Note: In Intel's format `bar` gives pointer to the variable while `[bar]` gives its value.*
+
 Examples
 
 ```c
