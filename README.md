@@ -142,7 +142,9 @@ MGW (Minimalist GNU for Windows)
 
 https://wiki.gentoo.org/wiki/Main_Page
 
-https://jasonblog.github.io/note/index.html
+- https://jasonblog.github.io/note/index.html
+- https://github.com/shichao-an/notes
+  - https://notes.shichao.io/utlk/
 
 [coreboot](https://www.coreboot.org/)
   - [System76](https://system76.com/)
