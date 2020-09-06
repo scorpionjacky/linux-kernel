@@ -145,6 +145,8 @@ https://wiki.gentoo.org/wiki/Main_Page
 - https://jasonblog.github.io/note/index.html
 - https://github.com/shichao-an/notes
   - https://notes.shichao.io/utlk/
+- https://0xax.gitbooks.io/linux-insides/content/
+  - https://github.com/0xAX/linux-insides
 
 [coreboot](https://www.coreboot.org/)
   - [System76](https://system76.com/)
