@@ -682,7 +682,7 @@ Now DS becomes 0x7c00 (16 * AX).
 
 *Note that segment registers can be set only through general registers*
 
-## Reading data from RAM
+### Reading data from RAM
 
 Example 1: test.S
 
@@ -764,7 +764,7 @@ _freeze:
      .byte 0xaa                             #append boot signature  
 ```
 
-## Interaction with a floppy disk
+### Interaction with a floppy disk
 
 As our mission in this article is to read data from a floppy disk, the only choice left to us as of now is to use BIOS Services in our program as during the boot time we are in Real Mode to interact with the floppy disk. We need to use BIOS Interrupts to achieve our task.
 
@@ -780,7 +780,7 @@ How to access a floppy disk using the interrupt 0x13?
 - AL = N: To request BIOS to read ‘N’ number of sectors we use below.
 - Int 0x13: To interrupt the CPU to perform this activity we use below.
 
-## Reading data from Floppy Disk
+### Reading data from Floppy Disk
 
 Example: test.S
 
@@ -889,8 +889,73 @@ Compile and save the executable as kernel.bin
 Part 2:
 - In our boot-loader, all we can do is to load the second sector(kernel.bin) of the bootable drive into the RAM memory at address say 0x1000 and then jump to the location 0x1000 from 0x7c00 to start executing the kernel.bin file.
 
+### FAT File System
 
-## Writing a FAT boot-loader
+- Boot Sector: 512 Bytes, Start: 0
+- FAT Table No: 1, Size: 9\*512 bytes, Start Position: 1, End Position: 9
+- FAT Table No: 2, Size: 9\*512 bytes, Start Position: 10, End Position: 18
+- Root Directory, Size: 14\*512 Bytes, Start Position: 19, End Position: 32
+- Data Area, Size: 2847\*512, Start Position: 33, End Position: 2879
+
+Boot Sector:
+
+A boot sector on a FAT formatted disk is embedded with a some information related to FAT so that each time the disk is inserted into a system, its file system is automatically known by the Operating System.
+
+The operating system reads the boot sector of the FAT formatted disk and then parses the required information and then recognizes the type of file system and then starts reading the contents accordingly.
+
+The information about FAT file system that is embedded inside a boot sector is called as Boot Parameter Block.
+
+Boot Parameter Block:
+
+Let me present you the values inside a boot parameter block with respect to boot sector.
+
+![FAT Boot Parameter Block](https://www.codeproject.com/KB/cpp/737545/fat12BPB.png)
+
+File Allocation Table:
+
+This table acts like a linked list containing the next cluster value of a file.
+
+The cluster value obtained from FAT for a particular file is useful in two ways.
+
+- To determine the End of File
+ - If the cluster value is in between 0x0ff8 and 0x0fff, then the file does not have data in other sectors( End of File is reached ).
+- To determine the next sector where the file's data is located
+
+Note:
+
+I have mentioned in the picture about FAT table 1 & 2. All you need to remember is that one table is a copy of another. In case data from one is lost or corrupted, the data from the other table can act as a backup. This was the pure intention of introducing two tables rather than one.
+
+Root Directory:
+
+The root directory acts like an index to a list of all file names present on the disk. So the bootloader should search for the file name in the root directory and if it is positive then it can find the first cluster in the root directory and then load the data accordingly.
+
+Now after finding the first cluster from the root directory, the bootloader should use the FAT table to find the next clusters in order to check for the end of file.
+
+Data Area:
+
+This is the area which actually contains the data of the file(s).
+
+Once the proper sector of the file is identified by the program, the data of the file can be extracted from the data area.
+
+### FAT workflow
+
+Suppose, say our boot-loader should load kernel.bin file into the memory and then execute it. Now, in this scenario all we have to do is to code the below functionality into our boot-loader.
+
+Compare the first 11 bytes of data with "kernel.bin" starting at offset 0 in root directory table.
+
+If the string matches then extract the first cluster of the "kernel.bin" file at offset 26 in root directory table.
+
+Now you have the starting cluster of the "kernel.bin" file.
+
+All you have to do is to convert the cluster into the respective sector and then load the data into memory.
+
+Now after finding the first sector of the "kernel.bin" file, load into memory and then look up in File Allocation Table for next cluster of the file to check if the file still has data or end of file is reached.
+
+Below is the diagram for your reference.
+
+![FAT Workflow](https://www.codeproject.com/KB/cpp/737545/fatWorkflow.png)
+
+### Writing a FAT boot-loader
 
 File Name: stage0.S
 
@@ -1327,7 +1392,7 @@ SECTIONS
 }
 ```
 
-## Mini-Project - Writing a 16-bit Kernel
+### Mini-Project - Writing a 16-bit Kernel
 
 The below file is the source code of the dummy kernel that is being introduced as part of the testing process. All we have to do is to compile the source utilizing the make file and see if it gets loaded by the bootloader or not.
 
