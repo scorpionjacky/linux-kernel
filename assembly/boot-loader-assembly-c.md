@@ -4,6 +4,9 @@
 [*Part 2*](https://www.codeproject.com/Articles/668422/Writing-a-boot-loader-in-Assembly-and-C-Part-2), 
 [*Writing a 16-bit dummy kernel in C/C++*](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
 
+- Part 1
+- [Part 2](#part2)
+- [Kernel with FAT](#kernel)
 
 What are registers?
 
@@ -653,6 +656,7 @@ void main() {
 }
 ```
 
+<a id="part2"></a>
 ## Introduction to Segmentation
 
 **Code Segment (CS)**
@@ -874,7 +878,7 @@ What is the purpose of setting the extended segment?
 
 First we read a sector into our program memory at 0x9000 and then start displaying the content of the sector. That is why we set the Extended segment to 0x9000.
 
-
+<a id="kernel"></a>
 ## Writing a 16-bit dummy kernel in C/C++
 
 [*Writing a 16-bit dummy kernel in C/C++*](https://www.codeproject.com/Articles/737545/Writing-a-bit-dummy-kernel-in-C-Cplusplus)
