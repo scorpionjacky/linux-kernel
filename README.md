@@ -133,7 +133,7 @@ https://jasonblog.github.io/note/index.html
     - System76 introduces [laptops with open source BIOS coreboot](https://opensource.com/article/19/11/coreboot-system76-laptops)
   - [Purism](https://puri.sm/)
   
--Startup
+-Booting
   - [UEFI... The Microsoft Kill Switch](https://learnlinuxandlibreoffice.org/1-why-switch-to-linux/1-4-uefi-the-microsoft-kill-switch)
   - [Linux startup process](https://en.wikipedia.org/wiki/Linux_startup_process)
   - [Stages of Linux booting process](https://www.crybit.com/linux-boot-process/) (January 6, 2019)
@@ -143,6 +143,9 @@ https://jasonblog.github.io/note/index.html
   - [Linux Boot Process](https://medium.com/devops-world/linux-boot-process-39b58198b791)
   - [Understanding the Boot process — BIOS vs UEFI](https://linuxhint.com/understanding_boot_process_bios_uefi/)
   - [GUID Partition Table](https://en.wikipedia.org/wiki/GUID_Partition_Table#Operating_System_support_of_GPT)
+
+Memory
+  - [Memory Addressing](https://notes.shichao.io/utlk/ch2/), [@github](https://github.com/shichao-an/notes/blob/master/docs/utlk/ch2.md) ([UTLK](https://notes.shichao.io/utlk/))
 
 1494|2006-11-07|5395338|ebooks1|A Heavily Commented Linux Kernel Source Code.(2004).cn.pdf|pack01|/preprocess|H:/eBooks/xpub/Pack01
 
