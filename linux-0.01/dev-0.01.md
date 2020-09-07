@@ -466,6 +466,10 @@ create a customized include/linux/sched.h:
 #include <linux/head.h>
 #include <linux/fs.h>
 
+#ifndef NULL
+#define NULL    ((void *)0)
+#endif
+
 #define NR_TASKS 64
 
 #define TASK_RUNNING		0
@@ -567,17 +571,32 @@ struct task_struct {
 	}, \
 }
 
+#define FIRST_TSS_ENTRY 4
+#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
+#define _TSS(n) ((((unsigned long) n)<<4)+(FIRST_TSS_ENTRY<<3))
+#define _LDT(n) ((((unsigned long) n)<<4)+(FIRST_LDT_ENTRY<<3))
+
 extern void schedule(void);
 extern struct task_struct *task[NR_TASKS];
 extern struct task_struct *last_task_used_math;
 extern struct task_struct *current;
 extern long volatile jiffies;
+
+extern void interruptible_sleep_on(struct task_struct ** p);
+extern void wake_up(struct task_struct ** p);
 ```
 
 create a customized kernel/sched.c:
 
 ```c
 #include <linux/sched.h>
+
+#include <asm/system.h>
+#include <asm/io.h>
+#include <asm/segment.h>
+
+// from linux/mm.h
+#define PAGE_SIZE 4096
 
 union task_union {
 	struct task_struct task;
@@ -592,8 +611,8 @@ void interruptible_sleep_on(struct task_struct **p)
 
 	if (!p)
 		return;
-	if (current == &(init_task.task))
-		panic("task[0] trying to sleep");
+	//if (current == &(init_task.task))
+	//	panic("task[0] trying to sleep");
 	tmp=*p;
 	*p=current;
 repeat:	current->state = TASK_INTERRUPTIBLE;
@@ -633,6 +652,9 @@ Makefile
 ```make
 LIBS    =lib/lib.a
 
+lib/lib.a:
+	(cd lib; make)
+
 clean:
         rm -f Image System.map tmp_make boot/boot core
         rm -f init/*.o boot/*.o tools/system tools/build tools/system.bin
@@ -646,8 +668,102 @@ kernel/Makefile
 OBJS  =mktime.o tty_io.o console.o keyboard.o rs_io.o sched.o
 ```
 
-Make lib/Makefile to compile only for errono.o and ctype.o.
+Make lib/Makefile to compile only for errno.o and ctype.o.
 
+build output:
+```
+$ make
+(cd lib; make)
+make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o ctype.o ctype.c
+make[1]: *** No rule to make target 'errono.o', needed by 'lib.a'.  Stop.
+make[1]: Leaving directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+Makefile:56: recipe for target 'lib/lib.a' failed
+make: *** [lib/lib.a] Error 2
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ vi lib/Makefile
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ vi lib/Makefile
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ ls lib
+ctype.c  ctype.o  errno.c  Makefile
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ vi lib/Makefile
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ make clean
+rm -f Image System.map tmp_make boot/boot core
+rm -f init/*.o boot/*.o tools/system tools/build tools/system.bin
+(cd kernel;make clean)
+make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel'
+rm -f core *.o *.a tmp_make
+for i in *.c;do rm -f `basename $i .c`.s;done
+make[1]: Leaving directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel'
+(cd lib;make clean)
+make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+rm -f core *.o *.a tmp_make
+for i in *.c;do rm -f `basename $i .c`.s;done
+make[1]: Leaving directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+ubuntu@ip-172-24-68-210:~/linux_kernel/linux-dev/tty-init$ make
+as --32  --32 -o boot/head.o boot/head.s
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector -fno-builtin -g -m32 \
+-nostdinc -Iinclude -c -o init/main.o init/main.c
+(cd kernel; make)
+make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel'
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o mktime.o mktime.c
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o tty_io.o tty_io.c
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o console.o console.c
+as --32 -o keyboard.o keyboard.s
+as --32 -o rs_io.o rs_io.s
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o sched.o sched.c
+ld -m  elf_i386  -r -o kernel.o mktime.o tty_io.o console.o keyboard.o rs_io.o sched.o
+sync
+make[1]: Leaving directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel'
+(cd lib; make)
+make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o ctype.o ctype.c
+gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
+-c -o errno.o errno.c
+ar rcs lib.a ctype.o errno.o
+sync
+make[1]: Leaving directory '/home/ubuntu/linux_kernel/linux-dev/tty-init/lib'
+ld -m  elf_i386  -M -Ttext 0 -e startup_32 boot/head.o init/main.o \
+kernel/kernel.o \
+lib/lib.a \
+-o tools/system > System.map
+kernel/kernel.o: In function `tty_init':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:96: undefined reference to `rs_init'
+kernel/kernel.o: In function `tty_intr':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:108: undefined reference to `task'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:108: undefined reference to `task'
+kernel/kernel.o: In function `tty_read':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:204: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:209: undefined reference to `jiffies'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:210: undefined reference to `jiffies'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:215: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:219: undefined reference to `current'
+kernel/kernel.o: In function `sleep_if_empty':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:114: undefined reference to `current'
+kernel/kernel.o: In function `tty_read':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:239: undefined reference to `jiffies'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:240: undefined reference to `jiffies'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:250: undefined reference to `current'
+kernel/kernel.o: In function `sleep_if_full':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:124: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:124: undefined reference to `current'
+kernel/kernel.o: In function `tty_write':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:266: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/tty_io.c:289: undefined reference to `schedule'
+kernel/kernel.o: In function `interruptible_sleep_on':
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/sched.c:27: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/sched.c:28: undefined reference to `current'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/sched.c:29: undefined reference to `schedule'
+/home/ubuntu/linux_kernel/linux-dev/tty-init/kernel/sched.c:30: undefined reference to `current'
+kernel/kernel.o:(.data+0xcac): undefined reference to `rs_write'
+kernel/kernel.o:(.data+0x190c): undefined reference to `rs_write'
+Makefile:47: recipe for target 'tools/system' failed
+make: *** [tools/system] Error 1
+```
 
 https://blogs.oracle.com/d/inline-functions-in-c
 
