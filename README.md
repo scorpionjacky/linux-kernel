@@ -63,6 +63,12 @@ Minimal Linux
 - https://linuxboot.org/
 - DIY: Build a Custom Minimal Linux Distribution from Source: [part 1](https://www.linuxjournal.com/content/diy-build-custom-minimal-linux-distribution-source), [part2](https://www.linuxjournal.com/content/build-custom-minimal-linux-distribution-source-part-ii)
 
+2.0
+- https://github.com/kalamangga-net/linux-2.0
+
+1.0
+- https://github.com/kalamangga-net/linux-1.0
+
 0.12
 - Build OK
   - https://github.com/sky-big/Linux-0.12
