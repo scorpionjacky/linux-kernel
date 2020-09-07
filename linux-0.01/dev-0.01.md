@@ -296,6 +296,95 @@ Boot sector 452 bytes.
 System 25392 bytes.
 ```
 
+## trap_init()
+
+- #include <string.h>
+- #include <linux/head.h> (uses idt)
+  - typedef struct desc_struct {}
+  - extern unsigned long pg_dir[1024];
+  - extern desc_table idt,gdt;
+  - #define GDT_NUL 0 | GDT_CODE 1 | GDT_DATA 2 | GDT_TMP 3
+  - #define LDT_NUL 0 | LDT_CODE 1 | LDT_DATA 2
+- #include <linux/sched.h> (using *current)
+- #include <linux/kernel.h> (ignore it if we don't use printk())
+  - void verify_area(void * addr,int count);
+  - void panic(const char * str);
+  - int printf(const char * fmt, ...);
+  - int printk(const char * fmt, ...);
+  - int tty_write(unsigned ch,char * buf,int count);
+- #include <asm/system.h>
+- #include <asm/segment.h>
+- die()
+- void trap_init(void)
+
+kernel/asm.s
+- .globl divide_error,debug,nmi,int3,overflow,bounds,invalid_op
+- .globl device_not_available,double_fault,coprocessor_segment_overrun
+- .globl invalid_TSS,segment_not_present,stack_segment
+- .globl general_protection,coprocessor_error,reserved
+
+all symbols above are referenced in traps.c by trap.init(), and still needing &page_fault
+
+mm/page.s (page.s contains the low-level page-exception code. the real work is done in mm.c)
+- .globl page_fault
+- call do_no_page
+- call do_wp_page
+
+kernel/exit.c (do_exit() referenced in traps.c)
+- #include <errno.h>
+- #include <signal.h>
+- #include <sys/wait.h>
+- #include <linux/sched.h>
+- #include <linux/kernel.h>
+- #include <linux/tty.h>
+- #include <asm/segment.h>
+- int sys_pause(void);
+- int sys_close(int fd);
+- void release(struct task_struct * p){}
+- void do_kill(long pid,long sig,int priv){}
+- int sys_kill(int pid,int sig){}
+- int do_exit(long code){}
+- int sys_exit(int error_code){}
+- int sys_waitpid(pid_t pid,int * stat_addr, int options){}
+
+
+[system calls](https://tldp.org/LDP/khg/HyperNews/get/syscall/syscall86.html) from [Linux Kernel Hackers' Guide](https://tldp.org/LDP/khg/HyperNews/get/khg.html), or [mirro](http://mirrors.kernel.org/LDP/)
+
+[A small trail through the Linux kernel](https://www.win.tue.nl/~aeb/linux/vfs/trail.html)
+
+https://blog.packagecloud.io/eng/2016/04/05/the-definitive-guide-to-linux-system-calls/
+
+https://linux-kernel-labs.github.io/refs/heads/master/lectures/syscalls.html
+
+What do we do?
+
+traps.c:
+- change die() to do nothing (avoid using printk())
+  - this avoids using printk()
+  - this also avoids referencing `*current` from sched.c
+- comment out include for sched.h, kernel.h, string.h
+- do_int3(): comment out calls to printk()
+
+kernel/Makefile:
+- add asm.o, traps.o for compilation
+
+```bash
+cp ../../mariuz-0.01/linux-0.01/include/asm/segment.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/asm/system.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/linux/head.h linux
+# cp ../../mariuz-0.01/linux-0.01/include/string.h include/
+cp ../../mariuz-0.01/linux-0.01/kernel/traps.c kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/asm.s kernel/
+```
+
+main.c
+- add trap_init() to main() function
+
+```c
+// from sched.h
+extern void trap_init(void);
+```
+
 ## lib
 
 lib
