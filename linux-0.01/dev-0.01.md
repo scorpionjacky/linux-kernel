@@ -339,7 +339,9 @@ System 25392 bytes.
 - die()
 - void trap_init(void)
 
-kernel/asm.s
+kernel/asm.s + kernel/system_call.s + kernel/sys.c + kernel/traps.c: interrupt and exceptions registration
+
+kernel/asm.s (in Linux 1.0, it is moved to sys_call.S; system_call.s is renamed to sys_call.S)
 - .globl divide_error,debug,nmi,int3,overflow,bounds,invalid_op
 - .globl device_not_available,double_fault,coprocessor_segment_overrun
 - .globl invalid_TSS,segment_not_present,stack_segment
