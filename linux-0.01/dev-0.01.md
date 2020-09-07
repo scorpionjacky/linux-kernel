@@ -296,26 +296,168 @@ Boot sector 452 bytes.
 System 25392 bytes.
 ```
 
+## lib
+
+lib
+- \_exit.c (void \_exit(int exit_code))
+  - unistd.h
+- close.c (\_syscall1(int,close,int,fd))
+  - unistd.h
+- ctype.c (signed char \_ctmp; unsigned char \_ctype[])
+  - ctype.h
+- dup.c (\_syscall1(int,dup,int,fd))
+  - unistd.h
+- errno.c (int errno;)
+- execve.c (`_syscall3(int, execve, const char*, file, char**, argv, char**, envp)`)
+  - unistd.h
+- open.c (`int open(const char * filename, int flag, ...)`)
+  - unistd.h
+  - stdarg.h
+- setsid.c (\_syscall0(pid_t,setsid))
+  - unistd.h
+- string.c
+  - string.h (independent, details see below)
+- wait.c (`_syscall3(pid_t,waitpid,pid_t,pid,int *,wait_stat,int,options)`, `pid_t wait(int * wait_stat) {return waitpid(-1,wait_stat,0);}`)
+  - unistd.h
+  - sys/wait.h
+    - [sys/types.h](https://github.com/mariuz/linux-0.01/blob/master/include/sys/types.h) (indepedent)
+- write.c (`_syscall3(int,write,int,fd,const char *,buf,off_t,count)`)
+  - unistd.h
+
+- ctype.h: only tied to ctype.c
+- stdarg.h: (independent)
+- string.h: (indepedent)
+  - #define NULL ((void *) 0)
+  - typedef unsigned int size_t;
+  - extern char * strerror(int errno);
+  - extern inline char * strcpy(char * dest,const char *src)
+  - extern inline char * strncpy(char * dest,const char *src,int count)
+  - extern inline char * strcat(char * dest,const char * src)
+  - extern inline char * strncat(char * dest,const char * src,int count)
+  - extern inline int strcmp(const char * cs,const char * ct)
+  - extern inline int strncmp(const char * cs,const char * ct,int count)
+  - extern inline char * strchr(const char * s,int c)
+  - extern inline char * strrchr(const char * s,int c)
+  - extern inline int strspn(const char * cs, const char * ct)
+  - extern inline int strcspn(const char * cs, const char * ct)
+  - extern inline char * strpbrk(const char * cs,const char * ct)
+  - extern inline char * strstr(const char * cs,const char * ct)
+  - extern inline int strlen(const char * s)
+  - extern char * ___strtok;
+  - extern inline char * strtok(char * s,const char * ct)
+  - extern inline void * memcpy(void * dest,const void * src, int n)
+  - extern inline void * memmove(void * dest,const void * src, int n)
+  - extern inline int memcmp(const void * cs,const void * ct,int count)
+  - extern inline void * memchr(const void * cs,char c,int count)
+  - extern inline void * memset(void * s,int c,int count)
+- [unistd.h](https://github.com/mariuz/linux-0.01/blob/master/include/unistd.h)
+  - #define STDIN_FILENO	0
+  - #define STDOUT_FILENO	1
+  - #define STDERR_FILENO	2
+  - #define NULL ((void *)0)
+  - sys/stat.h
+    - sys/types.h
+    - stdint.h (independent)
+      - bits/wchar.h, bits/wordsize.h
+    - fs/stat.c
+      - *more includes*
+  - sys/times.h
+    - sys/types.h
+    - struct tms {}
+    - extern time_t times(struct tms * tp);
+  - sys/utsname.h
+    - struct utsname {...}
+    - extern int uname (struct utsname *__name);
+  - utime.h
+  - dirent.h
+  - #define __NR_setup , up to 221, used only by init, to get system going
+  - ...
+  - #define _syscall0(type,name)
+  - #define _syscall1(type,name,atype,a)
+  - #define _syscall2(type,name,atype,a,btype,b)
+  - #define _syscall3(type,name,atype,a,btype,b,ctype,c)
+  - extern int errno;
+  - a lot of Unix standard function protocols
+- sys/wait.h
+
+Basically all header files in include/sys and include/bits have been referenced above:
+- include/sys
+  - stat.h
+  - times.h
+  - types.h
+  - utsname.h
+  - wait.h
+- bits
+  - wchar.h
+  - wordsize.h
+
+lib/string.c + include/string.h are completely independent
+
+`include/asm/*.h` are completely independent
+
+`include/bits/wchar.h` and `include/bits/wordsize.h` are completely independent, and only used by `include/stdint.h`.
+
+`include/errno.h` and `lib/errno.c` are completely independent.
+
 ## tty_init()
 
 `cp ../mariuz*/*/include/asm/io.h include/asm`
 
 Now the next one is `tty_ini()`:
 - kernel/tty_io.c
-  - ctype.h
+  - include/ctype.h
+    - lib/ctype.c
   - errno.h
-  - signal.h
-  - linux/sched.h
+    - extern int errno;
+  - signal.h  ???
+  - linux/sched.h  (references `task_struct *task|*current`)
+    - linux/head.h
+    - linux/fs.h
+    - linux/mm.h
   - linux/tty.h
+   - include/termios.h (independent)
   - asm/segment.h (indepedent)
   - asm/system.h (indepedent)
   - kernel/rs_io.s (globl rs1_interrupt,rs2_interrupt)
   - kernel/console.c
-    - linux/sched.h
+    - linux/sched.h ??? what's for
     - linux/tty.h
     - asm/io.h
     - asm/system.h
-    - keyboard.s (.globl keyboard_interrupt)
+    - kernel/keyboard.s (.globl keyboard_interrupt) (independent)
+
+```bash
+cp ../../mariuz-0.01/linux-0.01/kernel/tty_io.c kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/rs_io.s kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/console.c kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/keyboard.s kernel/
+cp ../../mariuz-0.01/linux-0.01/include/asm/segment.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/asm/system.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/linux/tty.h include/linux/
+cp ../../mariuz-0.01/linux-0.01/include/ctype.h include/
+cp ../../mariuz-0.01/linux-0.01/lib/ctype.c lib/
+cp ../../mariuz-0.01/linux-0.01/include/errno.h include/
+cp ../../mariuz-0.01/linux-0.01/lib/errno.c lib/
+cp ../../mariuz-0.01/linux-0.01/include/termios.h include/
+```
+
+main.c
+
+```c
+#include <linux/tty.h>
+
+int main() {
+	...
+	tty_init();
+	...
+}
+```
+
+kernel/Makefile
+
+```make
+OBJS  =mktime.o tty_io.o console.o keyboard.o rs_io.o
+```
 
 
 https://blogs.oracle.com/d/inline-functions-in-c
