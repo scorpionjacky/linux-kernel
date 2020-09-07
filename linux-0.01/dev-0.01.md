@@ -1,5 +1,27 @@
 # Self-Built 0.01
 
+## what does main() do
+
+```c
+int main() {
+  time_init();
+  tty_init();
+  trap_init();
+  sched_init();
+  buffer_init();
+  hd_init();
+  sti();
+  move_to_user_mode();
+  
+  if (!fork()) {init();}
+  
+  //go check if some other task can run, and if not we return here.
+  for(;;) pause(); 
+
+  return 0;
+}
+```
+
 ## include/asm/*
 
 Header files in `include/asm` all all aseembly code and are indepedent and foundamental. They will be included in the source tree.
