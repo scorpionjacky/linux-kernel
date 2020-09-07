@@ -410,8 +410,9 @@ Now the next one is `tty_ini()`:
   - errno.h
     - extern int errno;
   - signal.h  ???
+    - include/sys/types.h
   - linux/sched.h  (references `task_struct *task|*current`)
-    - linux/head.h
+    - linux/head.h (file descriptors, ldt, gdt, etc)
     - linux/fs.h
     - linux/mm.h
   - linux/tty.h
@@ -434,11 +435,185 @@ cp ../../mariuz-0.01/linux-0.01/kernel/keyboard.s kernel/
 cp ../../mariuz-0.01/linux-0.01/include/asm/segment.h include/asm/
 cp ../../mariuz-0.01/linux-0.01/include/asm/system.h include/asm/
 cp ../../mariuz-0.01/linux-0.01/include/linux/tty.h include/linux/
+cp ../../mariuz-0.01/linux-0.01/include/termios.h include/
+cp ../../mariuz-0.01/linux-0.01/include/linux/head.h include/linux/
+
+#cp ../../mariuz-0.01/linux-0.01/include/signal.h include/
+#cp ../../mariuz-0.01/linux-0.01/include/sys/types.h include/sys/
+
 cp ../../mariuz-0.01/linux-0.01/include/ctype.h include/
 cp ../../mariuz-0.01/linux-0.01/lib/ctype.c lib/
 cp ../../mariuz-0.01/linux-0.01/include/errno.h include/
 cp ../../mariuz-0.01/linux-0.01/lib/errno.c lib/
-cp ../../mariuz-0.01/linux-0.01/include/termios.h include/
+cp ../../mariuz-0.01/linux-0.01/lib/Makefile lib/
+```
+
+customized signal.h:
+
+```c
+#define SIGINT           2
+#define SIGALRM         14
+```
+
+customized fs.h:
+```c
+#define NR_OPEN 20
+```
+
+create a customized include/linux/sched.h:
+
+```c
+#include <linux/head.h>
+#include <linux/fs.h>
+
+#define NR_TASKS 64
+
+#define TASK_RUNNING		0
+#define TASK_INTERRUPTIBLE	1
+#define TASK_UNINTERRUPTIBLE	2
+#define TASK_ZOMBIE		3
+#define TASK_STOPPED		4
+
+typedef int (*fn_ptr)();
+
+struct i387_struct {
+	long	cwd;
+	long	swd;
+	long	twd;
+	long	fip;
+	long	fcs;
+	long	foo;
+	long	fos;
+	long	st_space[20];	/* 8*10 bytes for each FP-reg = 80 bytes */
+};
+
+struct tss_struct {
+	long	back_link;	/* 16 high bits zero */
+	long	esp0;
+	long	ss0;		/* 16 high bits zero */
+	long	esp1;
+	long	ss1;		/* 16 high bits zero */
+	long	esp2;
+	long	ss2;		/* 16 high bits zero */
+	long	cr3;
+	long	eip;
+	long	eflags;
+	long	eax,ecx,edx,ebx;
+	long	esp;
+	long	ebp;
+	long	esi;
+	long	edi;
+	long	es;		/* 16 high bits zero */
+	long	cs;		/* 16 high bits zero */
+	long	ss;		/* 16 high bits zero */
+	long	ds;		/* 16 high bits zero */
+	long	fs;		/* 16 high bits zero */
+	long	gs;		/* 16 high bits zero */
+	long	ldt;		/* 16 high bits zero */
+	long	trace_bitmap;	/* bits: trace 0, bitmap 16-31 */
+	struct i387_struct i387;
+};
+
+struct task_struct {
+/* these are hardcoded - don't touch */
+	long state;	/* -1 unrunnable, 0 runnable, >0 stopped */
+	long counter;
+	long priority;
+	long signal;
+	fn_ptr sig_restorer;
+	fn_ptr sig_fn[32];
+/* various fields */
+	int exit_code;
+	unsigned long end_code,end_data,brk,start_stack;
+	long pid,father,pgrp,session,leader;
+	unsigned short uid,euid,suid;
+	unsigned short gid,egid,sgid;
+	long alarm;
+	long utime,stime,cutime,cstime,start_time;
+	unsigned short used_math;
+/* file system info */
+	int tty;		/* -1 if no tty, so it must be signed */
+	unsigned short umask;
+	struct m_inode * pwd;
+	struct m_inode * root;
+	unsigned long close_on_exec;
+	struct file * filp[NR_OPEN];
+/* ldt for this task 0 - zero 1 - cs 2 - ds&ss */
+	struct desc_struct ldt[3];
+/* tss for this task */
+	struct tss_struct tss;
+};
+
+#define INIT_TASK \
+/* state etc */	{ 0,15,15, \
+/* signals */	0,NULL,{(fn_ptr) 0,}, \
+/* ec,brk... */	0,0,0,0,0, \
+/* pid etc.. */	0,-1,0,0,0, \
+/* uid etc */	0,0,0,0,0,0, \
+/* alarm */	0,0,0,0,0,0, \
+/* math */	0, \
+/* fs info */	-1,0133,NULL,NULL,0, \
+/* filp */	{NULL,}, \
+	{ \
+		{0,0}, \
+/* ldt */	{0x9f,0xc0fa00}, \
+		{0x9f,0xc0f200}, \
+	}, \
+/*tss*/	{0,PAGE_SIZE+(long)&init_task,0x10,0,0,0,0,(long)&pg_dir,\
+	 0,0,0,0,0,0,0,0, \
+	 0,0,0x17,0x17,0x17,0x17,0x17,0x17, \
+	 _LDT(0),0x80000000, \
+		{} \
+	}, \
+}
+
+extern void schedule(void);
+extern struct task_struct *task[NR_TASKS];
+extern struct task_struct *last_task_used_math;
+extern struct task_struct *current;
+extern long volatile jiffies;
+```
+
+create a customized kernel/sched.c:
+
+```c
+#include <linux/sched.h>
+
+union task_union {
+	struct task_struct task;
+	char stack[PAGE_SIZE];
+};
+
+static union task_union init_task = {INIT_TASK,};
+
+void interruptible_sleep_on(struct task_struct **p)
+{
+	struct task_struct *tmp;
+
+	if (!p)
+		return;
+	if (current == &(init_task.task))
+		panic("task[0] trying to sleep");
+	tmp=*p;
+	*p=current;
+repeat:	current->state = TASK_INTERRUPTIBLE;
+	schedule();
+	if (*p && *p != current) {
+		(**p).state=0;
+		goto repeat;
+	}
+	*p=NULL;
+	if (tmp)
+		tmp->state=0;
+}
+
+void wake_up(struct task_struct **p)
+{
+	if (p && *p) {
+		(**p).state=0;
+		*p=NULL;
+	}
+}
 ```
 
 main.c
@@ -453,11 +628,25 @@ int main() {
 }
 ```
 
+Makefile
+
+```make
+LIBS    =lib/lib.a
+
+clean:
+        rm -f Image System.map tmp_make boot/boot core
+        rm -f init/*.o boot/*.o tools/system tools/build tools/system.bin
+        (cd kernel;make clean)
+        (cd lib;make clean)
+```
+
 kernel/Makefile
 
 ```make
-OBJS  =mktime.o tty_io.o console.o keyboard.o rs_io.o
+OBJS  =mktime.o tty_io.o console.o keyboard.o rs_io.o sched.o
 ```
+
+Make lib/Makefile to compile only for errono.o and ctype.o.
 
 
 https://blogs.oracle.com/d/inline-functions-in-c
