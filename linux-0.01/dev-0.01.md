@@ -186,7 +186,7 @@ We also need to add `kernel/Makefile`, modified to compile only for `mktime.o`.
 #include <asm/io.h>
 #include <time.h>
 
-extern long kernel_mktime(struct tm * tm)
+extern long kernel_mktime(struct tm * tm);
 
 #define CMOS_READ(addr) ({ \
 outb_p(0x80|addr,0x70); \
@@ -257,10 +257,6 @@ $ make
 as --32  --32 -o boot/head.o boot/head.s
 gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -fno-stack-protector -fno-builtin -g -m32 \
 -nostdinc -Iinclude -c -o init/main.o init/main.c
-init/main.c: In function ‘time_init’:
-init/main.c:44:24: warning: implicit declaration of function ‘kernel_mktime’ [-Wimplicit-function-declaration]
-         startup_time = kernel_mktime(&time);
-                        ^
 (cd kernel; make)
 make[1]: Entering directory '/home/ubuntu/linux_kernel/linux-dev/boot-init-time/kernel'
 gcc -Wall -O -std=gnu89 -fstrength-reduce -fomit-frame-pointer -m32 -finline-functions -fno-stack-protector -nostdinc -fno-builtin -g -I../include \
