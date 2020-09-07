@@ -52,10 +52,13 @@ struct {
         short b;
 } stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };
 
+// from unistd.h
+#define __NR_pause	29
+
 int main(void) {
         //char* video_memory = (char*) 0xb8000;
         //*video_memory = 'X';
-	//for(;;) pause();
+	for(;;) __asm__("int $0x80"::"a" (__NR_pause):);
 	return 0;
 }
 ```
@@ -309,10 +312,10 @@ Now the next one is `tty_ini()`:
   - kernel/rs_io.s (globl rs1_interrupt,rs2_interrupt)
   - kernel/console.c
     - linux/sched.h
-		- linux/tty.h
-		- asm/io.h
-		- asm/system.h
-		- extern void keyboard_interrupt(void);
+    - linux/tty.h
+    - asm/io.h
+    - asm/system.h
+    - keyboard.s (.globl keyboard_interrupt)
 
 
 https://blogs.oracle.com/d/inline-functions-in-c
