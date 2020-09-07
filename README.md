@@ -204,9 +204,11 @@ Memory
 - [kernelnewbies](https://kernelnewbies.org/Documents)
   - https://kernelnewbies.org/FirstKernelPatch
   - https://kernelnewbies.org/KernelProjects
-- Packt.-.Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
-- Packt.-.Linux Device Drivers Development Develop Customized Drivers for Embedded Linux.-.(Oct 2017).-.978-1785280009
-- CRC.-.The Art of Linux Kernel Design Illustrating the Operating System Design Principle and Implementation.-.(Apr 2014).-.978-1466518032
+- Packt: Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
+- Packt.-.Mastering Embedded Linux Programming, 2ed.-.(Jun 2017).-.978-1787283282
+- Packt: Linux Device Drivers Development Develop Customized Drivers for Embedded Linux (Oct 2017) 978-1785280009
+- Pearson: Computer Systems: A Programmer's Perspective, 3E (Mar 2015)
+- CRC.-.The Art of Linux Kernel Design Illustrating the Operating System Design Principle and Implementation (Apr 2014) 978-1466518032
 - Apress.-.Linux Kernel Networking Implementation and Theory.-.(Dec 2013).-.978-1430261964
 - Addison-Wesley.-.Linux Kernel Development, 3ed.-.(Jul 2010).-.978-0672329463
 - Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
