@@ -39,9 +39,29 @@ FreeRTOS
 [GNU Hurd](https://github.com/joshumax/hurd)
   - [GNU Mach](https://github.com/flavioc/gnumach)
 
+## KBuild
+
+Linux Kernel Makefile [v5.8 @github[(https://github.com/torvalds/linux/blob/v5.8/Makefile)
+
+KBuild
+- [Linux Kernel Makefiles](https://www.kernel.org/doc/html/latest/kbuild/makefiles.html) @kernel.org
+- https://opensource.com/article/18/10/kbuild-and-kconfig
+- https://opensource.com/article/18/10/kbuild-and-kconfig
+
 ## Ancient Code
 
 http://oldlinux.org/
+
+Minimal Linux
+- https://github.com/ivandavidov/minimal
+- [Build and run minimal Linux / Busybox systems in Qemu](https://gist.github.com/chrisdone/02e165a0004be33734ac2334f215380e)
+- https://github.com/cirosantilli/linux-kernel-module-cheat
+- https://github.com/cirosantilli/runlinux
+- https://github.com/ivandavidov/minimal
+- [buildroot usage example](https://stackoverflow.com/questions/47557262/how-to-download-the-torvalds-linux-kernel-master-recompile-it-and-boot-it-wi/49349237)
+- https://ops.tips/notes/booting-linux-on-qemu/
+- https://linuxboot.org/
+- DIY: Build a Custom Minimal Linux Distribution from Source: [part 1](https://www.linuxjournal.com/content/diy-build-custom-minimal-linux-distribution-source), [part2](https://www.linuxjournal.com/content/build-custom-minimal-linux-distribution-source-part-ii)
 
 0.12
 - Build OK
@@ -137,6 +157,10 @@ MGW (Minimalist GNU for Windows)
 - http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/
   - [scope of static variables](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope-static.html)
   - [extern](http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/scope.html)
+
+## Major Websites
+
+https://lwn.net/
 
 ## Documentation
 
