@@ -145,6 +145,7 @@ lib
   - unistd.h
   - \_syscall3(int,write,int,fd,const char *,buf,off_t,count)
 
+include
 - ctype.h: only tied to ctype.c
 - stdarg.h: (independent)
 - string.h: (indepedent)
