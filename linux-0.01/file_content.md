@@ -110,7 +110,7 @@ lib
   - void \_exit(int exit_code)
 - close.c (\_syscall1(int,close,int,fd))
   - unistd.h
-  -\ _syscall1(int,close,int,fd)
+  - \_syscall1(int,close,int,fd)
 - ctype.c (signed char \_ctmp; unsigned char \_ctype[])
   - ctype.h
   - signed char \_ctmp;
