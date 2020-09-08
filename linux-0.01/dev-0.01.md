@@ -22,7 +22,9 @@ int main() {
 }
 ```
 
-## include/asm/*
+## Independent Code
+
+**include/asm/\***
 
 Header files in `include/asm` all all aseembly code and are indepedent and foundamental. They will be included in the source tree.
 
@@ -45,6 +47,87 @@ Header files in `include/asm` all all aseembly code and are indepedent and found
     - set_intr_gate(n,addr), set_trap_gate(n,addr), set_system_gate(n,addr)
     - set_tss_desc(n,addr), set_ldt_desc(n,addr)
 
+include/const.h (who use it?)
+- #define BUFFER_END 0x200000
+- #define I_TYPE          0170000
+- #define I_DIRECTORY	0040000
+- #define I_REGULAR       0100000
+- #define I_BLOCK_SPECIAL 0060000
+- #define I_CHAR_SPECIAL  0020000
+- #define I_NAMED_PIPE	0010000
+- #define I_SET_UID_BIT   0004000
+- #define I_SET_GID_BIT   0002000
+
+include/[stdint.h](https://github.com/mariuz/linux-0.01/blob/master/include/stdint.h)
+- #include <bits/wchar.h>
+- #include <bits/wordsize.h>
+- int8_t, int16_t, int32_t, int64_t, uint8_t, uint16_t, uint32_t, uint64_t
+- int_least8_t, int_least16_t, int_least32_t, int_least64_t
+- more ...
+- used by include/sys/stat.h
+
+include/ctype.h: independent
+
+include/sys/types.h: independent
+- pid_t, gid_t, mode_t, ushort, etc.
+- struct ustat {}
+- used by include/sys/stat.h, include/utime.h
+- used by include/sys/times.h, include/sys/wait.h
+
+include/sys/times.h
+- struct tms {time_t tms_utime;	time_t tms_stime;	time_t tms_cutime;	time_t tms_cstime;};
+- extern time_t times(struct tms * tp);
+
+include/utime.h
+  - #include <sys/types.h>
+  - struct utimbuf {time_t actime;	time_t modtime;};
+  - extern int utime(const char *filename, struct utimbuf *times);
+
+kernel/mktime.c soly dependent on include/time.h
+- kernel/mktime.c soly dependent on include/time.h
+  - #include <time.h>
+  - long kernel_mktime(struct tm * tm) (used in main.c)
+- include/time.h
+  - struct tm {}
+  - and more
+
+include/time.h ?????
+
+include/errno.h + lib/errno.c:  int errno; (independent combined)
+
+- include/stddef.h: (independent)
+  - typedef long ptrdiff_t;
+  - typedef unsigned long size_t;
+  - #define NULL ((void *\)0)
+  - #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *\)0)->MEMBER)
+- include/stdarg.h: (independent)
+  - typedef char \*va_list;
+  - va_start, va_end, va_arg
+- include/string.h: (indepedent)
+  - #define NULL ((void *) 0)
+  - typedef unsigned int size_t;
+  - extern char * strerror(int errno);
+  - extern inline char * strcpy(char * dest,const char *src)
+  - extern inline char * strncpy(char * dest,const char *src,int count)
+  - extern inline char * strcat(char * dest,const char * src)
+  - extern inline char * strncat(char * dest,const char * src,int count)
+  - extern inline int strcmp(const char * cs,const char * ct)
+  - extern inline int strncmp(const char * cs,const char * ct,int count)
+  - extern inline char * strchr(const char * s,int c)
+  - extern inline char * strrchr(const char * s,int c)
+  - extern inline int strspn(const char * cs, const char * ct)
+  - extern inline int strcspn(const char * cs, const char * ct)
+  - extern inline char * strpbrk(const char * cs,const char * ct)
+  - extern inline char * strstr(const char * cs,const char * ct)
+  - extern inline int strlen(const char * s)
+  - extern char * ___strtok;
+  - extern inline char * strtok(char * s,const char * ct)
+  - extern inline void * memcpy(void * dest,const void * src, int n)
+  - extern inline void * memmove(void * dest,const void * src, int n)
+  - extern inline int memcmp(const void * cs,const void * ct,int count)
+  - extern inline void * memchr(const void * cs,char c,int count)
+  - extern inline void * memset(void * s,int c,int count)
+  
 ## booting only
 
 Starting from
@@ -318,8 +401,155 @@ Boot sector 452 bytes.
 System 25392 bytes.
 ```
 
+## sched_init()
+
+sched.h
+  - #include <linux/head.h>: uses ldt etc.
+  - #include <linux/fs.h>: used only for `#define NR_OPEN 20`
+  - #include <linux/mm.h>: used only for `#define PAGE_SIZE 4096`
+
+sched.c
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>: `panic()` only
+  - #include <signal.h>
+    - #include <sys/types.h>
+  - #include <linux/sys.h>: `fn_ptr sys_call_table[]`
+  - #include <asm/system.h>
+  - #include <asm/io.h>
+  - #include <asm/segment.h>
+  - system_call & timer_interrupt
+    - kernel/system_call.s
+      - .globl system_call,sys_fork,timer_interrupt,hd_interrupt,sys_execve
+      - asm.s
+
+```bash
+cp ../../mariuz-0.01/linux-0.01/include/asm/segment.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/asm/system.h include/asm/
+cp ../../mariuz-0.01/linux-0.01/include/linux/head.h include/linux/
+cp ../../mariuz-0.01/linux-0.01/include/linux/sys.h include/linux/
+#cp ../../mariuz-0.01/linux-0.01/include/linux/kernel.h include/linux/
+cp ../../mariuz-0.01/linux-0.01/include/sys/types.h include/sys/
+cp ../../mariuz-0.01/linux-0.01/include/signal.h include/
+cp ../../mariuz-0.01/linux-0.01/include/linux/sched.h include/linux/
+cp ../../mariuz-0.01/linux-0.01/include/string.h include/
+cp ../../mariuz-0.01/linux-0.01/kernel/sched.c kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/system_call.s kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/asm.s kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/traps.c kernel/
+cp ../../mariuz-0.01/linux-0.01/kernel/sys.c kernel/
+cp ../../mariuz-0.01/linux-0.01/include/errno.h include/
+cp ../../mariuz-0.01/linux-0.01/include/sys/times.h include/sys/
+cp ../../mariuz-0.01/linux-0.01/include/sys/utsname.h include/sys/
+```
+
+include/linux/fs.h: #define NR_OPEN 20
+
+include/linux/mm.h: #define PAGE_SIZE 4096
+
+kernel/traps.c: comment out calls to printk()
+
+Modify sched.c:
+
+```c
+//#include <linux/kernel.h>
+//#include <linux/sys.h>
+```
+and comment out calls to `panic`
+
+kernel/Makefile: add sched.o system_call.o asm.o
+
+main.c
+
+remove the following (added by time_init()):
+```c
+// from linux/mm.h
+#define PAGE_SIZE 4096
+
+// from sched.c
+long user_stack [ PAGE_SIZE>>2 ] ;
+
+// from sched.c
+struct {
+        long * a;
+        short b;
+} stack_start = { & user_stack [PAGE_SIZE>>2] , 0x10 };
+
+// in sched.c
+unsigned long startup_time=0;
+```
+
+add the following to main.c:
+
+```c
+extern long startup_time;
+
+```
+
+
 ## trap_init()
 
+kernel/asm.s + kernel/system_call.s + kernel/sys.c + kernel/traps.c: interrupt and exceptions registration
+
+asm.s contains the low-level code for most hardware faults; page_exception is handled by the mm
+
+kernel/asm.s (in Linux 1.0, it is moved to sys_call.S; system_call.s is renamed to sys_call.S)
+- .globl divide_error,debug,nmi,int3,overflow,bounds,invalid_op
+- .globl device_not_available,double_fault,coprocessor_segment_overrun
+- .globl invalid_TSS,segment_not_present,stack_segment
+- .globl general_protection,coprocessor_error,reserved
+
+all symbols above are referenced in traps.c by trap.init(), and still needing &page_fault
+
+mm/page.s (page.s contains the low-level page-exception code. the real work is done in mm.c)
+- .globl page_fault
+- call do_no_page (in mm.c)
+- call do_wp_page (in mm.c)
+
+[system_call.s](https://github.com/mariuz/linux-0.01/blob/master/kernel/system_call.s)
+  - .globl system_call,sys_fork,timer_interrupt,hd_interrupt,sys_execve
+  - uses `sys_call_table`, `sys_null`, `current`, `signal()`, `sig_fn()`
+  - uses `EIP()`, `OLDESP()`, `verify_area`m `restorer()`
+  - uses manyh more
+
+[sys.c](https://github.com/mariuz/linux-0.01/blob/master/kernel/sys.c)
+  - #include <errno.h>
+  - #include <linux/sched.h>
+  - #include <linux/tty.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - #include <sys/times.h>
+  - #include <sys/utsname.h>
+  - int sys_ftime(){}
+  - int sys_mknod(){}
+  - int sys_break(){}
+  - int sys_mount(){}
+  - int sys_umount(){}
+  - int sys_ustat(int dev,struct ustat * ubuf){}
+  - int sys_ptrace(){}
+  - int sys_stty(){}
+  - int sys_gtty(){}
+  - int sys_rename(){}
+  - int sys_prof(){}
+  - int sys_setgid(int gid){}
+  - int sys_acct(){}
+  - int sys_phys(){}
+  - int sys_lock(){}
+  - int sys_mpx(){}
+  - int sys_ulimit(){}
+  - int sys_time(long * tloc){}
+  - int sys_setuid(int uid){}
+  - int sys_stime(long * tptr){}
+  - int sys_times(struct tms * tbuf){}
+  - int sys_brk(unsigned long end_data_seg){}
+  - int sys_setpgid(int pid, int pgid){}
+  - int sys_getpgrp(void){}
+  - int sys_setsid(void){}
+  - int sys_oldolduname(void* v){}
+  - int sys_uname(struct utsname * name){}
+  - int sys_umask(int mask){}
+  - int sys_null(int nr){}
+
+traps.c
 - #include <string.h>
 - #include <linux/head.h> (uses idt)
   - typedef struct desc_struct {}
@@ -339,20 +569,6 @@ System 25392 bytes.
 - die()
 - void trap_init(void)
 
-kernel/asm.s + kernel/system_call.s + kernel/sys.c + kernel/traps.c: interrupt and exceptions registration
-
-kernel/asm.s (in Linux 1.0, it is moved to sys_call.S; system_call.s is renamed to sys_call.S)
-- .globl divide_error,debug,nmi,int3,overflow,bounds,invalid_op
-- .globl device_not_available,double_fault,coprocessor_segment_overrun
-- .globl invalid_TSS,segment_not_present,stack_segment
-- .globl general_protection,coprocessor_error,reserved
-
-all symbols above are referenced in traps.c by trap.init(), and still needing &page_fault
-
-mm/page.s (page.s contains the low-level page-exception code. the real work is done in mm.c)
-- .globl page_fault
-- call do_no_page
-- call do_wp_page
 
 kernel/exit.c (do_exit() referenced in traps.c)
 - #include <errno.h>
@@ -414,28 +630,43 @@ extern void trap_init(void);
 lib
 - \_exit.c (void \_exit(int exit_code))
   - unistd.h
+  - void \_exit(int exit_code)
 - close.c (\_syscall1(int,close,int,fd))
   - unistd.h
+  -\ _syscall1(int,close,int,fd)
 - ctype.c (signed char \_ctmp; unsigned char \_ctype[])
   - ctype.h
+  - signed char \_ctmp;
+  - unsigned char \_ctype[] = {...}
 - dup.c (\_syscall1(int,dup,int,fd))
   - unistd.h
-- errno.c (int errno;)
-- execve.c (`_syscall3(int, execve, const char*, file, char**, argv, char**, envp)`)
+  - \_syscall1(int,dup,int,fd)
+- errno.c (only one line)
+  - int errno;
+- execve.c
   - unistd.h
+  - `_syscall3(int,execve,const char *,file,char **,argv,char **,envp)`
 - open.c (`int open(const char * filename, int flag, ...)`)
   - unistd.h
   - stdarg.h
+  - int open(const char * filename, int flag, ...) {...}
 - setsid.c (\_syscall0(pid_t,setsid))
   - unistd.h
+  - \_syscall0(pid_t,setsid)
 - string.c
-  - string.h (independent, details see below)
+  - #define extern
+  - #define inline
+  - #define __LIBRARY__
+  - #include <string.h> (independent, details see below)
 - wait.c (`_syscall3(pid_t,waitpid,pid_t,pid,int *,wait_stat,int,options)`, `pid_t wait(int * wait_stat) {return waitpid(-1,wait_stat,0);}`)
+  - \_syscall3(pid_t,waitpid,pid_t,pid,int *,wait_stat,int,options)
+  - pid_t wait(int * wait_stat){	return waitpid(-1,wait_stat,0);}
   - unistd.h
   - sys/wait.h
     - [sys/types.h](https://github.com/mariuz/linux-0.01/blob/master/include/sys/types.h) (indepedent)
 - write.c (`_syscall3(int,write,int,fd,const char *,buf,off_t,count)`)
   - unistd.h
+  - \_syscall3(int,write,int,fd,const char *,buf,off_t,count)
 
 - ctype.h: only tied to ctype.c
 - stdarg.h: (independent)
