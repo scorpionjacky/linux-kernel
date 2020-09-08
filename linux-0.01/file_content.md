@@ -1,4 +1,4 @@
-**include/asm/\***
+## include/asm/*
 
 Header files in `include/asm` all all aseembly code and are indepedent and foundamental. They will be included in the source tree.
 
@@ -24,6 +24,8 @@ Header files in `include/asm` all all aseembly code and are indepedent and found
 kernel/asm.s + kernel/system_call.s + kernel/sys.c + kernel/traps.c: interrupt and exceptions registration
 
 asm.s contains the low-level code for most hardware faults; page_exception is handled by the mm
+
+## kernel/*
 
 kernel
   - kernel/asm.s (in Linux 1.0, it is moved to sys_call.S; system_call.s is renamed to sys_call.S)
@@ -236,6 +238,8 @@ kernel
 
 all symbols above are referenced in traps.c by trap.init(), and still needing &page_fault
 
+## mm/*
+
 mm
 - mm/page.s (page.s contains the low-level page-exception code. the real work is done in mm.c)
   - .globl page_fault
@@ -266,8 +270,9 @@ mm
   - void do_no_page(unsigned long error_code,unsigned long address){}
   - void calc_mem(void){}
 
+## fs/*
 
-
+## others
 
 include/const.h (who use it?)
 - #define BUFFER_END 0x200000
@@ -350,6 +355,7 @@ include/errno.h + lib/errno.c:  int errno; (independent combined)
   - extern inline void * memchr(const void * cs,char c,int count)
   - extern inline void * memset(void * s,int c,int count)
 
+## lib/*
 
 lib
 - \_exit.c (void \_exit(int exit_code))
@@ -391,6 +397,8 @@ lib
 - write.c (`_syscall3(int,write,int,fd,const char *,buf,off_t,count)`)
   - unistd.h
   - \_syscall3(int,write,int,fd,const char *,buf,off_t,count)
+
+## include/\*.h
 
 include
 - ctype.h: only tied to ctype.c
