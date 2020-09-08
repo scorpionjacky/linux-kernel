@@ -7,7 +7,7 @@
 <body>
 
 <h2 align=center>LINUX's History</h2>
-<pre>
+<p>
                                        
    Note: The following text was written by Linus on July 31 1992. It is a
    collection of various artifacts from the period in which Linux first
@@ -551,7 +551,7 @@ been mostly very positive, and you do learn a lot doing this type of
 thing (on the other hand, your studies suffer in other respects :)
 
                 Linus
-</pre>
+</p>
 
 </body>
 </html>
