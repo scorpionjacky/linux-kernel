@@ -235,6 +235,7 @@ Memory
   - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
 - [Unreliable Guide To Hacking The Linux Kernel](https://www.kernel.org/doc/htmldocs/kernel-hacking)
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
+- [Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2005/readings/i386/toc.htm)
 - [The Linux kernel](https://www.win.tue.nl/~aeb/linux/lk/lk.html) Andries Brouwer, aeb@cwi.nl 2003-02-01
 - [Linux Kernel 2.4 Internals](https://www.kernel.org/doc/mirror/lki-single.html) (Tigran Aivazian tigran@veritas.com 7 August 2002)
   - [Linux Kernel Internals](https://www.star.bnl.gov/~liuzx/lki/lki.html#toc1) (Tigran Aivazian tigran@veritas.com 20 December 2000)
