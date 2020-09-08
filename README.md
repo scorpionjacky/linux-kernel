@@ -52,6 +52,8 @@ KBuild
 
 http://oldlinux.org/
 
+https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/
+
 Minimal Linux
 - https://github.com/ivandavidov/minimal
 - [Build and run minimal Linux / Busybox systems in Qemu](https://gist.github.com/chrisdone/02e165a0004be33734ac2334f215380e)
