@@ -288,6 +288,243 @@ mm
 <a id="fs"></a>
 ## fs/*
 
+fs/*
+- bitmap.c
+  - #include <string.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #define clear_block(addr)
+  - #define set_bit(nr,addr)
+  - #define clear_bit(nr,addr)
+  - #define find_first_zero(addr)
+  - void free_block(int dev, int block)
+  - int new_block(int dev)
+  - void free_inode(struct m_inode * inode)
+  - struct m_inode * new_inode(int dev)
+- block_dev.c
+  - #include <errno.h>
+  - #include <linux/fs.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - #define NR_BLK_DEV ((sizeof (rd_blk))/(sizeof (rd_blk[0])))
+  - int block_write(int dev, long * pos, char * buf, int count)
+  - int block_read(int dev, unsigned long * pos, char * buf, int count)
+  - extern void rw_hd(int rw, struct buffer_head * bh);
+  - typedef void (*blk_fn)(int rw, struct buffer_head * bh);
+  - static blk_fn rd_blk[]={...}
+  - void ll_rw_block(int rw, struct buffer_head * bh){}
+- buffer.c
+  - #include <linux/config.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <asm/system.h>
+  - extern int end;
+  - struct buffer_head * start_buffer = (struct buffer_head *) &end;
+  - struct buffer_head * hash_table[NR_HASH];
+  - static struct buffer_head * free_list;
+  - static struct task_struct * buffer_wait = NULL;
+  - int NR_BUFFERS = 0;
+  - int sys_sync(void){}
+  - #define hash(dev,block)
+  - struct buffer_head * get_hash_table(int dev, int block)
+  - struct buffer_head * getblk(int dev,int block)
+  - void brelse(struct buffer_head * buf)
+  - struct buffer_head * bread(int dev,int block)
+  - void buffer_init(void)
+- char_dev.c
+  - #include <errno.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - extern int tty_read(unsigned minor,char * buf,int count);
+  - extern int tty_write(unsigned minor,char * buf,int count);
+  - typedef int (*crw_ptr)(int rw,unsigned minor,char * buf,int count);
+  - #define NRDEVS ((sizeof (crw_table))/(sizeof (crw_ptr)))
+  - int rw_char(int rw,int dev, char * buf, int count){}
+- exec.c
+  - #include <errno.h>
+  - #include <sys/stat.h>
+  - #include <elf.h>
+  - #include <linux/fs.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <linux/mm.h>
+  - #include <asm/segment.h>
+  - extern int sys_exit(int exit_code);
+  - extern int sys_close(int fd);
+  - #define MAX_ARG_PAGES 32
+  - inline void cp_block(const void * from,void * to, int size){}
+  - typedef struct{	unsigned long b_entry;	unsigned long b_size;} bin_section;
+  - #include <string.h>
+  - int is_valid_elf(Elf32_Ehdr* ex)
+  - struct buffer_head* read_file_block_ind(int dev,int ind,int block_num){}
+  - struct buffer_head* read_file_block(struct m_inode * inode,int block_num){}
+  - int copy_section(struct m_inode * inode,Elf32_Off from, Elf32_Addr dest,Elf32_Word size)
+  - inline int create_bss_section(Elf32_Addr dest,Elf32_Word size)
+  - int load_elf_binary(struct m_inode *inode, struct buffer_head* bh, bin_section* bs){}
+  - int do_execve(unsigned long * eip,long tmp,char * filename,	char ** argv, char ** envp){}
+- fcntl.c
+  - #include <string.h>
+  - #include <errno.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - #include <fcntl.h>
+  - #include <sys/stat.h>
+  - extern int sys_close(int fd);
+  - int sys_dup2(unsigned int oldfd, unsigned int newfd){}
+  - int sys_dup(unsigned int fildes){}
+  - int sys_fcntl(unsigned int fd, unsigned int cmd, unsigned long arg){}
+  - int sys_fcntl64(unsigned int fd, unsigned int cmd, unsigned long arg){}
+- file_dev.c
+  - #include <errno.h>
+  - #include <fcntl.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - #define MIN(a,b) (((a)<(b))?(a):(b))
+  - #define MAX(a,b) (((a)>(b))?(a):(b))
+  - int file_read(struct m_inode * inode, struct file * filp, char * buf, int count)
+  - int file_write(struct m_inode * inode, struct file * filp, char * buf, int count)
+- file_table.c
+  - #include <linux/fs.h>
+  - struct file file_table[NR_FILE];
+- inode.c
+  - #include <string.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <linux/mm.h>
+  - #include <asm/system.h>
+  - struct m_inode inode_table[NR_INODE]={{0,},};
+  - void sync_inodes(void){}
+  - int bmap(struct m_inode * inode,int block){}
+  - int create_block(struct m_inode * inode, int block){}
+  - void iput(struct m_inode * inode){}
+  - struct m_inode * get_empty_inode(void)
+  - struct m_inode * get_pipe_inode(void)
+  - struct m_inode * iget(int dev,int nr)
+- ioctl.c
+  - #include <string.h>
+  - #include <errno.h>
+  - #include <sys/stat.h>
+  - #include <linux/sched.h>
+  - extern int tty_ioctl(int dev, int cmd, int arg);
+  - typedef int (*ioctl_ptr)(int dev,int cmd,int arg);
+  - #define NRDEVS ((sizeof (ioctl_table))/(sizeof (ioctl_ptr)))
+  - static ioctl_ptr ioctl_table[]={...}
+  - int sys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg){}
+- namei.c
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - #include <string.h>
+  - #include <fcntl.h>
+  - #include <errno.h>
+  - #include <const.h>
+  - #include <sys/stat.h>
+  - #define ACC_MODE(x) ("\004\002\006\377"[(x)&O_ACCMODE])
+  - #define MAY_EXEC 1
+  - #define MAY_WRITE 2
+  - #define MAY_READ 4
+  - struct m_inode * namei(const char * pathname)
+  - int open_namei(const char * pathname, int flag, int mode, struct m_inode ** res_inode){}
+  - int sys_mkdir(const char * pathname, int mode)
+  - int sys_rmdir(const char * name)
+  - int sys_unlink(const char * name)
+  - int sys_link(const char * oldname, const char * newname)
+- open.c
+  - #include <string.h>
+  - #include <errno.h>
+  - #include <fcntl.h>
+  - #include <sys/types.h>
+  - #include <utime.h>
+  - #include <sys/stat.h>
+  - #include <linux/sched.h>
+  - #include <linux/tty.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - int sys_utime(char * filename, struct utimbuf * times)
+  - int sys_access(const char * filename,int mode)
+  - int sys_chdir(const char * filename)
+  - int sys_chroot(const char * filename)
+  - int sys_chmod(const char * filename,int mode)
+  - int sys_chown(const char * filename,int uid,int gid)
+  - int sys_open(const char * filename,int flag,int mode)
+  - int sys_creat(const char * pathname, int mode)
+  - int sys_close(unsigned int fd)
+- pipe.c
+  - #include <signal.h>
+  - #include <linux/sched.h>
+  - #include <linux/mm.h>	/* for get_free_page */
+  - #include <asm/segment.h>
+  - int read_pipe(struct m_inode * inode, char * buf, int count)
+  - int write_pipe(struct m_inode * inode, char * buf, int count)
+  - int sys_pipe(unsigned long * fildes)
+- read_write.c
+  - #include <sys/stat.h>
+  - #include <errno.h>
+  - #include <sys/types.h>
+  - #include <linux/kernel.h>
+  - #include <linux/sched.h>
+  - #include <asm/segment.h>
+  - extern int rw_char(int rw,int dev, char * buf, int count);
+  - extern int read_pipe(struct m_inode * inode, char * buf, int count);
+  - extern int write_pipe(struct m_inode * inode, char * buf, int count);
+  - extern int block_read(int dev, off_t * pos, char * buf, int count);
+  - extern int block_write(int dev, off_t * pos, char * buf, int count);
+  - extern int file_read(struct m_inode * inode, struct file * filp, char * buf, int count);
+  - extern int file_write(struct m_inode * inode, struct file * filp, char * buf, int count);
+  - int sys_lseek(unsigned int fd,off_t offset, int origin)
+  - int sys_read(unsigned int fd,char * buf,int count)
+  - int sys_write(unsigned int fd,char * buf,int count)
+- stat.c
+  - #include <errno.h>
+  - #include <sys/stat.h>
+  - #include <linux/fs.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <asm/segment.h>
+  - int sys_stat(char * filename, struct stat * statbuf)
+  - int sys_lstat(char* filename, struct stat * statbuf)
+  - int sys_fstat(unsigned int fd, struct stat * statbuf)
+  - int sys_stat64(char * filename, struct stat64 * statbuf)
+  - int sys_fstat64(unsigned int fd, struct stat64 * statbuf)
+  - int sys_lstat64(char* filename, struct stat * statbuf)
+  - int sys_oldstat()
+  - int sys_oldfstat()
+- super.c
+  - #include <linux/config.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #define set_bit(bitnr,addr)
+  - struct super_block super_block[NR_SUPER];
+  - struct super_block * do_mount(int dev){}
+  - void mount_root(void)
+- sys_getdents.c
+  - #include <dirent.h>
+  - #include <errno.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <linux/mm.h>
+  - #include <asm/segment.h>
+  - #include <sys/stat.h>
+  - struct buffer_head* read_file_block(struct m_inode * inode,int block_num);
+  - int sys_getdents(unsigned int fd, struct dirent *dirp, unsigned int count)
+  - int sys_getdents64(unsigned int fd, struct dirent64 *dirp, unsigned int count)
+- truncate.c
+  - #include <linux/sched.h>
+  - #include <sys/stat.h>
+  - void truncate(struct m_inode * inode)
+- ty_ioctl.c
+  - #include <errno.h>
+  - #include <termios.h>
+  - #include <linux/sched.h>
+  - #include <linux/kernel.h>
+  - #include <linux/tty.h>
+  - #include <asm/segment.h>
+  - #include <asm/system.h>
+  - int tty_ioctl(int dev, int cmd, int arg)
+
+
 <a id="others"></a>
 ## others
 
