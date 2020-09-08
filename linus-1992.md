@@ -4,7 +4,8 @@
 <link rev=made href="maverick@fly.cc.fer.hr">
 </head>
 <body>
-
+  <a href="https://www.cs.cmu.edu/~awb/linux.history.html">original web link</a>
+  
 <h2 align=center>LINUX's History</h2>
 <pre>
                                        
