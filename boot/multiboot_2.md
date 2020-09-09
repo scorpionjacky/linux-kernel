@@ -95,13 +95,13 @@ check_multiboot:
     jmp error
 ```
 
-We use the cmp instruction to compare the value in eax to the magic value. If the values are equal, the cmp instruction sets the zero flag in the FLAGS register. The jne (“jump if not equal”) instruction reads this zero flag and jumps to the given address if it's not set. Thus we jump to the .no_multiboot label if eax does not contain the magic value.
+We use the `cmp` instruction to compare the value in `eax` to the magic value. If the values are equal, the `cmp` instruction sets the zero flag in the [FLAGS register](https://en.wikipedia.org/wiki/FLAGS_register). The `jne` (“jump if not equal”) instruction reads this zero flag and jumps to the given address if it's not set. Thus we jump to the `.no_multiboot` label if `eax` does not contain the magic value.
 
-In no_multiboot, we use the jmp (“jump”) instruction to jump to our error function. We could just as well use the call instruction, which additionally pushes the return address. But the return address is not needed because error never returns. To pass 0 as error code to the error function, we move it into al before the jump (error will read it from there).
+In `no_multiboot`, we use the `jmp` (“jump”) instruction to jump to our error function. We could just as well use the `call` instruction, which additionally pushes the return address. But the return address is not needed because `error` never returns. To pass `0` as error code to the `error` function, we move it into `al` before the jump (`error` will read it from there).
 
 🔗CPUID check
 
-CPUID is a CPU instruction that can be used to get various information about the CPU. But not every processor supports it. CPUID detection is quite laborious, so we just copy a detection function from the OSDev wiki:
+[CPUID](https://wiki.osdev.org/CPUID) is a CPU instruction that can be used to get various information about the CPU. But not every processor supports it. CPUID detection is quite laborious, so we just copy a detection function from the [OSDev wiki](https://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID):
 
 ```asm
 check_cpuid:
@@ -141,13 +141,13 @@ check_cpuid:
     jmp error
 ```
 
-Basically, the CPUID instruction is supported if we can flip some bit in the FLAGS register. We can't operate on the flags register directly, so we need to load it into some general purpose register such as eax first. The only way to do this is to push the FLAGS register on the stack through the pushfd instruction and then pop it into eax. Equally, we write it back through push ecx and popfd. To flip the bit we use the xor instruction to perform an exclusive OR. Finally we compare the two values and jump to .no_cpuid if both are equal (je – “jump if equal”). The .no_cpuid code just jumps to the error function with error code 1.
+Basically, the `CPUID` instruction is supported if we can flip some bit in the [FLAGS register](https://en.wikipedia.org/wiki/FLAGS_register). We can't operate on the flags register directly, so we need to load it into some general purpose register such as `eax` first. The only way to do this is to push the `FLAGS` register on the stack through the `pushfd` instruction and then pop it into `eax`. Equally, we write it back through `push ecx` and `popfd`. To flip the bit we use the `xor` instruction to perform an [exclusive OR](https://en.wikipedia.org/wiki/Exclusive_or). Finally we compare the two values and jump to `.no_cpuid` if both are equal (`je` – “jump if equal”). The `.no_cpuid` code just jumps to the `error` function with error code `1`.
 
 Don't worry, you don't need to understand the details.
 
 🔗Long Mode check
 
-Now we can use CPUID to detect whether long mode can be used. I use code from OSDev again:
+Now we can use CPUID to detect whether long mode can be used. I use code from [OSDev](https://wiki.osdev.org/Setting_Up_Long_Mode#x86_or_x86-64) again:
 
 ```asm
 check_long_mode:
@@ -168,9 +168,9 @@ check_long_mode:
     jmp error
 ```
 
-Like many low-level things, CPUID is a bit strange. Instead of taking a parameter, the cpuid instruction implicitly uses the eax register as argument. To test if long mode is available, we need to call cpuid with 0x80000001 in eax. This loads some information to the ecx and edx registers. Long mode is supported if the 29th bit in edx is set. Wikipedia has detailed information.
+Like many low-level things, CPUID is a bit strange. Instead of taking a parameter, the `cpuid` instruction implicitly uses the `eax` register as argument. To test if long mode is available, we need to call `cpuid` with `0x80000001` in `eax`. This loads some information to the `ecx` and `edx` registers. Long mode is supported if the 29th bit in `edx` is set. [Wikipedia](https://en.wikipedia.org/wiki/CPUID#EAX.3D80000001h:_Extended_Processor_Info_and_Feature_Bits) has detailed information.
 
-If you look at the assembly above, you'll probably notice that we call cpuid twice. The reason is that the CPUID command started with only a few functions and was extended over time. So old processors may not know the 0x80000001 argument at all. To test if they do, we need to invoke cpuid with 0x80000000 in eax first. It returns the highest supported parameter value in eax. If it's at least 0x80000001, we can test for long mode as described above. Else the CPU is old and doesn't know what long mode is either. In that case, we directly jump to .no_long_mode through the jb instruction (“jump if below”).
+If you look at the assembly above, you'll probably notice that we call `cpuid` twice. The reason is that the CPUID command started with only a few functions and was extended over time. So old processors may not know the `0x80000001` argument at all. To test if they do, we need to invoke `cpuid` with `0x80000000` in `eax` first. It returns the highest supported parameter value in `eax`. If it's at least `0x80000001`, we can test for long mode as described above. Else the CPU is old and doesn't know what long mode is either. In that case, we directly jump to `.no_long_mode` through the `jb` instruction (“jump if below”).
 
 🔗Putting it together
 
@@ -196,51 +196,61 @@ When the CPU doesn't support a needed feature, we get an error message with an u
 
 🔗Paging
 
-Paging is a memory management scheme that separates virtual and physical memory. The address space is split into equal sized pages and a page table specifies which virtual page points to which physical page. If you never heard of paging, you might want to look at the paging introduction (PDF) of the Three Easy Pieces OS book.
+*Paging* is a memory management scheme that separates virtual and physical memory. The address space is split into equal sized pages and a page table specifies which virtual page points to which physical page. If you never heard of paging, you might want to look at the paging introduction ([PDF](http://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf)) of the [Three Easy Pieces](http://pages.cs.wisc.edu/~remzi/OSTEP/) OS book.
 
 In long mode, x86 uses a page size of 4096 bytes and a 4 level page table that consists of:
 
-the Page-Map Level-4 Table (PML4),
-the Page-Directory Pointer Table (PDP),
-the Page-Directory Table (PD),
-and the Page Table (PT).
+- the Page-Map Level-4 Table (PML4),
+- the Page-Directory Pointer Table (PDP),
+- the Page-Directory Table (PD),
+- and the Page Table (PT).
+
 As I don't like these names, I will call them P4, P3, P2, and P1 from now on.
 
-Each page table contains 512 entries and one entry is 8 bytes, so they fit exactly in one page (512*8 = 4096). To translate a virtual address to a physical address the CPU1 will do the following2:
+Each page table contains 512 entries and one entry is 8 bytes, so they fit exactly in one page (`512*8 = 4096`). To translate a virtual address to a physical address the CPU1 will do the following2:
 
-translation of virtual to physical addresses in 64 bit mode
+> Note 1: In the x86 architecture, the page tables are hardware walked, so the CPU will look at the table on its own when it needs a translation. Other architectures, for example MIPS, just throw an exception and let the OS translate the virtual address.
 
-Get the address of the P4 table from the CR3 register
-Use bits 39-47 (9 bits) as an index into P4 (2^9 = 512 = number of entries)
-Use the following 9 bits as an index into P3
-Use the following 9 bits as an index into P2
-Use the following 9 bits as an index into P1
-Use the last 12 bits as page offset (2^12 = 4096 = page size)
-But what happens to bits 48-63 of the 64-bit virtual address? Well, they can't be used. The “64-bit” long mode is in fact just a 48-bit mode. The bits 48-63 must be copies of bit 47, so each valid virtual address is still unique. For more information see Wikipedia.
+> Note 2: Image source: Wikipedia, with modified font size, page table naming, and removed sign extended bits. The modified file is licensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.
 
-An entry in the P4, P3, P2, and P1 tables consists of the page aligned 52-bit physical address of the frame or the next page table and the following bits that can be OR-ed in:
+![translation of virtual to physical addresses in 64 bit mode](https://os.phil-opp.com/entering-longmode/X86_Paging_64bit.svg)
 
-Bit(s)	Name	Meaning
-0	present	the page is currently in memory
-1	writable	it's allowed to write to this page
-2	user accessible	if not set, only kernel mode code can access this page
-3	write through caching	writes go directly to memory
-4	disable cache	no cache is used for this page
-5	accessed	the CPU sets this bit when this page is used
-6	dirty	the CPU sets this bit when a write to this page occurs
-7	huge page/null	must be 0 in P1 and P4, creates a 1GiB page in P3, creates a 2MiB page in P2
-8	global	page isn't flushed from caches on address space switch (PGE bit of CR4 register must be set)
-9-11	available	can be used freely by the OS
-52-62	available	can be used freely by the OS
-63	no execute	forbid executing code on this page (the NXE bit in the EFER register must be set)
+1. Get the address of the P4 table from the CR3 register
+1. Use bits 39-47 (9 bits) as an index into P4 (2^9 = 512 = number of entries)
+1. Use the following 9 bits as an index into P3
+1. Use the following 9 bits as an index into P2
+1. Use the following 9 bits as an index into P1
+1. Use the last 12 bits as page offset (2^12 = 4096 = page size)
+
+But what happens to bits 48-63 of the 64-bit virtual address? Well, they can't be used. The “64-bit” long mode is in fact just a 48-bit mode. The bits 48-63 must be copies of bit 47, so each valid virtual address is still unique. For more information see [Wikipedia](https://en.wikipedia.org/wiki/X86-64#Virtual_address_space_details).
+
+An entry in the P4, P3, P2, and P1 tables consists of the page aligned 52-bit *physical* address of the frame or the next page table and the following bits that can be OR-ed in:
+
+|Bit(s)|Name|Meaning|
+|0|present|the page is currently in memory
+|1|writable|it's allowed to write to this page
+|2|user accessible|if not set, only kernel mode code can access this page
+|3|write through caching|writes go directly to memory
+|4|disable cache|no cache is used for this page
+|5|accessed|the CPU sets this bit when this page is used
+|6|dirty|the CPU sets this bit when a write to this page occurs
+|7|huge page/null|must be 0 in P1 and P4, creates a 1GiB page in P3, creates a 2MiB page in P2
+|8|global|page isn't flushed from caches on address space switch (PGE bit of CR4 register must be set)
+|9-11|available|can be used freely by the OS
+|52-62|available|can be used freely by the OS
+|63|no execute|forbid executing code on this page (the NXE bit in the EFER register must be set)
+
 🔗Set Up Identity Paging
-When we switch to long mode, paging will be activated automatically. The CPU will then try to read the instruction at the following address, but this address is now a virtual address. So we need to do identity mapping, i.e. map a physical address to the same virtual address.
 
-The huge page bit is now very useful to us. It creates a 2MiB (when used in P2) or even a 1GiB page (when used in P3). So we could map the first gigabytes of the kernel with only one P4 and one P3 table by using 1GiB pages. Unfortunately 1GiB pages are relatively new feature, for example Intel introduced it 2010 in the Westmere architecture. Therefore we will use 2MiB pages instead to make our kernel compatible to older computers, too.
+When we switch to long mode, paging will be activated automatically. The CPU will then try to read the instruction at the following address, but this address is now a virtual address. So we need to do *identity mapping*, i.e. map a physical address to the same virtual address.
+
+The `huge page` bit is now very useful to us. It creates a 2MiB (when used in P2) or even a 1GiB page (when used in P3). So we could map the first *gigabytes* of the kernel with only one P4 and one P3 table by using 1GiB pages. Unfortunately 1GiB pages are relatively new feature, for example Intel introduced it 2010 in the [Westmere architecture](https://en.wikipedia.org/wiki/Westmere_(microarchitecture)#Technology). Therefore we will use 2MiB pages instead to make our kernel compatible to older computers, too.
 
 To identity map the first gigabyte of our kernel with 512 2MiB pages, we need one P4, one P3, and one P2 table. Of course we will replace them with finer-grained tables later. But now that we're stuck with assembly, we choose the easiest way.
 
-We can add these two tables at the beginning3 of the .bss section:
+We can add these two tables at the beginning3 of the `.bss` section:
+
+> Note 3: Page tables need to be page-aligned as the bits 0-11 are used for flags. By putting these tables at the beginning of `.bss`, the linker can just page align the whole section and we don't have unused padding bytes in between.
 
 ```asm
 ...
@@ -258,9 +268,9 @@ stack_bottom:
 stack_top:
 ```
 
-The resb command reserves the specified amount of bytes without initializing them, so the 8KiB don't need to be saved in the executable. The align 4096 ensures that the page tables are page aligned.
+The `resb` command reserves the specified amount of bytes without initializing them, so the 8KiB don't need to be saved in the executable. The `align 4096` ensures that the page tables are page aligned.
 
-When GRUB creates the .bss section in memory, it will initialize it to 0. So the p4_table is already valid (it contains 512 non-present entries) but not very useful. To be able to map 2MiB pages, we need to link P4's first entry to the p3_table and P3's first entry to the the p2_table:
+When GRUB creates the `.bss` section in memory, it will initialize it to `0`. So the `p4_table` is already valid (it contains 512 non-present entries) but not very useful. To be able to map 2MiB pages, we need to link P4's first entry to the `p3_table` and P3's first entry to the the `p2_table`:
 
 ```asm
 set_up_page_tables:
