@@ -7,15 +7,15 @@ Aug 18, 2015
 https://os.phil-opp.com/multiboot-kernel/
 
 Table of Contents
-Overview
-Multiboot
-The Boot Code
-Building the Executable
-Creating the ISO
-Booting
-Build Automation
-What's next?
-Footnotes
+- Overview
+- Multiboot
+- The Boot Code
+- Building the Executable
+- Creating the ISO
+- Booting
+- Build Automation
+- What's next?
+- Footnotes
 
 No longer updated! You are viewing the a post of the first edition of “Writing an OS in Rust”, which is no longer updated. You can find the second edition here.
 This post explains how to create a minimal x86 operating system kernel using the Multiboot standard. In fact, it will just boot and print OK to the screen. In subsequent blog posts we will extend it using the Rust programming language.
@@ -25,23 +25,26 @@ I tried to explain everything in detail and to keep the code as simple as possib
 Note that this tutorial is written mainly for Linux. For some known problems on OS X see the comment section and this issue. If you want to use a virtual Linux machine, you can find instructions and a Vagrantfile in Ashley Willams's [x86-kernel repository](https://github.com/ashleygwilliams/x86-kernel).
 
 🔗Overview
+
 When you turn on a computer, it loads the BIOS from some special flash memory. The BIOS runs self test and initialization routines of the hardware, then it looks for bootable devices. If it finds one, the control is transferred to its bootloader, which is a small portion of executable code stored at the device's beginning. The bootloader has to determine the location of the kernel image on the device and load it into memory. It also needs to switch the CPU to the so-called protected mode because x86 CPUs start in the very limited real mode by default (to be compatible to programs from 1978).
 
 We won't write a bootloader because that would be a complex project on its own (if you really want to do it, check out Rolling Your Own Bootloader). Instead we will use one of the many well-tested bootloaders out there to boot our kernel from a CD-ROM. But which one?
 
 🔗Multiboot
+
 Fortunately there is a bootloader standard: the Multiboot Specification. Our kernel just needs to indicate that it supports Multiboot and every Multiboot-compliant bootloader can boot it. We will use the Multiboot 2 specification (PDF) together with the well-known GRUB 2 bootloader.
 
 To indicate our Multiboot 2 support to the bootloader, our kernel must start with a Multiboot Header, which has the following format:
 
 ```
-Field	Type	Value
-magic number	u32	0xE85250D6
-architecture	u32	0 for i386, 4 for MIPS
-header length	u32	total header size, including tags
-checksum	u32	-(magic + architecture + header_length)
-tags	variable	
-end tag	(u16, u16, u32)	(0, 0, 8)
+|Field|Type|Value|
+| -- | -- | -- |
+|magic number|u32|`0xE85250D6`
+|architecture|u32|`0` for i386, `4` for MIPS
+|header length|u32|total header size, including tags
+|checksum|u32|`-(magic + architecture + header_length)`
+|tags|variable|
+|end tag|(u16, u16, u32)|`(0, 0, 8)`
 ```
 
 Converted to a x86 assembly file it looks like this (Intel syntax):
