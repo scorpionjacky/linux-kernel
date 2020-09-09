@@ -15,9 +15,9 @@ Table of Contents
 - Booting
 - Build Automation
 - What's next?
-- Footnotes
 
-No longer updated! You are viewing the a post of the first edition of “Writing an OS in Rust”, which is no longer updated. You can find the second edition here.
+No longer updated! You are viewing the a post of the first edition of “Writing an OS in Rust”, which is no longer updated. You can find the second edition [here](https://os.phil-opp.com/second-edition/).
+
 This post explains how to create a minimal x86 operating system kernel using the Multiboot standard. In fact, it will just boot and print OK to the screen. In subsequent blog posts we will extend it using the Rust programming language.
 
 I tried to explain everything in detail and to keep the code as simple as possible. If you have any questions, suggestions or other issues, please leave a comment or create an issue on Github. The source code is available in a [repository](https://github.com/phil-opp/blog_os/tree/first_edition_post_1/src/arch/x86_64), too.
@@ -26,13 +26,13 @@ Note that this tutorial is written mainly for Linux. For some known problems on 
 
 🔗Overview
 
-When you turn on a computer, it loads the BIOS from some special flash memory. The BIOS runs self test and initialization routines of the hardware, then it looks for bootable devices. If it finds one, the control is transferred to its bootloader, which is a small portion of executable code stored at the device's beginning. The bootloader has to determine the location of the kernel image on the device and load it into memory. It also needs to switch the CPU to the so-called protected mode because x86 CPUs start in the very limited real mode by default (to be compatible to programs from 1978).
+When you turn on a computer, it loads the [BIOS](https://en.wikipedia.org/wiki/BIOS) from some special flash memory. The BIOS runs self test and initialization routines of the hardware, then it looks for bootable devices. If it finds one, the control is transferred to its bootloader, which is a small portion of executable code stored at the device's beginning. The bootloader has to determine the location of the kernel image on the device and load it into memory. It also needs to switch the CPU to the so-called [protected mode](https://en.wikipedia.org/wiki/Protected_mode) because x86 CPUs start in the very limited [real mode](https://wiki.osdev.org/Real_Mode) by default (to be compatible to programs from 1978).
 
-We won't write a bootloader because that would be a complex project on its own (if you really want to do it, check out Rolling Your Own Bootloader). Instead we will use one of the many well-tested bootloaders out there to boot our kernel from a CD-ROM. But which one?
+We won't write a bootloader because that would be a complex project on its own (if you really want to do it, check out [*Rolling Your Own Bootloader*](https://wiki.osdev.org/Rolling_Your_Own_Bootloader)). Instead we will use one of the [many well-tested bootloaders](https://en.wikipedia.org/wiki/Comparison_of_boot_loaders) out there to boot our kernel from a CD-ROM. But which one?
 
 🔗Multiboot
 
-Fortunately there is a bootloader standard: the Multiboot Specification. Our kernel just needs to indicate that it supports Multiboot and every Multiboot-compliant bootloader can boot it. We will use the Multiboot 2 specification (PDF) together with the well-known GRUB 2 bootloader.
+Fortunately there is a bootloader standard: the [Multiboot Specification](https://en.wikipedia.org/wiki/Multiboot_Specification). Our kernel just needs to indicate that it supports Multiboot and every Multiboot-compliant bootloader can boot it. We will use the Multiboot 2 specification ([PDF](https://nongnu.askapache.com/grub/phcoder/multiboot.pdf)) together with the well-known [GRUB 2](https://wiki.osdev.org/GRUB_2) bootloader.
 
 To indicate our Multiboot 2 support to the bootloader, our kernel must start with a Multiboot Header, which has the following format:
 
@@ -67,12 +67,14 @@ header_end:
 
 If you don't know x86 assembly, here is some quick guide:
 
-- the header will be written to a section named .multiboot_header (we need this later)
-- header_start and header_end are labels that mark a memory location, we use them to calculate the header length easily
-- dd stands for define double (32bit) and dw stands for define word (16bit). They just output the specified 32bit/16bit constant.
-- the additional 0x100000000 in the checksum calculation is a small hack1 to avoid a compiler warning
+- the header will be written to a section named `.multiboot`_header (we need this later)
+- `header_start` and `header_end` are labels that mark a memory location, we use them to calculate the header length easily
+- `dd` stands for `define double` (32bit) and `dw` stands for `define word` (16bit). They just output the specified 32bit/16bit constant.
+- the additional `0x100000000` in the checksum calculation is a small hack1 to avoid a compiler warning
 
-We can already assemble this file (which I called multiboot_header.asm) using nasm. It produces a flat binary by default, so the resulting file just contains our 24 bytes (in little endian if you work on a x86 machine):
+> The formula from the table, `-(magic + architecture + header_length)`, creates a negative value that doesn't fit into 32bit. By subtracting from `0x100000000` (= 2^(32)) instead, we keep the value positive without changing its truncated value. Without the additional sign bit(s) the result fits into 32bit and the compiler is happy :).
+
+We can already assemble this file (which I called `multiboot_header.asm`) using `nasm`. It produces a flat binary by default, so the resulting file just contains our 24 bytes (in little endian if you work on a x86 machine):
 
 ```
 > nasm multiboot_header.asm
@@ -99,13 +101,13 @@ start:
 
 There are some new commands:
 
-- global exports a label (makes it public). As start will be the entry point of our kernel, it needs to be public.
-- the .text section is the default section for executable code
-- bits 32 specifies that the following lines are 32-bit instructions. It's needed because the CPU is still in Protected mode when GRUB starts our kernel. When we switch to Long mode in the next post we can use bits 64 (64-bit instructions).
-- the mov dword instruction moves the 32bit constant 0x2f4b2f4f to the memory at address b8000 (it prints OK to the screen, an explanation follows in the next posts)
-- hlt is the halt instruction and causes the CPU to stop
+- `global` exports a label (makes it public). As `start` will be the entry point of our kernel, it needs to be public.
+- the `.text` section is the default section for executable code
+- `bits 32` specifies that the following lines are 32-bit instructions. It's needed because the CPU is still in [Protected mode](https://en.wikipedia.org/wiki/Protected_mode) when GRUB starts our kernel. When we switch to [Long mode](https://en.wikipedia.org/wiki/Long_mode) in the [next post](https://os.phil-opp.com/entering-longmode/) we can use `bits 64` (64-bit instructions).
+- the `mov dword` instruction moves the 32bit constant `0x2f4b2f4f` to the memory at address `b8000` (it prints `OK` to the screen, an explanation follows in the next posts)
+- `hlt` is the halt instruction and causes the CPU to stop
 
-Through assembling, viewing and disassembling we can see the CPU Opcodes in action:
+Through assembling, viewing and disassembling we can see the CPU [Opcodes](https://en.wikipedia.org/wiki/Opcode) in action:
 
 ```
 > nasm boot.asm
@@ -120,9 +122,9 @@ Through assembling, viewing and disassembling we can see the CPU Opcodes in acti
 
 🔗Building the Executable
 
-To boot our executable later through GRUB, it should be an ELF executable. So we want nasm to create ELF object files instead of plain binaries. To do that, we simply pass the ‑f elf64 argument to it.
+To boot our executable later through GRUB, it should be an [ELF](https://en.wikipedia.org/wiki/Executable_and_Linkable_Format) executable. So we want `nasm` to create ELF [object files](https://wiki.osdev.org/Object_Files) instead of plain binaries. To do that, we simply pass the `‑f elf64` argument to it.
 
-To create the ELF executable, we need to link the object files together. We use a custom linker script named linker.ld:
+To create the ELF executable, we need to [link](https://en.wikipedia.org/wiki/Linker_(computing)) the object files together. We use a custom [linker script](https://sourceware.org/binutils/docs/ld/Scripts.html) named `linker.ld`:
 
 ```link
 ENTRY(start)
@@ -145,12 +147,14 @@ SECTIONS {
 
 Let's translate it:
 
-- start is the entry point, the bootloader will jump to it after loading the kernel
-- . = 1M; sets the load address of the first section to 1 MiB, which is a conventional place to load a kernel2
-- the executable will have two sections: .boot at the beginning and .text afterwards
-- the .text output section contains all input sections named .text
-- Sections named .multiboot_header are added to the first output section (.boot) to ensure they are at the beginning of the executable. This is necessary because GRUB expects to find the Multiboot header very early in the file.
+- `start` is the entry point, the bootloader will jump to it after loading the kernel
+- `. = 1M;` sets the load address of the first section to 1 MiB, which is a conventional place to load a kernel2
+- the executable will have two sections: `.boot` at the beginning and `.text` afterwards
+- the `.text` output section contains all input sections named `.text`
+- Sections named `.multiboot_header` are added to the first output section (`.boot`) to ensure they are at the beginning of the executable. This is necessary because GRUB expects to find the Multiboot header very early in the file.
 - So let's create the ELF object files and link them using our new linker script:
+
+> We don't want to load the kernel to e.g. `0x0` because there are many special memory areas below the 1MB mark (for example the so-called VGA buffer at `0xb8000`, that we use to print `OK` to the screen).
 
 ```bash
 > nasm -f elf64 multiboot_header.asm
@@ -158,9 +162,9 @@ Let's translate it:
 > ld -n -o kernel.bin -T linker.ld multiboot_header.o boot.o
 ```
 
-It's important to pass the -n (or --nmagic) flag to the linker, which disables the automatic section alignment in the executable. Otherwise the linker may page align the .boot section in the executable file. If that happens, GRUB isn't able to find the Multiboot header because it isn't at the beginning anymore.
+It's important to pass the `-n` (or `--nmagic`) flag to the linker, which disables the automatic section alignment in the executable. Otherwise the linker may page align the `.boot` section in the executable file. If that happens, GRUB isn't able to find the Multiboot header because it isn't at the beginning anymore.
 
-We can use objdump to print the sections of the generated executable and verify that the .boot section has a low file offset:
+We can use `objdump` to print the sections of the generated executable and verify that the `.boot` section has a low file offset:
 
 ```bash
 > objdump -h kernel.bin
@@ -174,11 +178,11 @@ Idx Name      Size      VMA               LMA               File off  Algn
               CONTENTS, ALLOC, LOAD, READONLY, CODE
 ```
 
-Note: The ld and objdump commands are platform specific. If you're not working on x86_64 architecture, you will need to cross compile binutils. Then use x86_64‑elf‑ld and x86_64‑elf‑objdump instead of ld and objdump.
+Note: The `ld` and `objdump` commands are platform specific. If you're *not* working on x86_64 architecture, you will need to [cross compile binutils](https://os.phil-opp.com/cross-compile-binutils/). Then use `x86_64‑elf‑ld` and `x86_64‑elf‑objdump` instead of `ld` and `objdump`.
 
 🔗Creating the ISO
 
-All PC BIOSes know how to boot from a CD-ROM, so we want to create a bootable CD-ROM image, containing our kernel and the GRUB bootloader's files, in a single file called an ISO. Make the following directory structure and copy the kernel.bin to the right place:
+All PC BIOSes know how to boot from a CD-ROM, so we want to create a bootable CD-ROM image, containing our kernel and the GRUB bootloader's files, in a single file called an [ISO](https://en.wikipedia.org/wiki/ISO_image). Make the following directory structure and copy the `kernel.bin` to the right place:
 
 ```
 isofiles
@@ -188,7 +192,7 @@ isofiles
     └── kernel.bin
 ```
 
-The grub.cfg specifies the file name of our kernel and its Multiboot 2 compliance. It looks like this:
+The `grub.cfg` specifies the file name of our kernel and its Multiboot 2 compliance. It looks like this:
 
 ```
 set timeout=0
@@ -204,40 +208,38 @@ Now we can create a bootable image using the command:
 
 ```bash
 grub-mkrescue -o os.iso isofiles
-
-# could be grub2-mkrescue
 ```
 
-Note: grub-mkrescue causes problems on some platforms. If it does not work for you, try the following steps:
+Note: `grub-mkrescue` causes problems on some platforms. If it does not work for you, try the following steps:
 
-- try to run it with --verbose
-- make sure xorriso is installed (xorriso or libisoburn package)
-- If you're using an EFI-system, grub-mkrescue tries to create an EFI image by default. You can either pass -d /usr/lib/grub/i386-pc to avoid EFI or install the mtools package to get a working EFI image
-- on some system the command is named grub2-mkrescue
+- try to run it with `--verbose`
+- make sure `xorriso` is installed (`xorriso` or `libisoburn` package)
+- If you're using an EFI-system, `grub-mkrescue` tries to create an EFI image by default. You can either pass `-d /usr/lib/grub/i386-pc` to avoid EFI or install the `mtools` package to get a working EFI image
+- on some system the command is named `grub2-mkrescue`
 
 🔗Booting
 
-Now it's time to boot our OS. We will use QEMU:
+Now it's time to boot our OS. We will use [QEMU](https://en.wikipedia.org/wiki/QEMU):
 
 ```
 qemu-system-x86_64 -cdrom os.iso
 ```
 
-Notice the green OK in the upper left corner. If it does not work for you, take a look at the comment section.
+Notice the green `OK` in the *upper left* corner. If it does not work for you, take a look at the comment section.
 
 Let's summarize what happens:
 
 1. the BIOS loads the bootloader (GRUB) from the virtual CD-ROM (the ISO)
 1. the bootloader reads the kernel executable and finds the Multiboot header
-1. it copies the .boot and .text sections to memory (to addresses 0x100000 and 0x100020)
-1. it jumps to the entry point (0x100020, you can obtain it through objdump -f)
-1. our kernel prints the green OK and stops the CPU
+1. it copies the `.boot` and `.text` sections to memory (to addresses `0x100000` and `0x100020`)
+1. it jumps to the entry point (`0x100020`, you can obtain it through `objdump -f`)
+1. our kernel prints the green `OK` and stops the CPU
 
 You can test it on real hardware, too. Just burn the ISO to a disk or USB stick and boot from it.
 
 🔗Build Automation
 
-Right now we need to execute 4 commands in the right order every time we change a file. That's bad. So let's automate the build using a Makefile. But first we should create some clean directory structure for our source files to separate the architecture specific files:
+Right now we need to execute 4 commands in the right order every time we change a file. That's bad. So let's automate the build using a `Makefile`. But first we should create some clean directory structure for our source files to separate the architecture specific files:
 
 ```
 …
@@ -294,24 +296,20 @@ build/arch/$(arch)/%.o: src/arch/$(arch)/%.asm
 
 Some comments (see the [Makefile tutorial] if you don't know make):
 
-- the $(wildcard src/arch/$(arch)/*.asm) chooses all assembly files in the src/arch/$(arch)` directory, so you don't have to update the Makefile when you add a file
-- the patsubst operation for assembly_object_files just translates src/arch/$(arch)/XYZ.asm to build/arch/$(arch)/XYZ.o
-- the $< and $@ in the assembly target are automatic variables
-- if you're using cross-compiled binutils just replace ld with x86_64‑elf‑ld
+- the `$(wildcard src/arch/$(arch)/*.asm)` chooses all assembly files in the `src/arch/$(arch)` directory, so you don't have to update the Makefile when you add a file
+- the `patsubst` operation for `assembly_object_files` just translates `src/arch/$(arch)/XYZ.asm` to `build/arch/$(arch)/XYZ.o`
+- the `$<` and `$@` in the assembly target are [automatic variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
+- if you're using [cross-compiled binutils](https://os.phil-opp.com/cross-compile-binutils/) just replace `ld` with `x86_64‑elf‑ld`
 
-Now we can invoke make and all updated assembly files are compiled and linked. The make iso command also creates the ISO image and make run will additionally start QEMU.
+Now we can invoke `make` and all updated assembly files are compiled and linked. The `make iso` command also creates the ISO image and `make run` will additionally start QEMU.
 
 🔗What's next?
 
-In the next post we will create a page table and do some CPU configuration to switch to the 64-bit long mode.
+In the [next post](https://os.phil-opp.com/entering-longmode/) we will create a page table and do some CPU configuration to switch to the 64-bit [long mode](https://en.wikipedia.org/wiki/Long_mode).
 
-🔗Footnotes
-
-1 The formula from the table, -(magic + architecture + header_length), creates a negative value that doesn't fit into 32bit. By subtracting from 0x100000000 (= 2^(32)) instead, we keep the value positive without changing its truncated value. Without the additional sign bit(s) the result fits into 32bit and the compiler is happy :).
-
-2 We don't want to load the kernel to e.g. 0x0 because there are many special memory areas below the 1MB mark (for example the so-called VGA buffer at 0xb8000, that we use to print OK to the screen).
 
 [Entering Long Mode »](https://os.phil-opp.com/entering-longmode/)
+
 
 ## Comments (Archived)
 
