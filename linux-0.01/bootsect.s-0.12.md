@@ -1,67 +1,43 @@
 # bootsect.S v0.12
 
-! 这里位于一行开始的感叹号'!'或分号';'表示该行是注释语句。 没有行号的语句均是作者的注释。
-1 !
-2 ! SYS_SIZE is the number of clicks (16 bytes) to be loaded.
-3 ! 0x3000 is 0x30000 bytes = 196kB, more than enough for current
-4 ! versions of linux
-! SYS_SIZE 是要加载的系统模块长度。 长度单位是节（ paragraph） ，每节 16 字节。 这里 0x3000 共为
-! 0x30000 字节=196KB。 若以 1024 字节为 1KB 计，则应该是 192KB。对于当前内核版本这个空间长度
-! 已足够了。当该值为 0x8000 时，表示内核最大为 512KB。因为内存 0x90000 处开始存放移动后的
-! bootsect 和 setup 的代码，因此该值最大不得超过 0x9000（表示 584KB）。
-5 !
-! 头文件 linux/config.h 中定义了内核用到的一些常数符号和 Linus 自己使用的默认硬盘参数块。
-! 例如其中定义了以下一些常数：
+SYS_SIZE is the number of clicks (16 bytes) to be loaded. 0x3000 is 0x30000 bytes = 196kB, more than enough for current versions of linux
+
+SYS_SIZE 是要加载的系统模块长度。 长度单位是节（ paragraph） ，每节 16 字节。 这里 0x3000 共为 0x30000 字节=196KB。 若以 1024 字节为 1KB 计，则应该是 192KB。对于当前内核版本这个空间长度已足够了。当该值为 0x8000 时，表示内核最大为 512KB。因为内存 0x90000 处开始存放移动后的 bootsect 和 setup 的代码，因此该值最大不得超过 0x9000（表示 584KB）。
+
+头文件 linux/config.h 中定义了内核用到的一些常数符号和 Linus 自己使用的默认硬盘参数块。
+
+例如其中定义了以下一些常数：
+```
 ! DEF_SYSSIZE = 0x3000 - 默认系统模块长度。单位是节，每节为 16 字节；
 ! DEF_INITSEG = 0x9000 - 默认本程序代码移动目的段位置；
 ! DEF_SETUPSEG = 0x9020 - 默认 setup 程序代码段位置；
 ! DEF_SYSSEG = 0x1000 - 默认从磁盘加载系统模块到内存的段位置。
-6 #include <linux/config.h>
-7 SYSSIZE = DEF_SYSSIZE ! 定义一个标号或符号。指明编译连接后 system 模块的大小。
-8 !
-9 ! bootsect.s (C) 1991 Linus Torvalds
-10 ! modified by Drew Eckhardt
-11 !
-12 ! bootsect.s is loaded at 0x7c00 by the bios-startup routines, and moves
-13 ! iself out of the way to address 0x90000, and jumps there.
-14 !
-15 ! It then loads 'setup' directly after itself (0x90200), and the system
-16 ! at 0x10000, using BIOS interrupts.
-17 !
-18 ! NOTE! currently system is at most 8*65536 bytes long. This should be no
-19 ! problem, even in the future. I want to keep it simple. This 512 kB
-20 ! kernel size should be enough, especially as this doesn't contain the
-21 ! buffer cache as in minix
-22 !
-23 ! The loader has been made as simple as possible, and continuos
-24 ! read errors will result in a unbreakable loop. Reboot by hand. It
-25 ! loads pretty fast by getting whole sectors at a time whenever possible.
-!
-! 以下是前面文字的译文：
-! bootsect.s (C) 1991 Linus Torvalds6.2 bootsect.S 程序
-207
-! Drew Eckhardt 修改
-!
-! bootsect.s 被 ROM BIOS 启动子程序加载至 0x7c00 (31KB)处，并将自己移到了地址 0x90000
-! (576KB)处，并跳转至那里。
-!
-! 它然后使用 BIOS 中断将'setup'直接加载到自己的后面(0x90200)(576.5KB)，并将 system 加
-! 载到地址 0x10000 处。
-!
-! 注意! 目前的内核系统最大长度限制为(8*65536)(512KB)字节，即使是在将来这也应该没有问
-! 题的。我想让它保持简单明了。这样 512KB 的最大内核长度应该足够了，尤其是这里没有象
-! MINIX 中一样包含缓冲区高速缓冲。
-!
-! 加载程序已经做得够简单了，所以持续地读操作出错将导致死循环。只能手工重启。只要可能，
-! 通过一次读取所有的扇区，加载过程可以做得很快。
-26
-! 伪指令（伪操作符） .globl 或.global 用于定义随后的标识符是外部的或全局的，并且即使不
-! 使用也强制引入。 .text、 .data 和.bss 用于分别定义当前代码段、数据段和未初始化数据段。
-! 在链接多个目标模块时，链接程序（ ld86） 会根据它们的类别把各个目标模块中的相应段分别
-! 组合（合并）在一起。这里把三个段都定义在同一重叠地址范围中，因此本程序实际上不分段。
-! 另外，后面带冒号的字符串是标号，例如下面的'begtext:'。
-! 一条汇编语句通常由标号（可选）、指令助记符（指令名）和操作数三个字段组成。标号位于
-! 一条指令的第一个字段。它代表其所在位置的地址，通常指明一个跳转指令的目标位置。
+```
+
+```asm
+#include <linux/config.h>
+SYSSIZE = DEF_SYSSIZE ! 定义一个标号或符号。指明编译连接后 system 模块的大小。
+```
+
+bootsect.s is loaded at 0x7c00 by the bios-startup routines, and moves iself out of the way to address 0x90000, and jumps there.
+
+It then loads 'setup' directly after itself (0x90200), and the system at 0x10000, using BIOS interrupts.
+
+NOTE! currently system is at most 8\*65536 bytes long. This should be no problem, even in the future. I want to keep it simple. This 512 kB kernel size should be enough, especially as this doesn't contain the buffer cache as in minix
+
+The loader has been made as simple as possible, and continuos read errors will result in a unbreakable loop. Reboot by hand. It loads pretty fast by getting whole sectors at a time whenever possible.
+
+bootsect.s 被 ROM BIOS 启动子程序加载至 0x7c00 (31KB)处，并将自己移到了地址 0x90000 (576KB)处，并跳转至那里。
+
+它然后使用 BIOS 中断将'setup'直接加载到自己的后面(0x90200)(576.5KB)，并将 system 加载到地址 0x10000 处。
+
+注意! 目前的内核系统最大长度限制为(8\*65536)(512KB)字节，即使是在将来这也应该没有问题的。我想让它保持简单明了。这样 512KB 的最大内核长度应该足够了，尤其是这里没有象 MINIX 中一样包含缓冲区高速缓冲。
+
+加载程序已经做得够简单了，所以持续地读操作出错将导致死循环。只能手工重启。只要可能，通过一次读取所有的扇区，加载过程可以做得很快。
+
+伪指令（伪操作符） .globl 或.global 用于定义随后的标识符是外部的或全局的，并且即使不使用也强制引入。 .text、 .data 和.bss 用于分别定义当前代码段、数据段和未初始化数据段。在链接多个目标模块时，链接程序（ ld86） 会根据它们的类别把各个目标模块中的相应段分别组合（合并）在一起。这里把三个段都定义在同一重叠地址范围中，因此本程序实际上不分段。另外，后面带冒号的字符串是标号，例如下面的'begtext:'。一条汇编语句通常由标号（可选）、指令助记符（指令名）和操作数三个字段组成。标号位于一条指令的第一个字段。它代表其所在位置的地址，通常指明一个跳转指令的目标位置。
+
+```asm
 27 .globl begtext, begdata, begbss, endtext, enddata, endbss
 28 .text ! 文本段（代码段）。
 29 begtext:
@@ -1269,19 +1245,17 @@ Record）会被 BIOS 加载到内存 0x7c00 处并开始执行。该程序会首
 401 enddata:
 402 .bss
 403 endbss:
-4046.2 bootsect.S 程序
-218
+```
+
 6.2.3其他信息
-对 bootsect.S 这段程序的说明和描述，在网上可以搜索到大量的资料。其中 Alessandro Rubini 著并
-由本人翻译的《Linux 内核源代码漫游》一篇文章(http://oldlinux.org/Linux.old/docs/)比较全面地描述了内
-核启动的详细过程，很有参考价值。由于这段程序运行在 CPU 实模式下，因此相对来将比较容易理解。
-若此时阅读仍有困难，那么建议你首先再复习一下 80x86 汇编及其硬件的相关知识，然后再继续阅读本
+
+对 bootsect.S 这段程序的说明和描述，在网上可以搜索到大量的资料。其中 Alessandro Rubini 著并由本人翻译的《Linux 内核源代码漫游》一篇文章(http://oldlinux.org/Linux.old/docs/)比较全面地描述了内核启动的详细过程，很有参考价值。由于这段程序运行在 CPU 实模式下，因此相对来将比较容易理解。若此时阅读仍有困难，那么建议你首先再复习一下 80x86 汇编及其硬件的相关知识，然后再继续阅读本
 书。对于最新开发的 Linux 内核，这段程序的改动并不大，基本保持了 0.12 版 bootsect 程序的模样。
+
 6.2.3.1 Linux 0.12 硬盘设备号
-Linux 系统中通过设备号来使用各种设备。 设备号由主设备号和次设备号（ Major-Minor，或
-Master-Slave） 组合而成， 主设备号指定了设备的种类，次设备号则指明了具体的设备对象。 主、 次设
-备号分别用 1 个字节表示， 即各个设备号均有 2 个字节。 bootsect 程序中涉及的硬盘设备是块设备，其
-主设备号是 3。 Linux 系统中基本设备的主设备号有：
+
+Linux 系统中通过设备号来使用各种设备。 设备号由主设备号和次设备号（ Major-Minor，或Master-Slave） 组合而成， 主设备号指定了设备的种类，次设备号则指明了具体的设备对象。 主、 次设备号分别用 1 个字节表示， 即各个设备号均有 2 个字节。 bootsect 程序中涉及的硬盘设备是块设备，其主设备号是 3。 Linux 系统中基本设备的主设备号有：
+```
  1 - 内存；
  2 - 磁盘；
  3 - 硬盘；
@@ -1289,13 +1263,16 @@ Master-Slave） 组合而成， 主设备号指定了设备的种类，次设备
  5 - tty；
  6 - 并行口；
  7 - 非命名管道。
-由于 1 个硬盘中可以有 1--4 个分区，因此硬盘还使用次设备号来指定分区。因此硬盘的逻辑设备号由
-以下方式构成：
-设备号 = 主设备号*256 + 次设备号
-两个硬盘的所有逻辑设备号见表 6–1 所示。 其中 0x0300 和 0x0305 并不与任何一个分区对应，而是
-代表整个硬盘。从 Linux 内核 0.95 版后已经不使用这种烦琐的命名方式，而是使用与现在相同的命名
-方法了。
+```
+
+由于 1 个硬盘中可以有 1--4 个分区，因此硬盘还使用次设备号来指定分区。因此硬盘的逻辑设备号由以下方式构成：
+
+设备号 = 主设备号\*256 + 次设备号
+
+两个硬盘的所有逻辑设备号见表 6–1 所示。 其中 0x0300 和 0x0305 并不与任何一个分区对应，而是代表整个硬盘。从 Linux 内核 0.95 版后已经不使用这种烦琐的命名方式，而是使用与现在相同的命名方法了。
+
 表 6–1 硬盘逻辑设备号
+```
 逻辑设备号 对应设备文件 说明
 0x300 /dev/hd0 代表整个第 1 个硬盘
 0x301 /dev/hd1 表示第 1 个硬盘的第 1 个分区
@@ -1306,24 +1283,13 @@ Master-Slave） 组合而成， 主设备号指定了设备的种类，次设备
 0x306 /dev/hd6 表示第 2 个硬盘的第 1 个分区
 0x307 /dev/hd7 表示第 2 个硬盘的第 2 个分区
 0x308 /dev/hd8 表示第 2 个硬盘的第 3 个分区
-0x309 /dev/hd9 表示第 2 个硬盘的第 4 个分区6.3 setup.S 程序
-219
+0x309 /dev/hd9 表示第 2 个硬盘的第 4 个分区
+```
+
 6.2.3.2 从硬盘启动系统
-该 bootsect 程序给出了默认从软盘上引导启动 Linux 系统的操作方法和流程。 若你想从硬盘设备启
-动系统，那么通常需要使用其他多操作系统引导程序来引导加载系统。例如 Shoelace、 LILO 或 Grub 等
-多操作系统引导程序。此时 bootsect.S 所需执行的操作会由这些程序来完成。 bootsect 程序就不会被执行
-了。因为如果从硬盘启动系统，那么通常内核映像文件 Image 会存放在硬盘某个活动分区的根文件系统
-中。因此你就需要知道内核映像文件 Image 处于文件系统中的位置以及是什么文件系统。即你的引导扇
-区程序需要能够识别并访问文件系统，并从中读取内核映像文件。
-从硬盘启动的基本流程是：系统上电后，可启动硬盘的第 1 个扇区（主引导记录 MBR - Master Boot
-Record）会被 BIOS 加载到内存 0x7c00 处并开始执行。该程序会首先把自己向下移动到内存 0x600 处，
-然后根据 MBR 中分区表信息所指明的活动分区中的第 1 个扇区（引导扇区）加载到内存 0x7c00 处，然
-后开始执行之。
-对于 Linux 0.12 系统这种内核映像文件与根文件系统相互独立的情况， 如果直接使用这种方式来从
-硬盘上引导系统就会碰到这样一个问题，即根文件系统不能与内核映像文件 Image 共存在一处。 可行的
-解决办法有两个。一种办法是专门设置一个小容量的活动分区来存放内核映像文件 Image， 而相应的根
-文件系统则放在另外一个分区中。这样做虽然多用了硬盘上的一个主分区，但应该能在对 bootsect.S 程
-序作最少修改的前提下做到从硬盘启动系统。另一个办法是把内核映像文件 Image 与根文件系统组合存
-放在一个分区中，即内核映像文件 Image 放在分区开始的一些扇区中，而根文件系统则从随后某一指定
-扇区开始存放。这两种方法均需要对代码进行一些修改。读者可以参考最后一章的相关内容使用 bochs
-模拟软件亲手做一些实验。
+
+该 bootsect 程序给出了默认从软盘上引导启动 Linux 系统的操作方法和流程。 若你想从硬盘设备启动系统，那么通常需要使用其他多操作系统引导程序来引导加载系统。例如 Shoelace、 LILO 或 Grub 等多操作系统引导程序。此时 bootsect.S 所需执行的操作会由这些程序来完成。 bootsect 程序就不会被执行了。因为如果从硬盘启动系统，那么通常内核映像文件 Image 会存放在硬盘某个活动分区的根文件系统中。因此你就需要知道内核映像文件 Image 处于文件系统中的位置以及是什么文件系统。即你的引导扇区程序需要能够识别并访问文件系统，并从中读取内核映像文件。
+
+从硬盘启动的基本流程是：系统上电后，可启动硬盘的第 1 个扇区（主引导记录 MBR - Master Boot Record）会被 BIOS 加载到内存 0x7c00 处并开始执行。该程序会首先把自己向下移动到内存 0x600 处，然后根据 MBR 中分区表信息所指明的活动分区中的第 1 个扇区（引导扇区）加载到内存 0x7c00 处，然后开始执行之。
+
+对于 Linux 0.12 系统这种内核映像文件与根文件系统相互独立的情况， 如果直接使用这种方式来从硬盘上引导系统就会碰到这样一个问题，即根文件系统不能与内核映像文件 Image 共存在一处。 可行的解决办法有两个。一种办法是专门设置一个小容量的活动分区来存放内核映像文件 Image， 而相应的根文件系统则放在另外一个分区中。这样做虽然多用了硬盘上的一个主分区，但应该能在对 bootsect.S 程序作最少修改的前提下做到从硬盘启动系统。另一个办法是把内核映像文件 Image 与根文件系统组合存放在一个分区中，即内核映像文件 Image 放在分区开始的一些扇区中，而根文件系统则从随后某一指定扇区开始存放。这两种方法均需要对代码进行一些修改。读者可以参考最后一章的相关内容使用 bochs 模拟软件亲手做一些实验。
