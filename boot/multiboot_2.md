@@ -8,28 +8,29 @@ https://os.phil-opp.com/entering-longmode/
 
 Table of Contents
 
-Some Tests
-Creating a Stack
-Multiboot check
-CPUID check
-Long Mode check
-Putting it together
-Paging
-Set Up Identity Paging
-Enable Paging
-The Global Descriptor Table
-Loading the GDT
-What's next?
-Footnotes
+- Some Tests
+- Creating a Stack
+- Multiboot check
+- CPUID check
+- Long Mode check
+- Putting it together
+- Paging
+- Set Up Identity Paging
+- Enable Paging
+- The Global Descriptor Table
+- Loading the GDT
+- What's next?
+- Footnotes
 
-No longer updated! You are viewing the a post of the first edition of “Writing an OS in Rust”, which is no longer updated. You can find the second edition here.
+No longer updated! You are viewing the a post of the first edition of “Writing an OS in Rust”, which is no longer updated. You can find the second edition [here](https://os.phil-opp.com/second-edition/).
 
-In the previous post we created a minimal multiboot kernel. It just prints OK and hangs. The goal is to extend it and call 64-bit Rust code. But the CPU is currently in protected mode and allows only 32-bit instructions and up to 4GiB memory. So we need to set up Paging and switch to the 64-bit long mode first.
+In the [previous post](https://os.phil-opp.com/multiboot-kernel/) we created a minimal multiboot kernel. It just prints `OK` and hangs. The goal is to extend it and call 64-bit [Rust](https://www.rust-lang.org/) code. But the CPU is currently in [protected mode](https://en.wikipedia.org/wiki/Protected_mode) and allows only 32-bit instructions and up to 4GiB memory. So we need to set up *Paging* and switch to the 64-bit [long mode](https://en.wikipedia.org/wiki/Long_mode) first.
 
-I tried to explain everything in detail and to keep the code as simple as possible. If you have any questions, suggestions, or issues, please leave a comment or create an issue on Github. The source code is available in a repository, too.
+I tried to explain everything in detail and to keep the code as simple as possible. If you have any questions, suggestions, or issues, please leave a comment or create an issue on Github. The source code is available in a [repository](https://github.com/phil-opp/blog_os/tree/first_edition_post_2/src/arch/x86_64), too.
 
 🔗Some Tests
-To avoid bugs and strange errors on old CPUs we should check if the processor supports every needed feature. If not, the kernel should abort and display an error message. To handle errors easily, we create an error procedure in boot.asm. It prints a rudimentary ERR: X message, where X is an error code letter, and hangs:
+
+To avoid bugs and strange errors on old CPUs we should check if the processor supports every needed feature. If not, the kernel should abort and display an error message. To handle errors easily, we create an error procedure in `boot.asm`. It prints a rudimentary `ERR: X` message, where X is an error code letter, and hangs:
 
 ```asm
 ; Prints `ERR: ` and the given error code to screen and hangs.
@@ -42,14 +43,15 @@ error:
     hlt
 ```
 
-At address 0xb8000 begins the so-called VGA text buffer. It's an array of screen characters that are displayed by the graphics card. A future post will cover the VGA buffer in detail and create a Rust interface to it. But for now, manual bit-fiddling is the easiest option.
+At address `0xb8000` begins the so-called [VGA text buffer](https://en.wikipedia.org/wiki/VGA-compatible_text_mode). It's an array of screen characters that are displayed by the graphics card. A [future post](https://os.phil-opp.com/printing-to-screen/) will cover the VGA buffer in detail and create a Rust interface to it. But for now, manual bit-fiddling is the easiest option.
 
-A screen character consists of a 8 bit color code and a 8 bit ASCII character. We used the color code 4f for all characters, which means white text on red background. 0x52 is an ASCII R, 0x45 is an E, 0x3a is a :, and 0x20 is a space. The second space is overwritten by the given ASCII byte. Finally the CPU is stopped with the hlt instruction.
+A screen character consists of a 8 bit color code and a 8 bit [ASCII](https://en.wikipedia.org/wiki/ASCII) character. We used the color code `4f` for all characters, which means white text on red background. `0x52` is an ASCII `R`, `0x45` is an `E`, `0x3a` is a `:`, and `0x20` is a space. The second space is overwritten by the given ASCII byte. Finally the CPU is stopped with the `hlt` instruction.
 
-Now we can add some check functions. A function is just a normal label with an ret (return) instruction at the end. The call instruction can be used to call it. Unlike the jmp instruction that just jumps to a memory address, the call instruction will push a return address to the stack (and the ret will jump to this address). But we don't have a stack yet. The stack pointer in the esp register could point to some important data or even invalid memory. So we need to update it and point it to some valid stack memory.
+Now we can add some check functions. A function is just a normal label with an `ret` (return) instruction at the end. The `call` instruction can be used to call it. Unlike the `jmp` instruction that just jumps to a memory address, the `call` instruction will push a return address to the stack (and the `ret` will jump to this address). But we don't have a stack yet. The [stack pointer](https://stackoverflow.com/a/1464052/866447) in the esp register could point to some important data or even invalid memory. So we need to update it and point it to some valid stack memory.
 
 🔗Creating a Stack
-To create stack memory we reserve some bytes at the end of our boot.asm:
+
+To create stack memory we reserve some bytes at the end of our `boot.asm`:
 
 ```asm
 ...
@@ -59,9 +61,9 @@ stack_bottom:
 stack_top:
 ```
 
-A stack doesn't need to be initialized because we will pop only when we pushed before. So storing the stack memory in the executable file would make it unnecessary large. By using the .bss section and the resb (reserve byte) command, we just store the length of the uninitialized data (= 64). When loading the executable, GRUB will create the section of required size in memory.
+A stack doesn't need to be initialized because we will `pop` only when we `push`ed before. So storing the stack memory in the executable file would make it unnecessary large. By using the [.bss](https://en.wikipedia.org/wiki/.bss) section and the `resb` (reserve byte) command, we just store the length of the uninitialized data (= 64). When loading the executable, GRUB will create the section of required size in memory.
 
-To use the new stack, we update the stack pointer register right after start:
+To use the new stack, we update the stack pointer register right after `start`:
 
 ```asm
 global start
@@ -75,13 +77,13 @@ start:
     ...
 ```
 
-We use stack_top because the stack grows downwards: A push eax subtracts 4 from esp and does a mov [esp], eax afterwards (eax is a general purpose register).
+We use `stack_top` because the stack grows downwards: A `push eax` subtracts 4 from `esp` and does a `mov [esp], eax` afterwards (`eax` is a general purpose register).
 
-Now we have a valid stack pointer and are able to call functions. The following check functions are just here for completeness and I won't explain details. Basically they all work the same: They will check for a feature and jump to error if it's not available.
+Now we have a valid stack pointer and are able to call functions. The following check functions are just here for completeness and I won't explain details. Basically they all work the same: They will check for a feature and jump to `error` if it's not available.
 
 🔗Multiboot check
 
-We rely on some Multiboot features in the next posts. To make sure the kernel was really loaded by a Multiboot compliant bootloader, we can check the eax register. According to the Multiboot specification (PDF), the bootloader must write the magic value 0x36d76289 to it before loading a kernel. To verify that we can add a simple function:
+We rely on some Multiboot features in the next posts. To make sure the kernel was really loaded by a Multiboot compliant bootloader, we can check the `eax` register. According to the Multiboot specification ([PDF](https://nongnu.askapache.com/grub/phcoder/multiboot.pdf)), the bootloader must write the magic value `0x36d76289` to it before loading a kernel. To verify that we can add a simple function:
 
 ```asm
 check_multiboot:
