@@ -1,3 +1,7 @@
+## create small disk image with large partitions
+
+https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions
+
 ## multibook
 
 https://os.phil-opp.com/multiboot-kernel/
