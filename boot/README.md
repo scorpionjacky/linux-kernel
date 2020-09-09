@@ -1,7 +1,9 @@
 - [create small disk image with large partitions](https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions)
 - [An article](https://news.ycombinator.com/item?id=12182156)
-- A minimal Multiboot Kernel, Series, Rust
-  - https://os.phil-opp.com/multiboot-kernel/
+- A minimal Multiboot Kernel, Series, in Rust
+  - [Part 1: A minimal Multiboot Kernel](multiboot_1.md) ***This works!***
+  - [Part 2: Entering Long Mode](multiboot_2.md)
+  - [Updated Series](https://os.phil-opp.com/)
 - [build kernel and boot using qemu and grub](https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt)
   - Everything works but qemu can't really load kernel at stage 1.5.
   - Need to change `elf` to `elf64` for `nasm` compiling.
