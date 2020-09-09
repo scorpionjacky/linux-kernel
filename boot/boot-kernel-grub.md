@@ -1,3 +1,13 @@
+## An article
+
+https://news.ycombinator.com/item?id=12182156
+
+**cool example in 2010**
+
+https://github.com/rikusalminen/danjeros
+
+**build kernel and boot using qemu and grub**
+
 https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt
 
 Change elf to elf64 for nasm compiling.
