@@ -21,8 +21,7 @@
   - [0.01 - 1](https://kernel.googlesource.com/pub/scm/linux/kernel/git/nico/archive/)
 - Linux Variations
   - [illumos](https://github.com/illumos/illumos-gate)
-- Grub2
-  [@github](https://github.com/rhboot/grub2)
+- Grub2 [@github](https://github.com/rhboot/grub2)
 
 LXR
 - [Missing Link Electronics](https://lxr.missinglinkelectronics.com/linux)
