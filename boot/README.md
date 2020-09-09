@@ -1,31 +1,14 @@
-## create small disk image with large partitions
-
-https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions
-
-## multibook
-
-https://os.phil-opp.com/multiboot-kernel/
-
-## An article
-
-https://news.ycombinator.com/item?id=12182156
-
-**cool example in 2010**
-
-https://github.com/rikusalminen/danjeros
-
-issues with compiling. `ld` cannot find symbols on multiboot_header.o and start.o
-
-**build kernel and boot using qemu and grub**
-
-https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt
-
-Change elf to elf64 for nasm compiling.
-
-Get stage1, stage2, fat_stage_1.5 from [here](https://www.aioboot.com/en/grub-legacy/) (or directly [grub_0.97-29ubuntu66_amd64.deb](http://mirrors.kernel.org/ubuntu/pool/main/g/grub/grub_0.97-29ubuntu66_amd64.deb).
-
-Everything works but qemu can't really load kernel at stage 1.5.
-
-
-- [Kernel 101 – Let’s write a Kernel](https://github.com/arjun024/mkernel)
-- [Kernel 201 - Let’s write a Kernel with keyboard and screen support](https://github.com/arjun024/mkeykernel)
+- [create small disk image with large partitions](https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions)
+- [An article](https://news.ycombinator.com/item?id=12182156)
+- A minimal Multiboot Kernel, Series, Rust
+  - https://os.phil-opp.com/multiboot-kernel/
+- [build kernel and boot using qemu and grub](https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt)
+  - Everything works but qemu can't really load kernel at stage 1.5.
+  - Need to change `elf` to `elf64` for `nasm` compiling.
+  - Get stage1, stage2, fat_stage_1.5 from [here](https://www.aioboot.com/en/grub-legacy/) (or directly [grub_0.97-29ubuntu66_amd64.deb](http://mirrors.kernel.org/ubuntu/pool/main/g/grub/grub_0.97-29ubuntu66_amd64.deb).
+- cool example in 2010
+  - https://github.com/rikusalminen/danjeros
+  - issues with compiling. `ld` cannot find symbols on multiboot_header.o and start.o
+- mkernel
+  - [Kernel 101 – Let’s write a Kernel](https://github.com/arjun024/mkernel)
+  - [Kernel 201 - Let’s write a Kernel with keyboard and screen support](https://github.com/arjun024/mkeykernel)
