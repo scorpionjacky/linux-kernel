@@ -168,6 +168,7 @@ MGW (Minimalist GNU for Windows)
 
 ### C
 
+- Apress: Advanced C and C++ Compiling (Apr 2014) 978-1430266679
 - [Static Variables in C - GeeksforGeeks](https://www.geeksforgeeks.org/static-variables-in-c/)
 - http://faculty.cs.niu.edu/~freedman/241/241notes/
   - http://faculty.cs.niu.edu/~freedman/241/241notes/241var2.htm
