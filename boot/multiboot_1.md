@@ -36,7 +36,6 @@ Fortunately there is a bootloader standard: the Multiboot Specification. Our ker
 
 To indicate our Multiboot 2 support to the bootloader, our kernel must start with a Multiboot Header, which has the following format:
 
-```
 |Field|Type|Value|
 | -- | -- | -- |
 |magic number|u32|`0xE85250D6`
@@ -45,7 +44,6 @@ To indicate our Multiboot 2 support to the bootloader, our kernel must start wit
 |checksum|u32|`-(magic + architecture + header_length)`
 |tags|variable|
 |end tag|(u16, u16, u32)|`(0, 0, 8)`
-```
 
 Converted to a x86 assembly file it looks like this (Intel syntax):
 
