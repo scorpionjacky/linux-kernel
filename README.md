@@ -223,6 +223,7 @@ Memory
 - CRC.-.The Art of Linux Kernel Design Illustrating the Operating System Design Principle and Implementation (Apr 2014) 978-1466518032
 - Apress.-.Linux Kernel Networking Implementation and Theory.-.(Dec 2013).-.978-1430261964
 - Addison-Wesley.-.Linux Kernel Development, 3ed.-.(Jul 2010).-.978-0672329463
+- Wrox: Professional Linux Kernel Architecture (2008) 978-0470343432
 - Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
 - [The Linux Kernel Module Programming Guide](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/docs/lkmpg/), or [pdf](https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf) (2001, 2007−05−18 ver 2.6.4)
 - OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
