@@ -14,6 +14,8 @@ https://news.ycombinator.com/item?id=12182156
 
 https://github.com/rikusalminen/danjeros
 
+issues with compiling. `ld` cannot find symbols on multiboot_header.o and start.o
+
 **build kernel and boot using qemu and grub**
 
 https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt
@@ -25,3 +27,5 @@ Get stage1, stage2, fat_stage_1.5 from [here](https://www.aioboot.com/en/grub-le
 Everything works but qemu can't really load kernel at stage 1.5.
 
 
+- [Kernel 101 – Let’s write a Kernel](https://github.com/arjun024/mkernel)
+- [Kernel 201 - Let’s write a Kernel with keyboard and screen support](https://github.com/arjun024/mkeykernel)
