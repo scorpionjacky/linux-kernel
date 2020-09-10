@@ -1,3 +1,5 @@
+- [Kernel Boot Process](https://0xax.gitbooks.io/linux-insides/content/Booting/)
+  - [@github](https://github.com/0xAX/linux-insides/tree/master/Booting)
 - http://comet.lehman.cuny.edu/jung/cmp426697/LinuxMM.pdf
 - [JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [create small disk image with large partitions](https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions)
