@@ -1,6 +1,6 @@
-# bootsect.S v0.12
+# 6 引导启动程序（ boot） bootsect.S v0.12
 
-# 6 引导启动程序（ boot）
+- [6.2 bootsect.S 程序](#code)
 
 本章主要描述 boot/目录下的三个汇编语言文件，见文件列表 6-1 所示。正如在前一章中提到的，这三个文件虽然都是汇编程序，但却使用了两种不同语法格式。 bootsect.S 和 setup.S 是实模式下运行的 16 位代码程序，采用近似于 Intel 的汇编语言语法， 并且需要使用 8086 汇编编译器和连接器 as86 和 ld86。而 head.s 则使用一种 AT&T 的汇编语法格式，并且运行在保护模式下，需要用 GNU 的 as（ gas） 汇编器进行编译。
 
@@ -66,90 +66,8 @@ ROOT_DEV。块设备号的含义请参见程序中的注释。在内核初始化
 509、 510（ 0x1fc--0x1fd） 字节中的指定设备号。 bootsect.S 程序第 45 行上给出了交换设备号 SWAP_DEV，
 它指出用作虚拟存储交换空间的外部设备号。
 
-6.2 bootsect.S 程序
 
-6.2.1功能描述
-
-bootsect.S 代码是磁盘引导块程序，驻留在磁盘的第一个扇区中（引导扇区， 0 磁道（柱面）， 0 磁头，
-第 1 个扇区）。在 PC 机加电、 ROM BIOS 自检后， ROM BIOS 会把引导扇区代码 bootsect 加载到内存地
-址 0x7C00 开始处并执行之。在 bootsect 代码执行期间，它会将自己移动到内存绝对地址 0x90000 开始处
-并继续执行。该程序的主要作用是首先把从磁盘第 2 个扇区开始的 4 个扇区的 setup 模块（由 setup.s 编
-译而成）加载到内存紧接着 bootsect 后面位置处（ 0x90200），然后利用 BIOS 中断 0x13 取磁盘参数表中
-当前启动引导盘的参数，接着在屏幕上显示“ Loading system...”字符串。再者把磁盘上 setup 模块后面的
-system 模块加载到内存 0x10000 开始的地方。随后确定根文件系统的设备号。 若没有指定，则根据所保
-存的引导盘的每磁道扇区数判别出盘的类型和种类（是 1.44M A 盘吗？）， 并保存其设备号于 root_dev
-（引导块的 508 地址处）中。 最后长跳转到 setup 程序开始处（ 0x90200） 去执行 setup 程序。在磁盘上，
-引导块、 setup 模块和 system 模块的扇区位置和大小示意图见图 6-3 所示。
-
-图 6-3 Linux 0.12 内核在 1.44MB 磁盘上的分布情况
-
-图中示出了 Linux 0.12 内核在 1.44MB 磁盘上所占扇区的分布情况。 1.44MB 磁盘盘片两面各有 80
-个磁道（柱面），每磁道有 18 个扇区，共有 2880 个扇区。其中引导程序代码占用第 1 个扇区， setup 模
-块占用随后的 4 个扇区，而 0.12 内核 system 模块大约占随后的 260 个扇区。还剩下 2610 多个扇区未被
-使用。这些剩余的未用空间可被利用来存放一个基本的根文件系统，从而可以创建出使用单张磁盘就能
-让系统运转起来的集成盘来。这将在块设备驱动程序一章中再作详细介绍。
-
-system 模块
-boot 扇区
-setup 模块
-
-另外，这个程序的文件名与其他 gas 汇编语言程序有所不同，它的后缀是大写的'.S'。使用这样的后
-缀可以让 as 使用 GNU C 编译器的预处理功能，因此可以在汇编语言程序中包括"#include"、 "#if"等语句。
-本程序使用大写后缀主要是为了能在程序中使用"#include"语句来包含进 linux/config.h 头文件定义的常
-数，参见程序第 6 行。
-
-请再次注意，源代码文件中带有行号的语句均是原有的，没有行号的语句均是本书作者添加的注释语句。
-
-6.2.2代码注
-
-图 6-1 从系统加电起所执行程序的顺序
-
-因为当时 system 模块的长度不会超过 0x80000 字节大小（即 512KB），所以 bootsect 程序把 system
-模块读入物理地址 0x10000 开始位置处时并不会覆盖在 0x90000（ 576KB） 处开始的 bootsect 和 setup 模
-块上。后面 setup 程序将会把 system 模块移动到物理内存起始位置处，这样 system 模块中代码的地址也
-即等于实际的物理地址，便于对内核代码和数据进行操作。 图 6-2 清晰地显示出 Linux 系统启动时这几
-个程序或模块在内存中的动态位置。图中，每一竖条框代表某一时刻内存中各程序的映像位置图。在系
-统加载期间将显示信息"Loading..."。然后控制权将传递给 boot/setup.S 中的代码，这是另一个实模式汇编
-语言程序。
-
-图 6-2 启动引导时内核在内存中的位置和移动后的位置情况
-
-启动部分识别主机的某些特性以及 VGA 卡的类型。如果需要，它会要求用户为控制台选择显示模
-式。然后将整个系统从地址 0x10000 移至 0x0000 处，进入保护模式并跳转至系统的余下部分（在 0x0000
-处）。 到此时， 所有 32 位运行方式的启动设置均已被完成: IDT、 GDT 以及 LDT 被加载，处理器和协处
-理器也已确认，分页工作也设置好了， 最终会调用执行 init/main.c 中的 main()代码。上述操作的源代码
-是在 boot/head.s 中的，这可能是整个内核中最有诀窍的代码了。注意如果在前述任何一步中出了错，计
-算机就会死锁。在操作系统还没有完全运转之前是处理不了出错的。
-
-ROM BIOS bootsect.S setup.s head.s main.c
-system 模块
-1 2 3 4 5 6
-0x7c00(31K)
-0x0000
-0x90000(576K)
-0x10000(64K)
-0xA0000(640K)
-bootsect.s 程序
-setup.s 程序
-system 模块
-system 模块中的 head.s 程序
-代码执行位置线路
-0x90200(576.5K)
-
-bootsect 的代码为什么不把系统模块直接加载到物理地址 0x0000 开始处而要在 setup 程序中再进行
-移动呢？这是因为随后执行的 setup 开始部分的代码还需要利用 ROM BIOS 提供的中断调用功能来获取
-有关机器配置的一些参数（例如显示卡模式、硬盘参数表等）。 而当 BIOS 初始化时会在物理内存开始处
-放置一个大小为 0x400 字节(1KB)的中断向量表， 直接把系统模块放在物理内存开始处将导致该中断向
-量表被覆盖掉。 因此引导程序需要在使用完 BIOS 的中断调用后才能将这个区域覆盖掉。
-
-另外，仅在内存中加载了上述内核代码模块还不足以让 Linux 系统运行起来。作为完整可运行的
-Linux 系统还需要有一个基本的文件系统支持，即根文件系统（ Root file-system）。 Linux 0.12 内核仅支持
-MINIX 的 1.0 文件系统。根文件系统通常存在于另一个软盘上或者在一个硬盘分区中。为了通知内核所
-需要的根文件系统在什么地方， bootsect.S 程序第 44 行上给出了根文件系统所在的默认块设备号
-ROOT_DEV。块设备号的含义请参见程序中的注释。在内核初始化时会使用编译内核时放在引导扇区第
-509、 510（ 0x1fc--0x1fd） 字节中的指定设备号。 bootsect.S 程序第 45 行上给出了交换设备号 SWAP_DEV，
-它指出用作虚拟存储交换空间的外部设备号。
-
+<a id='code'></a>
 6.2 bootsect.S 程序
 
 6.2.1功能描述
@@ -225,51 +143,61 @@ bootsect.s 被 ROM BIOS 启动子程序加载至 0x7c00 (31KB)处，并将自己
 伪指令（伪操作符） .globl 或.global 用于定义随后的标识符是外部的或全局的，并且即使不使用也强制引入。 .text、 .data 和.bss 用于分别定义当前代码段、数据段和未初始化数据段。在链接多个目标模块时，链接程序（ ld86） 会根据它们的类别把各个目标模块中的相应段分别组合（合并）在一起。这里把三个段都定义在同一重叠地址范围中，因此本程序实际上不分段。另外，后面带冒号的字符串是标号，例如下面的'begtext:'。一条汇编语句通常由标号（可选）、指令助记符（指令名）和操作数三个字段组成。标号位于一条指令的第一个字段。它代表其所在位置的地址，通常指明一个跳转指令的目标位置。
 
 ```asm
-27 .globl begtext, begdata, begbss, endtext, enddata, endbss
-28 .text ! 文本段（代码段）。
-29 begtext:
-30 .data ! 数据段。
-31 begdata:
-32 .bss ! 未初始化数据段。
-33 begbss:
-34 .text ! 文本段（代码段）。
-35
+.globl begtext, begdata, begbss, endtext, enddata, endbss
+.text ! 文本段（代码段）。
+begtext:
+.data ! 数据段。
+begdata:
+.bss ! 未初始化数据段。
+begbss:
+.text ! 文本段（代码段）。
+
 ! 下面等号'='或符号'EQU'用于定义标识符或标号所代表的值。
-36 SETUPLEN = 4 ! nr of setup-sectors
+
+SETUPLEN = 4 ! nr of setup-sectors
 ! setup 程序代码占用磁盘扇区数(setup-sectors)值；
-37 BOOTSEG = 0x07c0 ! original address of boot-sector
+
+BOOTSEG = 0x07c0 ! original address of boot-sector
 ! bootsect 代码所在内存原始段地址；
-38 INITSEG = DEF_INITSEG ! we move boot here - out of the way
+
+INITSEG = DEF_INITSEG ! we move boot here - out of the way
 ! 将 bootsect 移到位置 0x90000 - 避开系统模块占用处；
-39 SETUPSEG = DEF_SETUPSEG ! setup starts here
+
+SETUPSEG = DEF_SETUPSEG ! setup starts here
 ! setup 程序从内存 0x90200 处开始；
-40 SYSSEG = DEF_SYSSEG ! system loaded at 0x10000 (65536).
+
+SYSSEG = DEF_SYSSEG ! system loaded at 0x10000 (65536).
 ! system 模块加载到 0x10000（ 64 KB） 处；
-41 ENDSEG = SYSSEG + SYSSIZE ! where to stop loading
+
+ENDSEG = SYSSEG + SYSSIZE ! where to stop loading
 ! 停止加载的段地址；
-42
-43 ! ROOT_DEV & SWAP_DEV are now written by "build".
-! 根文件系统设备号 ROOT_DEV 和交换设备号 SWAP_DEV 现在由 tools 目录下的 build 程序写入。
-! 设备号 0x306 指定根文件系统设备是第 2 个硬盘的第 1 个分区。 当年 Linus 是在第 2 个硬盘上
-! 安装了 Linux 0.11 系统，所以这里 ROOT_DEV 被设置为 0x306。在编译这个内核时你可以根据
-! 自己根文件系统所在设备位置修改这个设备号。 例如，若你的根文件系统在第 1 个硬盘的第 1 个
-! 分区上，那么该值应该为 0x0301，即（ 0x01, 0x03） 。 这个设备号是 Linux 系统老式的硬盘设备
-! 号命名方式，硬盘设备号具体值的含义如下：
-! 设备号=主设备号*256 + 次设备号（也即 dev_no = (major<<8) + minor ）
-! （主设备号： 1-内存,2-磁盘,3-硬盘,4-ttyx,5-tty,6-并行口,7-非命名管道）
-! 0x300 - /dev/hd0 - 代表整个第 1 个硬盘；
-! 0x301 - /dev/hd1 - 第 1 个盘的第 1 个分区；
-! …
-! 0x304 - /dev/hd4 - 第 1 个盘的第 4 个分区；
-! 0x305 - /dev/hd5 - 代表整个第 2 个硬盘；
-! 0x306 - /dev/hd6 - 第 2 个盘的第 1 个分区；
-! …
-! 0x309 - /dev/hd9 - 第 2 个盘的第 4 个分区；
-! 从 Linux 内核 0.95 版后就已经使用与现在内核相同的命名方法了。
-44 ROOT_DEV = 0 ! 根文件系统设备使用与系统引导时同样的设备；
-45 SWAP_DEV = 0 ! 交换设备使用与系统引导时同样的设备；
+
+ROOT_DEV = 0 ! 根文件系统设备使用与系统引导时同样的设备；
+SWAP_DEV = 0 ! 交换设备使用与系统引导时同样的设备；
 ```
 
+ROOT_DEV & SWAP_DEV are now written by "build".
+
+根文件系统设备号 ROOT_DEV 和交换设备号 SWAP_DEV 现在由 tools 目录下的 build 程序写入。
+
+设备号 0x306 指定根文件系统设备是第 2 个硬盘的第 1 个分区。 当年 Linus 是在第 2 个硬盘上安装了 Linux 0.11 系统，所以这里 ROOT_DEV 被设置为 0x306。在编译这个内核时你可以根据自己根文件系统所在设备位置修改这个设备号。 例如，若你的根文件系统在第 1 个硬盘的第 1 个分区上，那么该值应该为 0x0301，即（ 0x01, 0x03） 。 这个设备号是 Linux 系统老式的硬盘设备号命名方式，硬盘设备号具体值的含义如下：
+
+设备号 = 主设备号 * 256 + 次设备号（也即 dev_no = (major<<8) + minor ）
+
+（主设备号： 1-内存,2-磁盘,3-硬盘,4-ttyx,5-tty,6-并行口,7-非命名管道）
+
+```
+0x300 - /dev/hd0 - 代表整个第 1 个硬盘；
+0x301 - /dev/hd1 - 第 1 个盘的第 1 个分区；
+…
+0x304 - /dev/hd4 - 第 1 个盘的第 4 个分区；
+0x305 - /dev/hd5 - 代表整个第 2 个硬盘；
+0x306 - /dev/hd6 - 第 2 个盘的第 1 个分区；
+…
+0x309 - /dev/hd9 - 第 2 个盘的第 4 个分区；
+```
+
+从 Linux 内核 0.95 版后就已经使用与现在内核相同的命名方法了。
 
 伪指令 entry 迫使链接程序在生成的执行程序（ a.out）中包含指定的标识符或标号。这里是程序执行开始点。 其后将自身(bootsect)从目前段位置 0x07c0(31KB) 移动到 0x9000(576KB) 处，共 256 字（ 512 字节），然后跳转到移动后代码的 go 标号处，也即本程序的下一语句处。
 
@@ -416,36 +344,43 @@ load_setup:
 130 mov bp, sp ! ss:bp 指向欲显示的字（ word） 。
 131 call print_hex ! 显示十六进制值。
 132 pop ax
-133
-134 xor dl, dl ! reset FDC ! 复位磁盘控制器，重试。
-135 xor ah, ah
-136 int 0x13
-137 j load_setup ! j 即 jmp 指令。
-138
-139 ok_load_setup:
-140
-141 ! Get disk drive parameters, specifically nr of sectors/track
-! 这段代码利用 BIOS INT 0x13 功能 8 来取磁盘驱动器的参数。 实际是取每磁道扇区数，并保存在
-! 位置 sectors 处。取磁盘驱动器参数 INT 0x13 调用格式和返回信息如下：
-! ah = 0x08 dl = 驱动器号（如果是硬盘则要置位 7 为 1） 。
-! 返回信息：
-! 如果出错则 CF 置位，并且 ah = 状态码。
-! ah = 0， al = 0， bl = 驱动器类型（ AT/PS2）6.2 bootsect.S 程序
-211
-! ch = 最大磁道号的低 8 位， cl = 每磁道最大扇区数(位 0-5)，最大磁道号高 2 位(位 6-7)
-! dh = 最大磁头数， dl = 驱动器数量，
-! es:di - 软驱磁盘参数表。
-142
-143 xor dl,dl
-144 mov ah,#0x08 ! AH=8 is get drive parameters
-145 int 0x13
-146 xor ch,ch
-! 下面指令表示下一条语句的操作数在 cs 段寄存器所指的段中。 它只影响其下一条语句。实际
-! 上，由于本程序代码和数据都被设置处于同一个段中，即段寄存器 cs 和 ds、 es 的值相同，因
-! 此本程序中此处可以不使用该指令。
-147 seg cs
-! 下句保存每磁道扇区数。 对于软盘来说（ dl=0），其最大磁道号不会超过 256， ch 已经足够表
-! 示它，因此 cl 的位 6-7 肯定为 0。 又 146 行已置 ch=0，因此此时 cx 中是每磁道扇区数。
+
+xor dl, dl    ! reset FDC ! 复位磁盘控制器，重试。
+xor ah, ah
+int 0x13
+j load_setup  ! j 即 jmp 指令。
+```
+
+Get disk drive parameters, specifically nr of sectors/track
+
+这段代码利用 BIOS INT 0x13 功能 8 来取磁盘驱动器的参数。 实际是取每磁道扇区数，并保存在! 位置 sectors 处。取磁盘驱动器参数 INT 0x13 调用格式和返回信息如下：
+
+ah = 0x08 dl = 驱动器号（如果是硬盘则要置位 7 为 1）
+
+返回信息：如果出错则 CF 置位，并且 ah = 状态码。
+
+- ah = 0， al = 0， bl = 驱动器类型（ AT/PS2）6.2 bootsect.S 程序
+- ch = 最大磁道号的低 8 位， cl = 每磁道最大扇区数(位 0-5)，最大磁道号高 2 位(位 6-7)
+- dh = 最大磁头数， dl = 驱动器数量，
+- es:di - 软驱磁盘参数表。
+
+```asm
+ok_load_setup:
+xor dl,dl
+mov ah,#0x08 ! AH=8 is get drive parameters
+int 0x13
+xor ch,ch
+```
+
+下面指令表示下一条语句的操作数在 cs 段寄存器所指的段中。 它只影响其下一条语句。实际上，由于本程序代码和数据都被设置处于同一个段中，即段寄存器 cs 和 ds、 es 的值相同，因此本程序中此处可以不使用该指令。
+
+```asm
+seg cs
+```
+
+下句保存每磁道扇区数。 对于软盘来说（ dl=0），其最大磁道号不会超过 256， ch 已经足够表示它，因此 cl 的位 6-7 肯定为 0。 又 146 行已置 ch=0，因此此时 cx 中是每磁道扇区数。
+
+```asm
 148 mov sectors,cx
 149 mov ax,#INITSEG
 150 mov es,ax ! 因为上面取磁盘参数中断改了 es 值，这里重新改回。
@@ -471,68 +406,65 @@ load_setup:
 160 mov bp,#msg1 ! es:bp 指向要显示的字符串。
 161 mov ax,#0x1301 ! write string, move cursor
 162 int 0x10 ! 写字符串并移动光标到串结尾处。
-163
-164 ! ok, we've written the message, now
-165 ! we want to load the system (at 0x10000)
-! 现在开始将 system 模块加载到 0x10000（ 64KB）开始处。
-166
-167 mov ax,#SYSSEG
-168 mov es,ax ! segment of 0x010000 ! es = 存放 system 的段地址。
-169 call read_it ! 读磁盘上 system 模块， es 为输入参数。
-170 call kill_motor ! 关闭驱动器马达，这样就可以知道驱动器的状态了。
-171 call print_nl ! 光标回车换行。
-172
-173 ! After that we check which root-device to use. If the device is
-174 ! defined (!= 0), nothing is done and the given device is used.
-175 ! Otherwise, either /dev/PS0 (2,28) or /dev/at0 (2,8), depending6.2 bootsect.S 程序
-212
-176 ! on the number of sectors that the BIOS reports currently.
-! 此后，我们检查要使用哪个根文件系统设备（简称根设备）。如果已经指定了设备(!=0)，
-! 就直接使用给定的设备。否则就需要根据 BIOS 报告的每磁道扇区数来确定到底使用/dev/PS0
-! (2,28)，还是 /dev/at0 (2,8)。
-!! 上面一行中两个设备文件的含义说明如下：
-!! 在 Linux 中软驱的主设备号是 2(参见第 43 行的注释)，次设备号 = type*4 + nr，其中
-!! nr 为 0-3 分别对应软驱 A、 B、 C 或 D； type 是软驱的类型（ 21.2MB 或 71.44MB 等）。
-!! 因为 7*4 + 0 = 28，所以 /dev/PS0 (2,28)指的是 1.44MB A 驱动器,其设备号是 0x021c
-!! 同理 /dev/at0 (2,8)指的是 1.2MB A 驱动器， 其设备号是 0x0208。
-! 下面 root_dev 定义在引导扇区 508， 509 字节处，指根文件系统所在设备号。 0x0306 指第 2
-! 个硬盘第 1 个分区。这里默认为 0x0306 是因为当时 Linus 开发 Linux 系统时是在第 2 个硬
-! 盘第 1 个分区中存放根文件系统。这个值需要根据你自己根文件系统所在硬盘和分区进行修
-! 改。例如，如果你的根文件系统在第 1 个硬盘的第 1 个分区上，那么该值应该为 0x0301，即
-! （ 0x01, 0x03）。如果根文件系统是在第 2 个 1.44MB 软盘上，那么该值应该为 0x021D，即
-! （ 0x1D,0x02）。当编译内核时，你可以在 Makefile 文件中另行指定你自己的值。 内核映像
-! 文件 Image 的创建程序 tools/build 会使用你指定的值来设置你的根文件系统所在设备号。
-177
-178 seg cs
-179 mov ax,root_dev ! 取 508,509 字节处的根设备号并判断是否已被定义。
-180 or ax,ax
-181 jne root_defined
+```
+
+ok, we've written the message, now we want to load the system (at 0x10000) (64KB)
+
+```asm
+mov ax,#SYSSEG
+mov es,ax ! segment of 0x010000 ! es = 存放 system 的段地址。
+call read_it ! 读磁盘上 system 模块， es 为输入参数。
+call kill_motor ! 关闭驱动器马达，这样就可以知道驱动器的状态了。
+call print_nl ! 光标回车换行。
+```
+
+After that we check which root-device to use. If the device is defined (!= 0), nothing is done and the given device is used. Otherwise, either /dev/PS0 (2,28) or /dev/at0 (2,8), depending on the number of sectors that the BIOS reports currently.
+
+此后，我们检查要使用哪个根文件系统设备（简称根设备）。如果已经指定了设备(!=0)，就直接使用给定的设备。否则就需要根据 BIOS 报告的每磁道扇区数来确定到底使用/dev/PS0 (2,28)，还是 /dev/at0 (2,8)。
+
+上面一行中两个设备文件的含义说明如下：
+
+在 Linux 中软驱的主设备号是 2(参见第 43 行的注释)，次设备号 = type * 4 + nr，其中 nr 为 0-3 分别对应软驱 A、 B、 C 或 D； type 是软驱的类型（ 21.2MB 或 71.44MB 等）。
+因为 7 * 4 + 0 = 28，所以 /dev/PS0 (2,28)指的是 1.44MB A 驱动器,其设备号是 0x021c 同理 /dev/at0 (2,8)指的是 1.2MB A 驱动器， 其设备号是 0x0208。
+
+下面 root_dev 定义在引导扇区 508， 509 字节处，指根文件系统所在设备号。 0x0306 指第 2 个硬盘第 1 个分区。这里默认为 0x0306 是因为当时 Linus 开发 Linux 系统时是在第 2 个硬盘第 1 个分区中存放根文件系统。这个值需要根据你自己根文件系统所在硬盘和分区进行修改。例如，如果你的根文件系统在第 1 个硬盘的第 1 个分区上，那么该值应该为 0x0301，即（ 0x01, 0x03）。如果根文件系统是在第 2 个 1.44MB 软盘上，那么该值应该为 0x021D，即（ 0x1D,0x02）。当编译内核时，你可以在 Makefile 文件中另行指定你自己的值。 内核映像文件 Image 的创建程序 tools/build 会使用你指定的值来设置你的根文件系统所在设备号。
+
+```asm
+seg cs
+mov ax,root_dev ! 取 508,509 字节处的根设备号并判断是否已被定义。
+or ax,ax
+jne root_defined
+
 ! 下面语句取上面第 148 行保存的每磁道扇区数 sectors 来判断磁盘类型。如果 sectors=15 则说明
 ! 是 1.2MB 的驱动器；如果 sectors=18，则是 1.44MB 软驱。因为是可引导驱动器，所以肯定是 A 驱。
-182 seg cs
-183 mov bx,sectors
-184 mov ax,#0x0208 ! /dev/ps0 - 1.2Mb
-185 cmp bx,#15 ! 判断每磁道扇区数是否=15
-186 je root_defined ! 如果等于，则 ax 中就是引导驱动器的设备号。
-187 mov ax,#0x021c ! /dev/PS0 - 1.44Mb
-188 cmp bx,#18
-189 je root_defined
-190 undef_root: ! 如果都不一样，则死循环（死机）。
-191 jmp undef_root
-192 root_defined:
-193 seg cs
-194 mov root_dev,ax ! 将检查过的设备号保存到 root_dev 中。
-195
-196 ! after that (everyting loaded), we jump to
-197 ! the setup-routine loaded directly after
-198 ! the bootblock:
+seg cs
+mov bx,sectors
+mov ax,#0x0208 ! /dev/ps0 - 1.2Mb
+cmp bx,#15 ! 判断每磁道扇区数是否=15
+je root_defined ! 如果等于，则 ax 中就是引导驱动器的设备号。
+mov ax,#0x021c ! /dev/PS0 - 1.44Mb
+cmp bx,#18
+je root_defined
+undef_root: ! 如果都不一样，则死循环（死机）。
+jmp undef_root
+root_defined:
+seg cs
+mov root_dev,ax ! 将检查过的设备号保存到 root_dev 中。
+
+! after that (everyting loaded), we jump to
+! the setup-routine loaded directly after
 ! 到此，所有程序都加载完毕，我们就跳转到被加载在 bootsect 后面的 setup 程序去。
 ! 下面段间跳转指令（ Jump Intersegment） 。跳转到 0x9020:0000(setup.s 程序开始处)去执行。
-199
-200 jmpi 0,SETUPSEG !!!! 到此本程序就结束了。 !!!!
-! 下面是几个子程序。 read_it 用于读取磁盘上的 system 模块。 kill_moter 用于关闭软驱马达。
-! 还有一些屏幕显示子程序。
-201
+
+the bootblock:
+  jmpi 0,SETUPSEG
+```
+
+***到此本程序就结束了。***
+
+下面是几个子程序。 read_it 用于读取磁盘上的 system 模块。 kill_moter 用于关闭软驱马达。还有一些屏幕显示子程序。
+
+```asm
 202 ! This routine loads the system at address 0x10000, making sure
 203 ! no 64kB boundaries are crossed. We try to load it as fast as
 204 ! possible, loading whole tracks whenever we can.
