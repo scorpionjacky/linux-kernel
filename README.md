@@ -69,6 +69,9 @@ http://oldlinux.org/
 https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/
 
 Minimal Linux
+- [Building a tiny Linux kernel](https://weeraman.com/building-a-tiny-linux-kernel-8c07579ae79d)
+- https://events.static.linuxfound.org/sites/events/files/slides/tiny.pdf
+- https://mgalgs.github.io/2015/05/16/how-to-build-a-custom-linux-kernel-for-qemu-2015-edition.html
 - https://github.com/ivandavidov/minimal
 - [Build and run minimal Linux / Busybox systems in Qemu](https://gist.github.com/chrisdone/02e165a0004be33734ac2334f215380e)
 - https://github.com/cirosantilli/linux-kernel-module-cheat
