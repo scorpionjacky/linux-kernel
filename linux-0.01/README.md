@@ -3,6 +3,8 @@
 - [0.12](https://github.com/sky-big/Linux-0.12)
 - [0.11](https://github.com/yuan-xy/Linux-0.11)
 
+The latest version to have bootsect.S in the source code Repository is [2.6.22](https://kernel.googlesource.com/pub/scm/linux/kernel/git/wtarreau/linux-stable/+/refs/tags/v2.6.22).
+
 release notes: [0.01](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/RELNOTES-0.01), [0.12](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/RELNOTES-0.12), [0.95](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/RELNOTES-0.95), [0.95a](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/RELNOTES-0.95a), [0.97](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/RELNOTES-0.97), [0.99.11](https://kernel.googlesource.com/pub/scm/linux/kernel/git/nico/archive/+/v0.99-pl11), [others](https://mirrors.edge.kernel.org/pub/linux/kernel/Historic/old-versions/), [kernel.googlesource.com](https://kernel.googlesource.com/pub/scm/linux/kernel/git/nico/archive/)
 
 old linux @kernel.googlesource
