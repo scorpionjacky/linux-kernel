@@ -154,7 +154,7 @@ Privalege Level - RPL）用于保护机制。
 
 程序 6-2 linux/boot/setup.S
 
-```
+```asm
 1 !
 2 ! setup.s (C) 1991 Linus Torvalds
 3 !
