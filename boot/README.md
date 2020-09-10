@@ -1,3 +1,4 @@
+- http://comet.lehman.cuny.edu/jung/cmp426697/LinuxMM.pdf
 - [JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [create small disk image with large partitions](https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions)
 - [An article](https://news.ycombinator.com/item?id=12182156)
