@@ -108,7 +108,7 @@ go:
   mov sp,#0x400
 ```
 
-Now print a boot up message on the screen ...
+Now print a boot up message on the screen ... *Ref: [int](https://en.wikipedia.org/wiki/INT_(x86_instruction)), [int 0x10](https://en.wikipedia.org/wiki/INT_10H)*
 
 ```asm
   mov ah,#0x03 ; read cursor pos
