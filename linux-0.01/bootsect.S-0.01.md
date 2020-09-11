@@ -182,7 +182,7 @@ We'll first load the segment descriptors ...
   lgdt gdt_48 ; load gdt with whatever appropriate
 ```
 
-Now we enable A20. 
+Now we enable [A20](https://en.wikipedia.org/wiki/A20_line). 
 
 为了能够访问和使用 1MB 以上的物理内存，我们需要首先开启 A20 地址线。参见本程序列表后有关 A20 信号线的说明。关于所涉及的一些端口和命令，可参考 kernel/chr_drv/keyboard.S 程序后对键盘接口的说明。至于机器是否真正开启了 A20 地址线，我们还需要在进入保护模式之后（能访问 1MB 以上内存之后）在测试一下。这个工作放在了 head.S 程序中（ 32--36 行）。
 
@@ -198,15 +198,7 @@ Now we enable A20.
   call empty_8042   ; 若此时输入缓冲器为空，则表示 A20 线已经选通。
 ```
 
-* Refer to the hardware Manual about this A20 (Address Line 20) line controlled by the Keyboard controller.
-Actually, the A20 line is used in real mode in 32 bit systems to get access to more memory even when in
-real mode - the keyboard controller can be made to drive this Address Line 20 high in order to access more
-memory above the 1Mb limit. But then why not ask the keyboard controller to introduce an A21, A22 etc... :-)
-so that we can go on accessing the entire 4Gb memory range even when in real mode? Well, we don’t have
-any answer to this as of now (We will add something here if we get to know the answer later). But remember
-that this A20 extension will allow the “extra” memory to be accessed only as data and not as an executable
-memory area because it is NOT the processor who is driving the A20 line, but it is the keyboard controller
-who has to be programmed via I/O registers to drive the A20.
+Refer to the hardware Manual about this A20 (Address Line 20) line controlled by the Keyboard controller. Actually, the A20 line is used in real mode in 32 bit systems to get access to more memory even when in real mode - the keyboard controller can be made to drive this Address Line 20 high in order to access more memory above the 1Mb limit. But then why not ask the keyboard controller to introduce an A21, A22 etc... :-) so that we can go on accessing the entire 4Gb memory range even when in real mode? Well, we don’t have any answer to this as of now (We will add something here if we get to know the answer later). But remember that this A20 extension will allow the “extra” memory to be accessed only as data and not as an executable memory area because it is NOT the processor who is driving the A20 line, but it is the keyboard controller who has to be programmed via I/O registers to drive the A20.
 
 Well, that went ok, I hope. Now we have to reprogram the interrupts :-(
 
