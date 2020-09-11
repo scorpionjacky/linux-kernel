@@ -106,6 +106,8 @@ Minimal Linux
 0.11
 - Build OK
   - https://github.com/yuan-xy/Linux-0.11
+    - changed bootsect.S and setup.S to AT&T syntax !!!
+    - seems different Makefile syntax
     - download disk image file [oldlinux.org](http://oldlinux.org/Linux.old/bochs/linux-0.11-devel-040923.zip)
     - qemu-system-x86_64.exe -fda Image -boot a -hda linux-0.11-devel-040923\hdc-0.11-new.img
 - Others
