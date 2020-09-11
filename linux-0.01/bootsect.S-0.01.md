@@ -143,7 +143,7 @@ If the read went well we get current cursor position and save it for posterity. 
 
 Now we want to move to protected mode... First, diable interrups (`cli`). Then move the system to it’s rightful place.
 
-*`cld` (Clear Direction Flag) clears the DF flag in the EFLAGS register. When the DF flag is set to 0, string operations increment the index registers (ESI and/or EDI).*
+*`cld` (Clear Direction Flag), opposite of `std`, clears the DF flag in the [EFLAGS](https://en.wikipedia.org/wiki/FLAGS_register) register. When the DF flag is set to 0, string operations increment the index registers (ESI and/or EDI).* [](), [Direction flag](https://en.wikipedia.org/wiki/Direction_flag)
 
 bootsect 引导程序会把 system 模块读入到内存 0x10000（ 64KB） 开始的位置。由于当时假设 system 模块最大长度不会超过 0x80000（ 512KB） ，即其末端不会超过内存地址 0x90000，所以 bootsect 会把自己移动到 0x90000 开始的地方，并把 setup 加载到它的后面。下面这段程序的用途是再把整个 system 模块移动到 0x00000 位置，即把从 0x10000 到 0x8ffff 的内存数据块（ 512KB）整块地向内存低端移动了 0x10000（ 64KB） 字节。
 
