@@ -147,7 +147,8 @@ Now we want to move to protected mode... First, diable interrups (`cli`). Then m
 
 bootsect 引导程序会把 system 模块读入到内存 0x10000（ 64KB） 开始的位置。由于当时假设 system 模块最大长度不会超过 0x80000（ 512KB） ，即其末端不会超过内存地址 0x90000，所以 bootsect 会把自己移动到 0x90000 开始的地方，并把 setup 加载到它的后面。下面这段程序的用途是再把整个 system 模块移动到 0x00000 位置，即把从 0x10000 到 0x8ffff 的内存数据块（ 512KB）整块地向内存低端移动了 0x10000（ 64KB） 字节。
 
-`es:di` 是目的地址(初始为 0x0:0x0), `ds:si` 是源地址(初始为 0x1000:0x0), `cx` 移动 0x8000 字（ 64KB 字节）。
+
+[movs](http://faydoc.tripod.com/cpu/movsw.htm): `es:di` 是目的地址(初始为 0x0:0x0), `ds:si` 是源地址(初始为 0x1000:0x0), `cx` 移动 0x8000 字（ 64KB 字节）。
 
 ```asm
   cli
@@ -176,11 +177,23 @@ Let's prepare ourselves to switch to the protected mode. For this, GDT and IDT h
 We'll first load the segment descriptors ...
 
 ```asm
-  mov ax,cs   ; right, forgot this at first. didn’t work :-)
-  mov ds,ax
+  mov ax,cs
+  mov ds,ax   ; ds = cs
   lidt idt_48 ; load idt with 0,0
   lgdt gdt_48 ; load gdt with whatever appropriate
 ```
+
+> lidt & lgdt:
+> 
+> Loads the values in the source operand into the global descriptor table register (GDTR) or the interrupt descriptor table register (IDTR). The source operand specifies a 6-byte memory location that contains the base address (a linear address) and the limit (size of table in bytes) of the global descriptor table (GDT) or the interrupt descriptor table (IDT). If operand-size attribute is 32 bits, a 16-bit limit (lower 2 bytes of the 6-byte data operand) and a 32-bit base address (upper 4 bytes of the data operand) are loaded into the register. If the operand-size attribute is 16 bits, a 16-bit limit (lower 2 bytes) and a 24-bit base address (third, fourth, and fifth byte) are loaded. Here, the high-order byte of the operand is not used and the high-order byte of the base address in the GDTR or IDTR is filled with zeros.
+> 
+> The LGDT and LIDT instructions are used only in operating-system software; they are not used in application programs. They are the only instructions that directly load a linear address (that is, not a segment-relative address) and a limit in protected mode. They are commonly executed in real-address mode to allow processor initialization prior to switching to protected mode.
+> 
+> In 64-bit mode, the instruction’s operand size is fixed at 8+2 bytes (an 8-byte base and a 2-byte limit). See the summary chart at the beginning of this section for encoding data and limits.
+> 
+> See “SGDT—Store Global Descriptor Table Register” in Chapter 4, Intel® 64 and IA-32 Architectures Software Developer’s Manual, Volume 2B, for information on storing the contents of the GDTR and IDTR.
+
+[GDT](https://en.wikipedia.org/wiki/Global_Descriptor_Table) (gdt & ldt)
 
 Now we enable [A20](https://en.wikipedia.org/wiki/A20_line). 
 
