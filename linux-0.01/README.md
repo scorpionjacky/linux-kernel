@@ -1,6 +1,6 @@
 Linux Kernel [2.0](https://github.com/kalamangga-net/linux-2.0) - [1.0](https://github.com/kalamangga-net/linux-1.0) - [0.12](https://github.com/sky-big/Linux-0.12) - [0.11](https://github.com/yuan-xy/Linux-0.11)
 
-The last version with bootsect.S, setup.S and video.S in the source code Repository is [2.6.22](https://kernel.googlesource.com/pub/scm/linux/kernel/git/wtarreau/linux-stable/+/refs/tags/v2.6.22).
+The last version with bootsect.S, setup.S and video.S in the source code Repository is [2.4.37.11](https://kernel.googlesource.com/pub/scm/linux/kernel/git/wtarreau/linux-2.4/+/refs/tags/v2.4.37.11/arch/x86_64/boot).
 
 bootsect.S was in as86 in [2.2](https://github.com/mpe/linux-fullhistory/tree/v2.2.0-orig) and [2.3](https://github.com/heesub/davej) (DEVELOPMENT kernel), in gas in [2.4.0](https://github.com/mpe/linux-fullhistory/tree/v2.4.0-orig)
 
