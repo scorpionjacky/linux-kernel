@@ -733,7 +733,7 @@ endbss:
 
 6.2.3其他信息
 
-对 bootsect.S 这段程序的说明和描述，在网上可以搜索到大量的资料。其中 Alessandro Rubini 著并由本人翻译的《Linux 内核源代码漫游》一篇文章(http://oldlinux.org/Linux.old/docs/)比较全面地描述了内核启动的详细过程，很有参考价值。由于这段程序运行在 CPU 实模式下，因此相对来将比较容易理解。 若此时阅读仍有困难，那么建议你首先再复习一下 80x86 汇编及其硬件的相关知识，然后再继续阅读本书。对于最新开发的 Linux 内核，这段程序的改动并不大，基本保持了 0.12 版 bootsect 程序的模样。
+对 bootsect.S 这段程序的说明和描述，在网上可以搜索到大量的资料。其中 Alessandro Rubini 著并由本人翻译的[《Linux 内核源代码漫游》](http://oldlinux.org/Linux.old/docs/)一篇文章([Original text](https://tldp.org/LDP/khg/HyperNews/get/khg.html))比较全面地描述了内核启动的详细过程，很有参考价值。由于这段程序运行在 CPU 实模式下，因此相对来将比较容易理解。 若此时阅读仍有困难，那么建议你首先再复习一下 80x86 汇编及其硬件的相关知识，然后再继续阅读本书。对于最新开发的 Linux 内核，这段程序的改动并不大，基本保持了 0.12 版 bootsect 程序的模样。
 
 6.2.3.1 Linux 0.12 硬盘设备号
 
