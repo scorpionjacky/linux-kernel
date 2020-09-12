@@ -1,20 +1,21 @@
 # boot/boot.s
 
-`boot.s` is loaded at 0x7c00 by the bios-startup routines. It first moves itself out of the way to address 0x90000, and jumps there. It then loads the system at 0x10000, using BIOS interrupts. Thereafter it disables all interrupts, moves the system down to 0x0000, changes to protected mode, and calls the start of system. System then must RE-initialize the protected mode in its own tables, and enable interrupts as needed.
+`boot.s` is loaded at 0x7c00 by the bios-startup routines, the instruction points to CS:IP = 0x7c00. 
+1. Copies itself to 0x90000 (- 0x90200, 512 bytes), and jumps there at the next instruction. 
+1. Loads the system to 0x10000, using BIOS interrupts. 
+1. Disables all interrupts, moves the system down to 0x0000 (BIOS interrupts no longer needed)
+1. Changes to protected mode, and calls the start of system
+
+System then must RE-initialize the protected mode in its own tables, and enable interrupts as needed.
 
 
-*By 0x7c00, we mean the “combined” value after CS:IP. Remember that the x86 is still in the real mode. We don’t remember what the exact values for CS and IP will be (if there are exact values), which is immaterial also. Now why does it move itself to 0x90000? Well, it cant load itself in the “lower” address regions (like 0x0?) because the BIOS might store some information like the ISR table in low memory and we need the help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be sure that the kernel does not overwrite the boot loader. Also, it has to be remembered that the BIOS chip has address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))*
+Why does it move itself to 0x90000? Well, it cant load itself in the “lower” address regions (like 0x0?) because the BIOS might store some information like the ISR table in low memory and we need the help of BIOS to get the actual kernel image (the image names “system” we get after compilation) loaded into memory. Also, it has to be well out of the way of the actual kernel image that gets loaded at 0x10000 to be sure that the kernel does not overwrite the boot loader. Also, it has to be remembered that the BIOS chip has address range within the first Mega Byte. So refer the Hardware manual, find the address range of the BIOS chip and make sure that all the addresses where the boot loader images and the kernel image is loaded do not overlap with the BIOS. For this the size of each of the image has also to be considered - the boot loader is fixed at 512 bytes, the kernel as Linus says in his comment below will not be more than 512Kb :-)))*
 
-
-*Why 0x10000? Again, it needs to be taken care that till the “full” kernel is not in memory, the BIOS’s information should not be wiped off. So temporarily load the image at 0x10000.*
-
-*Now why 0x0? Now that the whole image is in memory, we no longer need BIOS. So we can load the image wherever we want and so we choose location 0x0.*
-
-*After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the bootloader boot.s. It need not be done by the bootloader, the kernel could also do it. But the boot loader should not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of the boot loader. so even if the kernel changes, the boot loader can be the same.*
+After the whole kernel is in memory, we have to switch to protected mode - in 0.01, this is also done by the bootloader boot.s. It need not be done by the bootloader, the kernel could also do it. But the boot loader should not forget that it is a “boot loader” and not the kernel. So it should do just the right amount of job. So it just uses some dummy IDT, GDT etc.. and uses that to switch into the protected mode and jump to the kernel code. Now the kernel code can decide how to map its memory, how do design the GDT etc.. independently of the boot loader. so even if the kernel changes, the boot loader can be the same.
 
 NOTE! currently system is at most 8 * 65536 bytes long. This should be no problem, even in the future. want to keep it simple. This 512 kB kernel size should be enough - in fact more would mean we’d have to move not just these start-up routines, but also do something about the cache- memory (block IO devices). The area left over in the lower 640 kB is meant for these. No other memory is assumed to be "physical", ie all memory over 1Mb is demand-paging. All addresses under 1Mb are guaranteed to match their physical addresses.
 
-*More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes, we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.*
+More about paging in the further sections. Anyway, the gist of what is written above is that the kernel code is within the first One Mega Byte and the mapping for Kernel code is one to one - that is an address 0x4012 referred inside the kernel will get translated to 0x4012 itself by the paging mechanism and similarly for all addresses. But for user processes, we have mentioned in the section on paging that address 0x3134 may correspond to “physical” address 0x200000.
 
 NOTE 1: The above is no longer valid in its entirety. cache-memory is allocated above the 1Mb mark as well as below. Otherwise it is mainly correct.
 
@@ -37,9 +38,9 @@ begdata:
 begbss:
 .text
 
-BOOTSEG = 0x07c0
-INITSEG = 0x9000
-SYSSEG  = 0x1000      ; system loaded at 0x10000 (65536)
+BOOTSEG = 0x07c0     ; loaded here by BIOS
+INITSEG = 0x9000     ; copies itself to here
+SYSSEG  = 0x1000     ; system loaded at 0x10000 (65536)
 ENDSEG  = SYSSEG + SYSSIZE
 ```
 
@@ -60,39 +61,14 @@ start:
   jmpi go,INITSEG
 ```
 
-The bootloader copies “itself”, 512 bytes, from 0x07C0 (BOOTSEG) to 0x90000 (INITSEG), aka copies itself from `ds:si` to `es:di` `(e)cs` times (512 bytes).
+The bootloader copies “itself”, 512 bytes, from 0x07C0 (BOOTSEG) to 0x90000 (INITSEG), aka copies itself from `ds:si` to `es:di` `cx` times (512 bytes).
 
-`rep movw` macroinstruction copies memory from location `ds:si` to `es:di`, which is from 0x07C0:0x0000 to 0x9000:0x0000. `(e)cx` is the register storing the copy size (or counter) used by `rep`, which is decremented by `rep` after each microinstruction loop, till 0. #256 is word corresponding to `movw` (which is 512 bytes),. Ref of [`REP MOVE` string instruction](https://patents.justia.com/patent/7802078).
+`rep movw` macroinstruction copies memory from location `ds:si` to `es:di`, which is from 0x07C0:0x0000 to 0x9000:0x0000. `cx` is the register storing the copy size (or counter) used by `rep`, which is decremented by `rep` after each microinstruction loop, till 0. `#256` is word corresponding to `movw` (which is 512 bytes),. Reference [`REP MOVE` string instruction](https://patents.justia.com/patent/7802078).
 
-`jmpi` is an inter-segment jump instruction (段间跳转), used in x86 real mode. This instruction set `cs` (code段地址) to `INITSEG`, and `ip` to `go` (段内偏移地址), and then the instruction at address INITSEG:go will be executed.
+`jmpi` is an inter-segment jump instruction, used in x86 real mode. This instruction set `cs` (code segment) to `INITSEG`, and `ip` to `go` (offset), and then the instruction at address INITSEG:go will be executed.
 
-从下面开始， CPU 在已移动到 0x90000:go 位置处的代码中执行
+By now, CS:IP = 0x9000:go
 
-> Addressing in real mode is for compatibility with the 8086 processor, 8086 is a 16-bit CPU (the data width of the ALU), and the 20-bit address bus can address 1M of memory space. The addressing mode: segment base address + offset mode. The segment base address is stored in CS, DS, ES and other segment registers, which is equivalent to the upper 16 bits of addressing, and the offset is provided by the internal 16-bit bus. To the external address bus, the segment base address and offset are combined into a 20-bit address to address the 1M physical address space.
-> 
-> Synthesis method: the segment base address is shifted left by 4 bits, and then the offset address is added. But it is not a general addition. Because the base address of the previous segment has been shifted left by 4 bits to 20 bits (the lowest 4 bits are 0), and the offset is still 16 bits, so it is actually the segment base address and offset The upper 12 bits of the sum are added, and the lower 4 bits of the offset are unchanged. For example:
-> 
-> 0x8880:0x0440 = 0x88800 + 0x0440 = 0x88c40 (20-bit address of external bus)
-> 
-> It can be seen that this so-called segmented memory management is not a pure base address plus offset method. It is said that Intel deceived everyone at the time.
-> 
->> **The addressing problem of 8086/8088**
->>
->> Both 8088 and 80286 are 16-bit CPUs. Why did Intel warn IBM and Gates? In the end what happened?
->>
->> To understand what happened, we have to look at the inside of the processor and we will see huge differences. First, you find a piece of 8088 CPU, grind the packaging, grind it to the CPU silicon wafer, put it under the microscope, you will see the internal structure of 8086/88, it is not a new design at all, but two 8085 running in parallel (8 bits) There are a little more microprocessors.
->>
->> Each 8085 has its own 8-bit data and 16-bit addressing capabilities. Combining two 8-bit data registers to pretend to be a 16-bit register is easy. In fact, there is nothing new. The RCA COSMAC microprocessor uses 16 8-bit registers, which can be used as internal 8-bit or 16-bit registers. You can have up to 16 8-bit registers or 8 16-bit registers or Any combination of the two. Now, a common IC factory in China can be easily designed.
->>
->> Probably due to the limitation of the production process at that time, the 8088 can only have 40 feet. Intel's design "elite" left and right thought, determined 20 address lines (1M addressing space), and 16 data lines have to be 20. There are 16 multiplexes in the address line (time-sharing multiplex, that is, one will be the address line and the other will be the data line. For this, you can read the timing part of the 8088 chip manual, or read the 8052 microcontroller books, Its address lines and data lines are also multiplexed).
->>
->> To the essence of the problem, the two 8085 in 8088 each have a set of 16-bit addressing registers, how to let them address 20-bit 1M address? In fact, it is very simple to put them together to form 32-bit addressing. If that is the case, then many of the troubles may be gone (such as A20 door), but those elites at that time may think that 32-bit addressing (4G address space) Is it nonsense, it is estimated that the earth disappeared and not use so much memory? Besides, the boss is too tight, so they use two 8085 on a piece of hardware to achieve a very good method-segmentation:
->>
->> They divided the 1024K address space into 16-byte segments, a total of 64K segments, using a 16-bit addressing register of 8085 as the address offset register (so the length of the segment is 64K), and another 16-bit addressing register of 8085 As a segment address register for a 16-byte segment, note that he does not store the address of the 16-byte segment, but the serial number of the 16-byte segment (0, 1, ... 65535).
->>
->> The advantage of this is that as long as a shifter and a 20-bit adder are added between two 8085 CPUs, 20-bit address addressing can be completed-a 8085 address register (segment address-is 16 bytes) The number of the segment) is shifted by 4 bits to the left (* 16 = the first address of the 16-byte segment), plus another address register of 8085, haha! You can pay the boss, the production cost is low, the design speed is fast, and if you have money, don't grab it is a grandson! As for the future, . . .
->>
->> - [段寄存器”的故事[转]（彻底搞清内存段/elf段/实模式保护模式以及段寄存器）](https://www.cnblogs.com/johnnyflute/p/3564894.html) or [Here](https://www.jianshu.com/p/d83bf4aa2262)
 >> - [Linux内存寻址之分段机制](https://www.jianshu.com/p/e899de3ccafe)
 >> - [linux内存管理---虚拟地址、逻辑地址、线性地址、物理地址的区别（一）](https://blog.csdn.net/yusiguyuan/article/details/9664887)
 >> - [Intel 64架构5级分页和5级EPT白皮书](https://www.jianshu.com/p/8d19b485617e)
