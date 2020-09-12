@@ -383,3 +383,5 @@ https://www.threatstack.com/blog/c-in-the-linux-kernel
 
 https://barrgroup.com/Embedded-Systems/Books/Embedded-C-Coding-Standard \
 https://www.perforce.com/resources/qac/misra-c-cpp
+
+[MacOS and iOS Internals, Volume I - III](http://newosxbook.com/index.php)
