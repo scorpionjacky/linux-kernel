@@ -14,6 +14,7 @@ For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki
 
 ## Links
 
+- https://github.com/egormkn/mbr-boot-manager
 - [Kernel Boot Process](https://0xax.gitbooks.io/linux-insides/content/Booting/)
   - [@github](https://github.com/0xAX/linux-insides/tree/master/Booting)
 - https://gilesbathgate.com/2008/04/01/how-to-write-an-operating-system/
