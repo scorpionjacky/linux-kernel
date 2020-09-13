@@ -1,5 +1,7 @@
 # GNU Assembler and AT&T Syntax
 
+[Registers](#x86-registers) | [Basics](#basics) | [Memory and Addressing](#memory) | [Instructions](#instructions) | [Calling Convention](#calling-conventions)
+
 ## X86 Registers
 
 32-bit: Exx; 64-bit: Rxx
@@ -25,7 +27,7 @@ All the labels and numeric constants used as *immediate operands* (i.e. not in a
 
 **Literal Values**: constant number: `$100`, address of lable: `$_start`
 
-
+<a id="memory"></a>
 ## Memory and Addressing Modes
 
 ### Declaring Static Data Regions
