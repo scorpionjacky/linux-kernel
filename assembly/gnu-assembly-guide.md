@@ -2,9 +2,7 @@
 
 [Registers](#x86-registers) | [Basics](#basics) | [Memory and Addressing](#memory) | [Instructions](#instructions) | [Calling Convention](#calling-convention)
 
-Original Documents
-- [intel-based](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html)
-- [att-based](http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html)
+Original Documents: [Intel-based](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html) | [att-based](http://flint.cs.yale.edu/cs421/papers/x86-asm/asm.html)
 
 ## X86 Registers
 
