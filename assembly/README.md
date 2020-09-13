@@ -1,5 +1,7 @@
 https://github.com/0xAX/asm
 
+http://www.staerk.de/thorsten/Tutorials/Assembler_Tutorial
+
 http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
 
 https://tldp.org/HOWTO/Assembly-HOWTO/index.html
