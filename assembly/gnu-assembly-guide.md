@@ -1,6 +1,6 @@
 # GNU Assembler and AT&T Syntax
 
-[Registers](#x86-registers) | [Basics](#basics) | [Memory and Addressing](#memory) | [Instructions](#instructions) | [Calling Convention](#calling-conventions)
+[Registers](#x86-registers) | [Basics](#basics) | [Memory and Addressing](#memory) | [Instructions](#instructions) | [Calling Convention](#calling-convention)
 
 ## X86 Registers
 
