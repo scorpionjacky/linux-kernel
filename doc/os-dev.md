@@ -1,10 +1,10 @@
 # Writing a Simple Operating System from Scratch
 
-*by Nick Blundell*
-
-School of Computer Science, University of Birmingham, UK
-
+*by Nick Blundell* \
+School of Computer Science, University of Birmingham, UK \
 Draft: December 2, 2010
+
+[Example Implementation](https://github.com/tcharding/os-from-scratch)
 
 ## Contents
 
