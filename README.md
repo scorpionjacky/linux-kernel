@@ -24,8 +24,10 @@
 - [More Linux History](https://github.com/mpe/linux-fullhistory)
 - https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/refs/tags
 - [2.3.x](https://github.com/heesub/davej) (DEVELOPMENT kernel)
-- Linux Variations
-  - [illumos](https://github.com/illumos/illumos-gate)
+- [Linux Variations](https://en.wikipedia.org/wiki/Comparison_of_open-source_operating_systems)
+  - [illumos](https://illumos.org), [@github](https://github.com/illumos/illumos-gate)
+  - [MenuetOS](http://menuetos.net)
+  - [KolibriOS](http://kolibrios.org/en/) / [svn](http://websvn.kolibrios.org/listing.php?repname=Kolibri+OS), [Kolibri-N](http://kolibri-n.org), [Unofficial Mirror](https://github.com/Harmon758/kolibrios), [LLVM port](https://github.com/devlato/kolibrios-llvm)
 - Grub2 [@github](https://github.com/rhboot/grub2)
 
 LXR
@@ -207,6 +209,7 @@ https://wiki.gentoo.org/wiki/Main_Page
   - [Purism](https://puri.sm/)
   
 -Booting
+  - [MultiBoot USB](https://mbusb.aguslr.com)
   - [UEFI... The Microsoft Kill Switch](https://learnlinuxandlibreoffice.org/1-why-switch-to-linux/1-4-uefi-the-microsoft-kill-switch)
   - [Linux startup process](https://en.wikipedia.org/wiki/Linux_startup_process)
   - [Stages of Linux booting process](https://www.crybit.com/linux-boot-process/) (January 6, 2019)
@@ -392,3 +395,16 @@ https://www.perforce.com/resources/qac/misra-c-cpp
 - https://github.com/berkus/jamesm-tutorials
 - https://github.com/xlar54/Starter-OS
 - https://github.com/kAworu/JamesM
+
+
+[TINAOS](https://github.com/1dime/TINAOS)
+- https://github.com/TINA-OS/tinaos
+- [multiboot](https://github.com/1dime/TINAOS/blob/master/src/boot/boot.asm)
+
+Kernels 201 - Let’s write a Kernel with keyboard and screen support
+- https://hackaday.com/2019/07/09/the-saga-of-32-bit-linux-why-going-64-bit-raises-concerns-over-multilib/
+- https://github.com/arjun024/mkeykernel
+- https://github.com/arjun024/mkernel (Kernels 101)
+
+http://www.flingos.co.uk/docs/reference/FlingOS/
+
