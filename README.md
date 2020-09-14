@@ -408,3 +408,10 @@ Kernels 201 - Let’s write a Kernel with keyboard and screen support
 
 http://www.flingos.co.uk/docs/reference/FlingOS/
 
+https://github.com/sukwon0709/osdev
+
+https://github.com/castvoid/Harrys-ASM-OS
+
+https://github.com/povilasb/simple-os
+
+https://github.com/tuhdo/os01
