@@ -385,3 +385,10 @@ https://barrgroup.com/Embedded-Systems/Books/Embedded-C-Coding-Standard \
 https://www.perforce.com/resources/qac/misra-c-cpp
 
 [MacOS and iOS Internals, Volume I - III](http://newosxbook.com/index.php)
+
+[JamesM's kernel development tutorials](https://web.archive.org/web/20160412174753/http://www.jamesmolloy.co.uk/tutorial_html/index.html)
+- https://github.com/JetStarBlues/JamesM-Kernel-Tutorial qemu
+- https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials (qemu version)
+- https://github.com/berkus/jamesm-tutorials
+- https://github.com/xlar54/Starter-OS
+- https://github.com/kAworu/JamesM
