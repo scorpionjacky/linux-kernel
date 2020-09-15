@@ -415,3 +415,5 @@ https://github.com/castvoid/Harrys-ASM-OS
 https://github.com/povilasb/simple-os
 
 https://github.com/tuhdo/os01
+
+[pedigree](https://github.com/jmolloy/pedigree/), C++
