@@ -252,10 +252,11 @@ Memory
   - Understanding the Linux Kernel, 2E (????), kernel 2.4
 - Prentice Hall.-.The Linux Kernel Primer A Top-Down Approach for x86 and PowerPC Architectures.-.(2005).-.978-0131181632
 - Novell.-.Linux Kernel Development, 2ed.-.(Jan 2005).-.978-0672327209
-- Linux Device Drivers, 3ed, OReilly (Feb 2005) 978-0596005900
-  - Linux Device Drivers, 2ed, OReilly (Jun 2001) 978-0596000080 [online](https://www.xml.com/ldd/chapter/book/index.html) kernel 2.4
+- [Linux Device Drivers, 3ed](http://lwn.net/Kernel/LDD3/), OReilly (Feb 2005) 978-0596005900
+  - [Linux Device Drivers, 2ed](https://www.xml.com/ldd/chapter/book/), OReilly (Jun 2001) 978-0596000080 kernel 2.4
   - Linux Device Drivers, OReilly, (Feb 1998) 9781565922921
 - [Unreliable Guide To Hacking The Linux Kernel](https://www.kernel.org/doc/htmldocs/kernel-hacking)
+- [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/) kernel 2.4/2.6
 - [Linux i386 Boot Code HOWTO](https://tldp.org/HOWTO/Linux-i386-Boot-Code-HOWTO/index.html) (2004-01-23) @tldp
 - [Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2005/readings/i386/toc.htm)
 - [The Linux kernel](https://www.win.tue.nl/~aeb/linux/lk/lk.html) Andries Brouwer, aeb@cwi.nl 2003-02-01
