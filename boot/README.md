@@ -14,6 +14,10 @@ For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki
 
 ## Links
 
+[minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm) <- [original](http://sebastian-plotz.blogspot.com)
+
+[Linux Kernel Tracing](https://github.com/Stefan20162016/tracing)
+
 - https://github.com/egormkn/mbr-boot-manager
 - [Kernel Boot Process](https://0xax.gitbooks.io/linux-insides/content/Booting/)
   - [@github](https://github.com/0xAX/linux-insides/tree/master/Booting)
