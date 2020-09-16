@@ -18,6 +18,8 @@ For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki
 
 [Linux Kernel Tracing](https://github.com/Stefan20162016/tracing)
 
+http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
+
 - https://github.com/egormkn/mbr-boot-manager
 - [Kernel Boot Process](https://0xax.gitbooks.io/linux-insides/content/Booting/)
   - [@github](https://github.com/0xAX/linux-insides/tree/master/Booting)
