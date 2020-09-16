@@ -236,6 +236,7 @@ Memory
   - https://kernelnewbies.org/FirstKernelPatch
   - https://kernelnewbies.org/KernelProjects
 - [Linux Kernel Workbook](https://lkw.readthedocs.io/en/latest/index.html), [@github](https://github.com/rishiba/doc_linux_kernel_workbook)
+- Packt: Linux Device Driver Development Cookbook (May 2019) 978-1838558802
 - Packt: Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
 - Packt.-.Mastering Embedded Linux Programming, 2ed.-.(Jun 2017).-.978-1787283282
 - Packt: Linux Device Drivers Development Develop Customized Drivers for Embedded Linux (Oct 2017) 978-1785280009
