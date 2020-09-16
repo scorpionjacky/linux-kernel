@@ -236,13 +236,19 @@ Memory
   - https://kernelnewbies.org/FirstKernelPatch
   - https://kernelnewbies.org/KernelProjects
 - [Linux Kernel Workbook](https://lkw.readthedocs.io/en/latest/index.html), [@github](https://github.com/rishiba/doc_linux_kernel_workbook)
+- Packt: Linux Kernel Development Cookbook (Feb 2021) 978-1789953435
 - Packt: Linux Device Driver Development Cookbook (May 2019) 978-1838558802
+- Linux Driver Development for Embedded Processors - Second Edition (Oct 2018) 978-1729321829
 - Packt: Mastering Linux Kernel Development.-.(Nov 2017).-.978-1785883057
 - Packt.-.Mastering Embedded Linux Programming, 2ed.-.(Jun 2017).-.978-1787283282
 - Packt: Linux Device Drivers Development Develop Customized Drivers for Embedded Linux (Oct 2017) 978-1785280009
+- Apress: Low-Level Programming: C, Assembly, and Program Execution on Intel® 64 Architecture (Jun 2017) 978-1484224021
+- Packt: Learning Linux Binary Analysis (Feb 2016) 978-1782167105
 - Pearson: Computer Systems: A Programmer's Perspective, 3E (Mar 2015)
+- No Starch Press: How Linux Works What Every Superuser Should Know, 2ed (Nov 2014) 978-1593275679
 - CRC: The Art of Linux Kernel Design (Apr 2014) 978-1466518032
 - Apress: Linux Kernel Networking Implementation and Theory (Dec 2013) 978-1430261964
+- No Starch Press: FreeBSD Device Drivers: A Guide for the Intrepid (May 2012) 978-1593272043
 - Addison-Wesley: Linux Kernel Development, 3ed (Jul 2010) 978-0672329463
 - No Starch Press: The Linux Programming Interface (Oct 2010) 978-1593272203
 - Wrox: Professional Linux Kernel Architecture (2008) 978-0470343432
