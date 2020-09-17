@@ -1,11 +1,11 @@
-# Booting explained
+# Booting Explained
 
 Linux Boot Process with a multi-boot manager and BIOS setup (GRUB as an example)
 
 ```
 Power-up/Reset          BIOS (System startup)
-Stage 1 bootloader:     BIOS             <- MBR (by GRUB)
-Stage 1.5 bootloader:   MBR code in mem  <- GRUB stage 1.5 code
+Stage 1 bootloader:     BIOS             <- MBR (boot.img GRUB)
+Stage 1.5 bootloader:   MBR code in mem  <- GRUB core.img
 Stage 2 bootloader:     GRUB 1.5 in mem  <- /boot/grub2
 Kernel Loading          GRUB in mem      <- load kernel image
 Kernel Setup/Init       Kernel in memory
@@ -55,3 +55,30 @@ This is the end of the boot process. At this point, the Linux kernel and systemd
 Kernel image starts with `header.S` in the `start` assembly routine. This routine does some basic hardware setup and invokes the `startup_32` routine in `compressed/head.S`. This routine sets up a basic environment (stack, etc.) and clears the Block Started by Symbol (BSS). The kernel is then decompressed through a call to a C function called `decompress_kernel` (located in `boot/compressed/misc.c`). When the kernel is decompressed into memory, it is called. This is yet another `startup_32` function, but this function is in `kernel/head.S`.
 
 https://developer.ibm.com/technologies/linux/articles/l-linuxboot/
+
+For a modern bzImage kernel with boot protocol version >= 2.02, a [memory layout](https://www.kernel.org/doc/html/latest/x86/boot.html#memory-layout) like the following is suggested:
+```
+          ~                        ~
+          |  Protected-mode kernel |
+  100000  +------------------------+
+          |  I/O memory hole       |
+  0A0000  +------------------------+
+          |  Reserved for BIOS     |      Leave as much as possible unused
+          ~                        ~
+          |  Command line          |      (Can also be below the X+10000 mark)
+  X+10000 +------------------------+
+          |  Stack/heap            |      For use by the kernel real-mode code.
+  X+08000 +------------------------+
+          |  Kernel setup          |      The kernel real-mode code.
+          |  Kernel boot sector    |      The kernel legacy boot sector.
+  X       +------------------------+
+          |  Boot loader           |      <- Boot sector entry point 0000:7C00
+  001000  +------------------------+
+          |  Reserved for MBR/BIOS |
+  000800  +------------------------+
+          |  Typically used by MBR |
+  000600  +------------------------+
+          |  BIOS use only         |
+  000000  +------------------------+
+```
+... where the address X is as low as the design of the boot loader permits.
