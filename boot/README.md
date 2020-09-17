@@ -16,6 +16,9 @@ For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki
 
 [minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm) <- [original](http://sebastian-plotz.blogspot.com)
 
+https://www.cs.rutgers.edu/~pxk/416/notes/
+- https://www.cs.rutgers.edu/~pxk/416/notes/02-boot.html
+
 [Linux Kernel Tracing](https://github.com/Stefan20162016/tracing)
 
 http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
