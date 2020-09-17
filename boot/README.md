@@ -12,9 +12,26 @@ Try looking at `start_kernel()` in [`/init/main.c`](https://elixir.bootlin.com/l
 
 For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki/Linux_startup_process).
 
+---
+
+backup MBR:
+`sudo dd if=/dev/sda of=mbr_old bs=512 count=1`
+
+LBA-address of the kernel-image
+`sudo hdparm --fibmap /boot/vmlinuz-3.4.6-2.fc17.x86_64`
+
+Update the current_lba field of the boot file accordingly. *Note: The image can only be booted if the image file is NOT fragmented.*
+
+```bash
+nasm bootloader.asm -o bootloader.bin
+sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
+```
+
+---
+
 ## Links
 
-[minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm) <- [original](http://sebastian-plotz.blogspot.com)
+[minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm)
 
 https://www.cs.rutgers.edu/~pxk/416/notes/
 - https://www.cs.rutgers.edu/~pxk/416/notes/02-boot.html
