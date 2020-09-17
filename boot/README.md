@@ -14,6 +14,20 @@ For more context: [wikipedia Linux startup process](http://en.wikipedia.org/wiki
 
 ---
 
+Best of the best: [Linux Insides](https://0xax.gitbooks.io/linux-insides/content/Booting/)
+
+Some explaination on head.S here: [Inside the Linux boot process](https://developer.ibm.com/technologies/linux/articles/l-linuxboot/) May 31, 2006
+
+Summary of POST, BIOS boot loading, GRUB 2 multi-stage loading.
+
+https://opensource.com/article/17/2/linux-boot-and-startup
+
+Everything explained here: https://en.wikipedia.org/wiki/Linux_startup_process, but seems using a little bit older kernel version?
+
+https://gyires.inf.unideb.hu/GyBITT/20/ch02.html
+
+---
+
 backup MBR:
 `sudo dd if=/dev/sda of=mbr_old bs=512 count=1`
 
