@@ -1,3 +1,11 @@
+https://copy.sh/v86/
+
+https://www.riscosopen.org/content/
+
+[KolibriOS discussion](https://news.ycombinator.com/item?id=22873298)
+
+https://wiki.osdev.org/Notable_Projects
+
 https://github.com/0xAX/asm
 
 http://www.staerk.de/thorsten/Tutorials/Assembler_Tutorial
@@ -5,6 +13,8 @@ http://www.staerk.de/thorsten/Tutorials/Assembler_Tutorial
 http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
 
 https://tldp.org/HOWTO/Assembly-HOWTO/index.html
+
+https://2ton.com.au/HeavyThing/
 
 nasm
 - [NASM Tutorial](https://www.tutorialspoint.com/assembly_programming)
