@@ -28,6 +28,14 @@ https://gyires.inf.unideb.hu/GyBITT/20/ch02.html
 
 ---
 
+Hardware: interrups, [pic](https://en.wikipedia.org/wiki/Programmable_interrupt_controller)/[apic](https://en.wikipedia.org/wiki/Advanced_Programmable_Interrupt_Controller)
+
+[smp](http://download.xskernel.org/docs/processors/multiprocessing/smp.html), good stuff [there](http://download.xskernel.org)
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/8/html/reference_guide/chap-hardware_interrupts
+
+---
+
 backup MBR:
 `sudo dd if=/dev/sda of=mbr_old bs=512 count=1`
 
