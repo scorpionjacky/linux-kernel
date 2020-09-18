@@ -124,4 +124,5 @@ For a modern bzImage kernel with boot protocol version >= 2.02, a [memory layout
 
 ref
 
-Latest version of [header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S)
+- Latest version of [header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S)
+- 0xax: booting [gitbooks.io](https://0xax.gitbooks.io/linux-insides/content/Booting/), [github](https://github.com/0xAX/linux-insides/tree/master/Booting)
