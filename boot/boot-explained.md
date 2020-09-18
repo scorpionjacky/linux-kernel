@@ -118,3 +118,10 @@ For a modern bzImage kernel with boot protocol version >= 2.02, a [memory layout
   000000  +------------------------+
 ```
 ... where the address X is as low as the design of the boot loader permits.
+
+
+---
+
+ref
+
+Latest version of [header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S)
