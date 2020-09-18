@@ -70,6 +70,8 @@ https://www.cs.rutgers.edu/~pxk/416/notes/
 
 [Linux Kernel Tracing](https://github.com/Stefan20162016/tracing)
 
+[eduOS](https://rwth-os.github.io/eduOS/) -> [github](https://github.com/RWTH-OS/eduOS)
+
 http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
 
 - https://github.com/egormkn/mbr-boot-manager
