@@ -126,3 +126,7 @@ ref
 
 - Latest version of [header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S)
 - 0xax: booting [gitbooks.io](https://0xax.gitbooks.io/linux-insides/content/Booting/), [github](https://github.com/0xAX/linux-insides/tree/master/Booting)
+
+read this next:
+
+https://opensource.com/article/17/2/linux-boot-and-startup
