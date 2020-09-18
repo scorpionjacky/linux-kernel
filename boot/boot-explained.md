@@ -27,7 +27,7 @@ Kernel Setup/Init       Kernel in memory
 
 *Note: [Coreboot](https://en.wikipedia.org/wiki/Coreboot) and [Libreboot](https://en.wikipedia.org/wiki/Libreboot)*
 
-System startup
+**System startup**
 
 The [system startup](https://en.wikipedia.org/wiki/BIOS#System_startup) stage depends on the hardware that Linux is being booted on. On an embedded platform, a bootstrap environment is used when the system is powered on, or reset. Examples include U-Boot, RedBoot, and MicroMonitor from Lucent. Embedded platforms are commonly shipped with a boot monitor. These programs reside in special region of flash memory on the target hardware and provide the means to download a Linux kernel image into flash memory and subsequently execute it. In addition to having the ability to store and boot a Linux image, these boot monitors perform some level of system test and hardware initialization. In an embedded target, these boot monitors commonly cover both the first- and second-stage boot loaders.
 
@@ -58,9 +58,11 @@ Note that the /boot directory must be located on a filesystem that is supported 
 
 The function of GRUB2 stage 2 is to locate and load a Linux kernel into RAM and turn control of the computer over to the kernel. The kernel and its associated files are located in the /boot directory. The kernel files are identifiable as they are all named starting with vmlinuz.
 
-Kernel
+**Kernel**
 
 All of the kernels are in a self-extracting, compressed format to save space. The kernels are located in the /boot directory, along with an initial RAM disk image, and device maps of the hard drives.
+
+***Multiboot specification:*** Within the OS image file, the header must be in the first 8192 (2¹³) bytes for Multiboot and 32768 (2¹⁵) bytes for Multiboot2. The loader searches for a magic number to find the header, which is 0x1BADB002 for Multiboot and 0xE85250D6 for Multiboot2. In the header, entry_addr points to the code where control is handed over to the OS. This allows different executable file formats (see Comparison of executable file formats). If the OS kernel is an ELF file (Executable and Linkable Format), which it is for the Linux kernel, this can be omitted for Multiboot2. The ELF format is very common in the open source world and has its own field (e_entry) containing the entry point. Before jumping to the OS entry point, the boot loader must provide a boot information structure to tell the OS how it left the system; for Multiboot, this is a struct, and for Multiboot2, every field (group) has a type tag and a size.
 
 At the head of this kernel image is a routine that does some minimal amount of hardware setup and then decompresses the kernel contained within the kernel image and places it into high memory. If an initial RAM disk image is present, this routine moves it into memory and notes it for later use. The routine then calls the kernel and the kernel boot begins.
 
@@ -86,7 +88,7 @@ The initrd function allows you to create a small Linux kernel with drivers compi
 > Note: The decompress_kernel function is where you see the usual decompression messages emitted to the display: *Uncompressing Linux… Ok, booting the kernel.*
 
 
-Init
+**Init**
 
 After the kernel is booted and initialized, the kernel starts the first user-space application. This is the first program invoked that is compiled with the standard C library. Prior to this point in the process, no standard C applications have been executed.
 
