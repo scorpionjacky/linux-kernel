@@ -1,4 +1,6 @@
-<h3>TOC</h3>
+# Bran's kernel development tutorial
+
+## TOC
 
 <a href="./Docs/intro.htm" target="showframe">Introduction</a><br>
 <a href="./Docs/gettingstarted.htm" target="showframe">Getting Started</a><br>
