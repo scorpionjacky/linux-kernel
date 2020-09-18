@@ -19,6 +19,8 @@ OK, It's time for some code! Although the brunt of our kernel will be written in
 
 Here we go:
 
+Ref: [Bran's kernel development tutorial](http://www.osdever.net/bkerndev/index.php), [eduOS](https://rwth-os.github.io/eduOS/) -> [github](https://github.com/RWTH-OS/eduOS)
+
 ```asm
 ;
 ; boot.s -- Kernel start location. Also defines multiboot header.
