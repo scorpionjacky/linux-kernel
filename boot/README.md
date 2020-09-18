@@ -32,6 +32,16 @@ Hardware: interrups, [pic](https://en.wikipedia.org/wiki/Programmable_interrupt_
 
 [smp](http://download.xskernel.org/docs/processors/multiprocessing/smp.html), good stuff [there](http://download.xskernel.org)
 
+[Linux SMP/Multicore](https://technolinchpin.wordpress.com/2015/11/05/linux-smp-and-multicore/) | [IBM Linux SMP](https://www.ibm.com/developerworks/library/l-linux-smp)
+
+https://www.linuxsecrets.com/elinux-wiki/images/4/43/Understanding_And_Using_SMP_Multicore_Processors_Anderson.pdf
+
+https://blog.acolyer.org/2016/04/26/the-linux-scheduler-a-decade-of-wasted-cores/
+
+https://www.esol.com/embedded/multicore_manycore2.html
+
+[QNX SMP](http://www.qnx.com/developers/docs/7.1/#com.qnx.doc.neutrino.sys_arch/topic/smp.html)
+
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/8/html/reference_guide/chap-hardware_interrupts
 
 ---
