@@ -1,6 +1,6 @@
 # Booting Explained
 
-Linux has its own boot loader (serving as MBR) up until version 2.4.\*. Starting from 2.6 (2.5 is a development version), the MBR part has been removed, and a boot manager is required to boot Linux kernel.
+Linux has its own [boot loader](https://en.wikipedia.org/wiki/Booting#Modern_boot_loaders) (serving as MBR) up until version 2.4.\*. Starting from 2.6 (2.5 is a development version), the MBR part has been removed, and a boot manager is required to boot Linux kernel.
 
 Linux versions between version 0.11 and 2.4 have bootsect.S, setup.S and header.S to serve as boot loader (MBR), setup, and kernel image. BIOS loads MBR, MBR loads setup, and setup loads the kernel. Starting from 2.6, these three have been changed to header.S and header_32.S and header_64.S. The MBR component has been removed and the many of the what setup.S does has been moved to c code. header_32.S and header_64.S are used for 32/64 bit respectively. Linux 0.01 has no setup.S and there is only 2-stage boot loading process.
 
@@ -8,7 +8,7 @@ Other than no longer serving MBR, the Linux booting process still dooe all the r
 
 ---
 
-Linux Boot Process with a multi-boot manager and BIOS setup (GRUB as an example):
+Linux Booting Process with a multi-boot manager and BIOS setup ([GRUB2](https://en.wikipedia.org/wiki/GNU_GRUB#Version_2_(GRUB_2)) as an example):
 
 ```
 On Power-up/Reset       BIOS (System startup)
@@ -19,19 +19,25 @@ Kernel Loading          GRUB in mem      <- load kernel image
 Kernel Setup/Init       Kernel in memory
 ```
 
-*What's the process with UEFI?*
+*Note: GRUB can alternatively pass control of the boot process to another boot loader, using chain loading. This is the method used to load operating systems that do not support the Multiboot Specification or are not supported directly by GRUB.*
+
+*Note: [Master Boot Record](https://en.wikipedia.org/wiki/Master_boot_record) (MBR) vs [GUID Partition Table](https://en.wikipedia.org/wiki/GUID_Partition_Table) (GPT)*
+
+*Note: [Unified Extensible Firmware Interface](https://en.wikipedia.org/wiki/Unified_Extensible_Firmware_Interface) (UEFI), and what's the process UEFI for booting?*
+
+*Note: [Coreboot](https://en.wikipedia.org/wiki/Coreboot) and [Libreboot](https://en.wikipedia.org/wiki/Libreboot)*
 
 System startup
 
-The system startup stage depends on the hardware that Linux is being booted on. On an embedded platform, a bootstrap environment is used when the system is powered on, or reset. Examples include U-Boot, RedBoot, and MicroMonitor from Lucent. Embedded platforms are commonly shipped with a boot monitor. These programs reside in special region of flash memory on the target hardware and provide the means to download a Linux kernel image into flash memory and subsequently execute it. In addition to having the ability to store and boot a Linux image, these boot monitors perform some level of system test and hardware initialization. In an embedded target, these boot monitors commonly cover both the first- and second-stage boot loaders.
+The [system startup](https://en.wikipedia.org/wiki/BIOS#System_startup) stage depends on the hardware that Linux is being booted on. On an embedded platform, a bootstrap environment is used when the system is powered on, or reset. Examples include U-Boot, RedBoot, and MicroMonitor from Lucent. Embedded platforms are commonly shipped with a boot monitor. These programs reside in special region of flash memory on the target hardware and provide the means to download a Linux kernel image into flash memory and subsequently execute it. In addition to having the ability to store and boot a Linux image, these boot monitors perform some level of system test and hardware initialization. In an embedded target, these boot monitors commonly cover both the first- and second-stage boot loaders.
 
-In a PC, booting Linux begins in the BIOS at address 0xFFFF0. The first step of the BIOS is the power-on self test (POST). The job of the POST is to perform a check of the hardware. The second step of the BIOS is local device enumeration and initialization.
+In a PC, booting Linux begins in the [BIOS](https://en.wikipedia.org/wiki/BIOS) at address 0xFFFF0. The first step of the BIOS is the [power-on self test](https://en.wikipedia.org/wiki/Power-on_self-test) (POST). The job of the POST is to perform a check of the hardware. The second step of the BIOS is local device enumeration and initialization.
 
 Given the different uses of BIOS functions, the BIOS is made up of two parts: the POST code and runtime services. After the POST is complete, it is flushed from memory, but the BIOS runtime services remain and are available to the target operating system.
 
-The MBR is a 512-byte sector with a magic number in the last two bytes, located in the first sector on the disk (sector 1 of cylinder 0, head 0). After the MBR is loaded into RAM, the BIOS yields control to it
+The [MBR](https://en.wikipedia.org/wiki/Master_boot_record) is a 512-byte sector with a magic number in the last two bytes, located in the first sector on the disk (sector 1 of cylinder 0, head 0). After the MBR is loaded into RAM, the BIOS yields control to it
 
-The primary boot loader that resides in the MBR is a 512-byte image containing both program code and a small partition table (see Figure 2). The first 446 bytes are the primary boot loader, which contains both executable code and error message text. The next sixty-four bytes are the partition table, which contains a record for each of four partitions (sixteen bytes each). The MBR ends with two bytes of the magic number (0xAA55) menifesting itself as a valid MBR.
+The primary boot loader that resides in the MBR is a 512-byte image containing both program code and a small partition table (see Figure 2). The first 446 bytes are the primary boot loader, which contains both executable code and error message text. The next sixty-four bytes are the partition table, which contains a record for each of four partitions (sixteen bytes each). The MBR ends with two bytes of the magic number 0xAA55 ([0x55 (offset +0x1FE) 0xAA (offset +0x1FF)](https://en.wikipedia.org/wiki/BIOS#Notes)) menifesting itself as a valid MBR.
 
 ```
 MBR
