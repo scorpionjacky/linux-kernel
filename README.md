@@ -252,7 +252,7 @@ Memory
 - Addison-Wesley: Linux Kernel Development, 3ed (Jul 2010) 978-0672329463
 - No Starch Press: The Linux Programming Interface (Oct 2010) 978-1593272203
 - Wrox: Professional Linux Kernel Architecture (2008) 978-0470343432
-- Prentice Hall.-.Essential Linux Device Drivers.-.(2008).-.0132396556
+- Prentice Hall: [Essential Linux Device Drivers](http://www.embeddedlinux.org.cn/essentiallinuxdevicedrivers/) (2008) 0132396556 ![more here](http://www.embeddedlinux.org.cn/html/zaixiantushu/5-5.html)
 - [The Linux Kernel Module Programming Guide](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/docs/lkmpg/), or [pdf](https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf) (2001, 2007−05−18 ver 2.6.4)
 - OReilly.-.Linux Kernel in a Nutshell A Desktop Quick Reference.-.(Dec 2006).-.978-0596100797
 - [Understanding the Linux Kernel, 3E] (2005), kernel 2.6
