@@ -63,6 +63,8 @@ sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
 
 ## Links
 
+http://www.osdever.net/tutorials/
+
 https://github.com/perlun/cocos
 
 long mode
