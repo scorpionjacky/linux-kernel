@@ -63,6 +63,11 @@ sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
 
 ## Links
 
+long mode
+- https://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID
+- https://wiki.osdev.org/Entering_Long_Mode_Directly
+
+
 [minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm)
 
 https://www.cs.rutgers.edu/~pxk/416/notes/
