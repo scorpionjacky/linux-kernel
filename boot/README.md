@@ -67,6 +67,7 @@ long mode
 - https://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID
 - https://wiki.osdev.org/Entering_Long_Mode_Directly
 
+https://www.bookstack.cn/read/tinyclub-elinux/dev_portals-Real_Time-Real_Time.md
 
 [minimal bootloader](https://github.com/Stefan20162016/linux-insides-code/blob/master/bootloader.asm)
 
