@@ -2,20 +2,20 @@
 
 ## TOC
 
-<a href="./Docs/intro.htm" target="showframe">Introduction</a><br>
-<a href="./Docs/gettingstarted.htm" target="showframe">Getting Started</a><br>
-<a href="./Docs/basickernel.htm" target="showframe">The basic kernel</a><br>
-<a href="./Docs/creatingmain.htm" target="showframe">Linking sources</a><br>
-<a href="./Docs/printing.htm" target="showframe">Printing onscreen</a><br>
-<a href="./Docs/gdt.htm" target="showframe">The GDT</a><br>
-<a href="./Docs/idt.htm" target="showframe">The IDT</a><br>
-<a href="./Docs/isrs.htm" target="showframe">Writing ISRs</a><br>
-<a href="./Docs/irqs.htm" target="showframe">IRQs and the PICs</a><br>
-<a href="./Docs/pit.htm" target="showframe">The PIT</a><br>
-<a href="./Docs/keyboard.htm" target="showframe">The Keyboard</a><br>
-<a href="./Docs/whatsleft.htm" target="showframe">What's left?</a><br>
+- [Introduction](#Introduction)
+- [Getting Started](#getting-started)
+- [The basic kernel](#the-basic-kernel)
+- [Linking sources](#linking)
+- [Printing onscreen](#screen)
+- [The GDT](#the-gdt)
+- [The IDT](#the-idt)
+- [Writing ISRs](#isr)
+- [IRQs and the PICs](#irqs-and-pics)
+- [The PIT](#pit)
+- [The Keyboard](#the-keyboard)
+- [What's left?](#left)
 
-<h2>Introduction</h2>
+## Introduction
 
 <p>
 Kernel development is not an easy task. This is a testament to your programming
@@ -93,7 +93,7 @@ the basics for a kernel. This involves:<br>
 </p>
 
 
-<h2>Getting Started</h2>
+## Getting Started
 
 <p>
 Kernel development is a lengthy process of writing code, as well as debugging various
@@ -124,7 +124,7 @@ leads to slower development time). Be prepared for many sudden reboots as you te
 and debug your kernel on real hardware.
 </p>
 
-<h3>Required Hardware for Testbed</h3>
+### Required Hardware for Testbed
 
 <p>
 - a 100% IBM Compatible PC with:<br>
@@ -136,7 +136,7 @@ and debug your kernel on real hardware.
 (Yes, that's right! You don't even NEED a hard disk on the testbed!)
 </p>
 
-<h3>Recommended Hardware for Development</h3>
+### Recommended Hardware for Development
 <p>
 - a 100% IBM Compatible PC with:<br>
 - a Pentium II or K6 300MHz<br>
@@ -150,27 +150,28 @@ and debug your kernel on real hardware.
 (A mouse is highly recommended)
 </p>
 
-<h2>Toolset</h2>
+### Toolset
 
-<h3>Compilers</h3>
+**Compilers**
 <p>
 - The Gnu C Compiler (GCC) [Unix]<br>
 - DJGPP (GCC for DOS/Windows) [Windows]<br>
 </p>
 
-<h3>Assemblers</h3>
+**Assemblers**
 <p>
 - Netwide Assembler (NASM) [Unix/Windows]<br>
 </p>
 
-<h3>Virtual Machines</h3>
+**Virtual Machines**
+
 <p>
 - VMWare Workstation 4.0.5 [Linux/Windows NT/2000/XP]<br>
 - Microsoft VirtualPC [Windows NT/2000/XP]<br>
 - Bochs [Unix/Windows]<br>
 </p>
 
-<h2 id="pagetop">The Basic Kernel</h2>
+## The Basic Kernel
 
 <p>
 In this section of the tutorial, we will delve into a bit of assembler, learn
@@ -182,7 +183,7 @@ Windows or DOS-based platform. We also assume that you have a a minimal
 understanding of the x86 Assembly language.
 </p>
 
-<h3 id="kernelentry">The Kernel Entry</h3>
+### The Kernel Entry
 
 <p>
 The kernel's entry point is the piece of code that will be executed FIRST when
@@ -363,7 +364,6 @@ echo Now assembling, compiling, and linking your kernel:
 nasm -f aout -o start.o start.asm
 rem Remember this spot here: We will add 'gcc' commands here to compile C sources
 
-
 rem This links all your files. Remember that as you add *.o files, you need to
 rem add them after start.o. If you don't add them at all, they won't be in your kernel!
 ld -T link.ld -o kernel.bin start.o
@@ -372,7 +372,8 @@ pause
 </pre>
 <pre class="codecaption">Our builder batch file: 'build.bat'</pre>
 
-<h2>Creating Main and Linking C Sources</h2>
+<a id="linking"></a>
+## Creating Main and Linking C Sources
 
 <p>
 In normal C programming practice, the function main() is your normal program entry
@@ -532,8 +533,8 @@ you are stuck creating our accessory functions like memcpy, a solution 'main.c' 
 shown <a href="../Sources/main.c">here</a>.
 </p>
 
-
-<h2>Printing to the Screen</h2>
+<a id='screen'></a>
+## Printing to the Screen
 
 <p>
 Now, we will try to print to the screen. In order to print to the screen, we need a
@@ -955,7 +956,7 @@ click 'build.bat' to make your kernel, debugging any syntax errors. Copy your
 kernel that prints 'Hello World!' on a black screen in white text!
 </p>
 
-<h2>The GDT</h2>
+## The GDT
 
 <p>
 A vital part of the 386's various protection measures is the Global Descriptor Table,
@@ -1281,7 +1282,7 @@ changes on the screen: this is an internal change. Onto the Interrupt Descriptor
 Table (IDT)!
 </p>
 
-<h2>The IDT</h2>
+## The IDT
 
 <p>
 The Interrupt Descriptor Table, or IDT, is used in order to show the processor
@@ -1473,6 +1474,7 @@ If you got stuck writing 'idt_set_gate', you may find the solution to this secti
 of the tutorial <a href="../Sources/idt.c">here</a>.
 </p>
 
+<a id='isr'></a>
 <h2>Interrupt Service Routines</h2>
 
 <p>
@@ -1829,7 +1831,7 @@ You may find the complete solution to 'start.s' <a href="../Sources/start.asm">
 here</a>, and the complete solution to 'isrs.c' <a href="../Sources/isrs.c">here</a>.
 </p>
 
-<h2>IRQs and PICs</h2>
+## IRQs and PICs
 
 <p>
 Interrupt Requests or IRQs are interrupts that are raised by hardware devices. Some
@@ -2059,7 +2061,8 @@ successfully get past installing ISRs and an IDT. Next, we will learn about the
 simplest device to use an IRQ: The Programmable Interval Timer (PIT).
 </p>
 
-<h2>The PIT: A System Clock</h2>
+<a id="pit"></a>
+## The PIT: A System Clock
 
 <p>
 The Programmable Interval Timer (PIT, model 8253 or 8254), also called the System
@@ -2275,7 +2278,7 @@ Next, we will discuss how to use the keyboard. This involves installing a custom
 IRQ handler just like this tutorial, with hardware I/O on each interrupt.
 </p>
 
-<h2>The Keyboard</h2>
+## The Keyboard
 
 <p>
 A keyboard is the most common way for a user to give a computer input, therefore
@@ -2450,6 +2453,7 @@ IRQs, handle the timer, and handle the keyboard. Click to find what's next in st
 for your kernel development.
 </p>
 
+<a id="left"></a>
 <h2>What's Left</h2>
 
 <p>
