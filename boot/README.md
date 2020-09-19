@@ -63,6 +63,8 @@ sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
 
 ## Links
 
+https://github.com/perlun/cocos
+
 long mode
 - https://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID
 - https://wiki.osdev.org/Entering_Long_Mode_Directly
