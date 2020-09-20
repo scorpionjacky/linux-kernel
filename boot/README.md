@@ -63,6 +63,8 @@ sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
 
 ## Links
 
+https://intermezzos.github.io/book/first-edition/creating-our-first-crate.html
+
 http://www.osdever.net/tutorials/
 
 https://github.com/perlun/cocos
