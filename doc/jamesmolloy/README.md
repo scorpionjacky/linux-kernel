@@ -1,6 +1,6 @@
 # Roll your own toy UNIX-clone OS
 
-*JamesM's kernel development tutorials*
+*[JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)*
 
 ref: 
 - https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials
