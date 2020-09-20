@@ -293,6 +293,7 @@ Memory
   - https://pdos.csail.mit.edu/6.828/2018/xv6.html
 - [Write your own operating system](http://mirror.freedoors.org/Geezer-2/osd/index.htm)
   - http://mirror.freedoors.org/Geezer-2/osd/boot/index.htm
+- http://www.staroceans.org/generatedTrees/_kernel-and-driver.html
 
 Interview Questions
 - https://www.careercup.com/page?pid=linux-kernel-interview-questions&sort=votes&n=2
