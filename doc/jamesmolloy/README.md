@@ -2,6 +2,17 @@
 
 *JamesM's kernel development tutorials*
 
+ref: 
+- https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials
+- https://github.com/berkus/jamesm-tutorials/tree/master/src
+- https://github.com/dhyey35/james-molloy-os
+- https://github.com/kAworu/JamesM
+- https://github.com/dwnoble/dsd
+- https://github.com/xlar54/Starter-OS
+- https://github.com/NateBrune/jamesmolloy.co.uk
+- https://github.com/ilkka/unix-from-scratch
+- etc.
+
 This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.
 
 This set of tutorials is very practical in nature. The theory is given in every section, but the majority of the tutorial deals with getting dirty and implementing the abstract ideas and mechanisms discussed everywhere. It is important to note that the kernel implemented is a **teaching kernel**. I **know** that the algorithms used are not the most space efficient or optimal. They normally are chosen for their simplicity and ease of understanding.The aim of this is to get you into the correct mindset, and to give you a grounding upon which you can work. The kernel given is extensible, and good algorithms can easily be plugged in.If you have problems with the theory, there are plenty of sites that would be delighted to help you (most questions on OSDev forums are concerned with implementation - "My gets function doesn't work! help!" - A theory question is a breath of fresh air to many ;) ). Links can be found at the bottom of the page.
