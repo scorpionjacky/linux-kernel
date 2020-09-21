@@ -110,3 +110,5 @@ http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
 - mkernel
   - [Kernel 101 – Let’s write a Kernel](https://github.com/arjun024/mkernel)
   - [Kernel 201 - Let’s write a Kernel with keyboard and screen support](https://github.com/arjun024/mkeykernel)
+
+https://github.com/cirosantilli/x86-bare-metal-examples
