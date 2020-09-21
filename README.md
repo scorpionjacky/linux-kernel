@@ -38,6 +38,16 @@ LXR
 - [Linux Cross Reference (LXR)](http://lxr.linux.no/)
 - [TOMOYO Linux Cross Reference Linux](http://tomoyo.osdn.jp/cgi-bin/lxr/source)
 
+## Intel Manuals
+
+Intel® 64 and IA-32 Architectures Software Developer Manuals [@Intel Website](https://software.intel.com/content/www/us/en/develop/articles/intel-sdm.html)
+
+Intel documentation converted in HTML:
+- [Volume 1](http://xem.github.io/minix86/manual/intel-x86-and-64-manual-vol1/o_7281d5ea06a5b67a.html): Basic Architecture
+- [Volume 2](http://xem.github.io/minix86/manual/intel-x86-and-64-manual-vol2/o_b5573232dd8f1481.html): (2A, 2B, 2C & 2D) Instruction Set Reference, A-Z
+- [Volume 3](http://xem.github.io/minix86/manual/intel-x86-and-64-manual-vol3/o_fe12b1e2a880e0ce.html): (3A, 3B, 3C & 3D) System Programming Guide
+- Volume 4: Model-Specific Registers
+
 ## Linux Alternatives
 
 https://en.wikipedia.org/wiki/Lions'_Commentary_on_UNIX_6th_Edition,_with_Source_Code
