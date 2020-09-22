@@ -28,7 +28,7 @@ https://gyires.inf.unideb.hu/GyBITT/20/ch02.html
 
 ---
 
-[SOS](http://beefchunk.com/documentation/hardware/serial/) / http://sos.enix.org/en/MainPage / http://beefchunk.com/documentation/
+[SOS](http://sos.enix.org/lxr/source/) / http://sos.enix.org/en/MainPage / http://beefchunk.com/documentation/
 
 https://github.com/LordNoteworthy/cpu-internals / https://awesomeopensource.com/project/LordNoteworthy/cpu-internals
 
