@@ -32,7 +32,9 @@ https://github.com/ravexina/linux-notes
 
 [jindian: linux_note](https://github.com/jindian/linux_note) <- [jiandian repos](https://github.com/jindian?tab=repositories)
 
-[SOS](http://sos.enix.org/lxr/source/) / http://sos.enix.org/en/MainPage / http://beefchunk.com/documentation/
+beginner OS
+- [Starter-OS](https://github.com/xlar54/Starter-OS)
+- [SOS](http://sos.enix.org/lxr/source/) / http://sos.enix.org/en/MainPage / http://beefchunk.com/documentation/
 
 https://github.com/LordNoteworthy/cpu-internals / https://awesomeopensource.com/project/LordNoteworthy/cpu-internals
 
