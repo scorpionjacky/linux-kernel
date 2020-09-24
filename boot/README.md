@@ -75,6 +75,8 @@ sudo dd if=bootloader.bin of=/dev/sda bs=446 count=1
 
 ## Links
 
+https://files.osdev.org/ | https://files.osdev.org/mirrors/geezer/
+
 https://intermezzos.github.io/book/first-edition/creating-our-first-crate.html
 
 http://www.osdever.net/tutorials/
