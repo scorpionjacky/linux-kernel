@@ -30,7 +30,7 @@ https://gyires.inf.unideb.hu/GyBITT/20/ch02.html
 
 https://github.com/ravexina/linux-notes
 
-[jindian: linux_note](https://github.com/jindian/linux_note) <- [jiandian repos](https://github.com/jindian?tab=repositories)
+[jindian: linux_note](https://github.com/jindian/linux_note) <- [jiandian repos](https://github.com/jindian?tab=repositories) <- [@gitbooks.io](https://start_fjin.gitbooks.io/linux-note/content/)
 
 beginner OS
 - [Starter-OS](https://github.com/xlar54/Starter-OS)
