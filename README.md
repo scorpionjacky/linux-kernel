@@ -361,8 +361,6 @@ https://en.wikipedia.org/wiki/Linux_kernel
 
 https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/
 
-https://github.com/cfenollosa/os-tutorial
-
 Chinese
 - https://blog.csdn.net/chengwenyang/article/details/77417830
 - https://blog.csdn.net/chenpu5887/article/details/100627321?utm_medium=distribute.pc_relevant.none-task-blog-title-8&spm=1001.2101.3001.4242
@@ -392,9 +390,6 @@ VeraCrypt is a free open source disk encryption software for Windows, Mac OSX an
 - https://www.veracrypt.fr/code/VeraCrypt/tree/src/Boot/Windows/BootSector.asm?id=a630fae22ce0c942af9abdff28b87609909012d2
 - https://www.veracrypt.fr/code/VeraCrypt/tree/src/Boot/
 
-GeeksOS 
-- https://www.cs.umd.edu/~hollings/cs412/s03/prog1/
-
 https://www.howtogeek.com/howto/31632/what-is-the-linux-kernel-and-what-does-it-do/
 
 https://www.cs.bham.ac.uk/~exr/lectures/
@@ -409,31 +404,9 @@ https://www.perforce.com/resources/qac/misra-c-cpp
 
 [MacOS and iOS Internals, Volume I - III](http://newosxbook.com/index.php)
 
-[JamesM's kernel development tutorials](https://web.archive.org/web/20160412174753/http://www.jamesmolloy.co.uk/tutorial_html/index.html)
-- https://github.com/JetStarBlues/JamesM-Kernel-Tutorial qemu
-- https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials (qemu version)
-- https://github.com/berkus/jamesm-tutorials
-- https://github.com/xlar54/Starter-OS
-- https://github.com/kAworu/JamesM
-
-
-[TINAOS](https://github.com/1dime/TINAOS)
-- https://github.com/TINA-OS/tinaos
-- [multiboot](https://github.com/1dime/TINAOS/blob/master/src/boot/boot.asm)
-
 Kernels 201 - Let’s write a Kernel with keyboard and screen support
 - https://hackaday.com/2019/07/09/the-saga-of-32-bit-linux-why-going-64-bit-raises-concerns-over-multilib/
 - https://github.com/arjun024/mkeykernel
 - https://github.com/arjun024/mkernel (Kernels 101)
-
-http://www.flingos.co.uk/docs/reference/FlingOS/
-
-https://github.com/sukwon0709/osdev
-
-https://github.com/castvoid/Harrys-ASM-OS
-
-https://github.com/povilasb/simple-os
-
-https://github.com/tuhdo/os01
 
 [pedigree](https://github.com/jmolloy/pedigree/), C++
