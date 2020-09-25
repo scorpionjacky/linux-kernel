@@ -17,7 +17,7 @@
   - [YWHyuk](https://github.com/YWHyuk/linux-kernel-0.01)
 - [x86 Bare Metal Examples](https://github.com/cirosantilli/x86-bare-metal-examples) by cirosantilli
 - [TINAOS](https://github.com/1dime/TINAOS), or [here](https://github.com/TINA-OS/tinaos)
-- [simply-OS](https://github.com/povilasb/simple-os)
+- [simple-OS](https://github.com/povilasb/simple-os)
 
 Others
 - http://www.flingos.co.uk/docs/reference/FlingOS/
