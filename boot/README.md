@@ -32,11 +32,9 @@ https://github.com/ravexina/linux-notes
 
 [jindian: linux_note](https://github.com/jindian/linux_note) <- [jiandian repos](https://github.com/jindian?tab=repositories) <- [@gitbooks.io](https://start_fjin.gitbooks.io/linux-note/content/)
 
-beginner OS
-- [Starter-OS](https://github.com/xlar54/Starter-OS)
-- [SOS](http://sos.enix.org/lxr/source/) / http://sos.enix.org/en/MainPage / http://beefchunk.com/documentation/
+http://beefchunk.com/documentation/
 
-https://github.com/LordNoteworthy/cpu-internals / https://awesomeopensource.com/project/LordNoteworthy/cpu-internals
+[cpu-internals](https://github.com/LordNoteworthy/cpu-internals) / [project](https://awesomeopensource.com/project/LordNoteworthy/cpu-internals)
 
 https://awesomeopensource.com/projects/kernel / https://awesomeopensource.com
 
@@ -81,8 +79,6 @@ https://intermezzos.github.io/book/first-edition/creating-our-first-crate.html
 
 http://www.osdever.net/tutorials/
 
-https://github.com/perlun/cocos
-
 long mode
 - https://wiki.osdev.org/Setting_Up_Long_Mode#Detection_of_CPUID
 - https://wiki.osdev.org/Entering_Long_Mode_Directly
@@ -96,8 +92,6 @@ https://www.cs.rutgers.edu/~pxk/416/notes/
 
 [Linux Kernel Tracing](https://github.com/Stefan20162016/tracing)
 
-[eduOS](https://rwth-os.github.io/eduOS/) -> [github](https://github.com/RWTH-OS/eduOS)
-
 http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
 
 - https://github.com/egormkn/mbr-boot-manager
@@ -107,22 +101,12 @@ http://3zanders.co.uk/2017/10/13/writing-a-bootloader/
   - https://gilesbathgate.com/2009/11/25/how-to-write-an-operating-system-part-2/
 - http://mikeos.sourceforge.net/write-your-own-os.html
 - http://comet.lehman.cuny.edu/jung/cmp426697/LinuxMM.pdf
-- [JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)
 - [create small disk image with large partitions](https://unix.stackexchange.com/questions/216570/how-do-i-create-small-disk-image-with-large-partitions)
 - [An article](https://news.ycombinator.com/item?id=12182156)
-- A minimal Multiboot Kernel, Series, in Rust
-  - [Part 1: A minimal Multiboot Kernel](multiboot_1.md) ***This works!***
-  - [Part 2: Entering Long Mode](multiboot_2.md)
-  - [Updated Series](https://os.phil-opp.com/)
 - [build kernel and boot using qemu and grub](https://www.cs.vu.nl/~herbertb/misc/writingkernels.txt)
   - Everything works but qemu can't really load kernel at stage 1.5.
   - Need to change `elf` to `elf64` for `nasm` compiling.
   - Get stage1, stage2, fat_stage_1.5 from [here](https://www.aioboot.com/en/grub-legacy/) (or directly [grub_0.97-29ubuntu66_amd64.deb](http://mirrors.kernel.org/ubuntu/pool/main/g/grub/grub_0.97-29ubuntu66_amd64.deb).
-- cool example in 2010
-  - https://github.com/rikusalminen/danjeros
-  - issues with compiling. `ld` cannot find symbols on multiboot_header.o and start.o
 - mkernel
   - [Kernel 101 – Let’s write a Kernel](https://github.com/arjun024/mkernel)
   - [Kernel 201 - Let’s write a Kernel with keyboard and screen support](https://github.com/arjun024/mkeykernel)
-
-https://github.com/cirosantilli/x86-bare-metal-examples
