@@ -1,16 +1,18 @@
 # Roll your own toy UNIX-clone OS
 
 *[JamesM's kernel development tutorials](http://www.jamesmolloy.co.uk/tutorial_html/)*
+- *[@web.archive.org](https://web.archive.org/web/20160412174753/http://www.jamesmolloy.co.uk/tutorial_html/index.html)*
 
 ref: 
-- https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials
-- https://github.com/berkus/jamesm-tutorials/tree/master/src
+- https://github.com/cirosantilli/jamesmolloy-kernel-development-tutorials (qemu version)
+- https://github.com/berkus/jamesm-tutorials
 - https://github.com/dhyey35/james-molloy-os
 - https://github.com/kAworu/JamesM
 - https://github.com/dwnoble/dsd
 - https://github.com/xlar54/Starter-OS
 - https://github.com/NateBrune/jamesmolloy.co.uk
 - https://github.com/ilkka/unix-from-scratch
+- https://github.com/JetStarBlues/JamesM-Kernel-Tutorial qemu
 - etc.
 
 This set of tutorials aims to take you through programming a simple UNIX-clone operating system for the x86 architecture. The tutorial uses C as the language of choice, with liberally mixed in bits of assembler. The aim is to talk you through the design and implementation decisions in making an operating system. The OS we make is monolithic in design (drivers are loaded through kernel-mode modules as opposed to user-mode programs), as this is simpler.
