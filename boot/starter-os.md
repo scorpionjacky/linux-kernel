@@ -18,6 +18,7 @@
 - [x86 Bare Metal Examples](https://github.com/cirosantilli/x86-bare-metal-examples) by cirosantilli
 - [TINAOS](https://github.com/1dime/TINAOS), or [here](https://github.com/TINA-OS/tinaos)
 - [simple-OS](https://github.com/povilasb/simple-os)
+- [pritamzope/OS](https://github.com/pritamzope/OS), [web](https://www.codeproject.com/Articles/1225196/Create-Your-Own-Kernel-In-C-2)
 
 Others
 - http://www.flingos.co.uk/docs/reference/FlingOS/
