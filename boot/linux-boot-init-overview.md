@@ -6,7 +6,7 @@ ref:
 
 ## modern kernel with boot manager
 
-[arch/x86/boot/header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S)
+[arch/x86/boot/header.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/header.S) ([@elixir](https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/header.S))
 - First 512 bytes (formerly as MBR) display error message to use a boot manager
 - Followed by [linux boot protocol](https://www.kernel.org/doc/Documentation/x86/boot.txt) and various Linux data structures
     - kernel setup entry point: [`.globl _start`](https://github.com/torvalds/linux/blob/c9c9e6a49f8998e9334507378c08cc16cb3ec0e5/arch/x86/boot/header.S#L294)
@@ -20,7 +20,7 @@ Pay attention to the data parts, and section names which are used in [arch/x86/b
 
 More detail at [linux-insides](https://0xax.gitbooks.io/linux-insides/content/Booting/linux-bootstrap-1.html)
 
-[`arch/x86/boot/main.c`](https://github.com/torvalds/linux/blob/171d4ff79f965c1f164705ef0aaea102a6ad238b/arch/x86/boot/main.c#L134)
+[arch/x86/boot/main.c](https://github.com/torvalds/linux/blob/171d4ff79f965c1f164705ef0aaea102a6ad238b/arch/x86/boot/main.c#L134) ([@elixir](https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/main.c))
 - copy_boot_params(); /* First, copy the boot header into the "zeropage" */
 - console_init();  /* Initialize the early-boot console */
 - init_heap(); /* End of heap check */
@@ -42,7 +42,7 @@ More detail at [linux-insides](https://0xax.gitbooks.io/linux-insides/content/Bo
 	- protected_mode_jump(); [x86/boot/pmjump.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/pmjump.S)
         - this jumps to the 32-bit entry point (arch/x86/boot/compressed/head_64.S)
 
-[arch/x86/boot/compressed/head_64.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/compressed/head_64.S) detail info [here](https://0xax.gitbooks.io/linux-insides/content/Booting/linux-bootstrap-4.html)
+[arch/x86/boot/compressed/head_64.S](https://github.com/torvalds/linux/blob/master/arch/x86/boot/compressed/head_64.S) ([@elixir](https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/compressed/head_64.S)) detail info [linux-insides](https://0xax.gitbooks.io/linux-insides/content/Booting/linux-bootstrap-4.html)
 - Stack setup and CPU verification
 - Calculate the relocation address
 - Reload the segments if needed
@@ -82,7 +82,7 @@ initial_code <- [head_64.S using x86_64_start_kernel from head64.c](https://elix
 - `x86_64_start_reservations`(real_mode_data);
     - call `start_kernel()` in init/main.c
 
-[init/main.c](https://github.com/torvalds/linux/blob/master/init/main.c)
+[init/main.c](https://github.com/torvalds/linux/blob/master/init/main.c) ([@elixir](https://elixir.bootlin.com/linux/latest/source/init/main.c))
 - set_task_stack_end_magic(&init_task);
 - smp_setup_processor_id();
 - debug_objects_early_init();
