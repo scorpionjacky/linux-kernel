@@ -1,5 +1,7 @@
 ref:
 
+- https://en.wikipedia.org/wiki/Linux_console
+- https://en.wikipedia.org/wiki/8250_UART
 - https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 - https://en.wikipedia.org/wiki/16550_UART
 - https://tldp.org/HOWTO/Serial-HOWTO.html#toc18 (v2.27 February 2011)
@@ -11,6 +13,11 @@ ref:
 - https://web.archive.org/web/20200207194832/https://www.lammertbies.nl/comm/info/serial-uart
 - https://people.cs.clemson.edu/~mark/interrupts.html
 - https://cateee.net/lkddb/web-lkddb/SERIAL_8250.html
+- https://www.programmersought.com/article/41803652491/
+
+---
+
+![](https://en.wikipedia.org/wiki/Linux_console#/media/File:Simplified_Structure_of_the_Linux_Kernel.svg)
 
 ---
 
