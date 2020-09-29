@@ -4,7 +4,7 @@ ref:
 - [linux_note](https://github.com/jindian/linux_note) by [jindian](https://github.com/jindian?tab=repositories) <- [@gitbooks.io](https://start_fjin.gitbooks.io/linux-note/content/)
 - [Linux Insides](https://github.com/0xAX/linux-insides) by 0xax  <- [@gitbooks.io](https://0xax.gitbooks.io/linux-insides/content/Booting/)
 - [Linux boot protocol](https://github.com/torvalds/linux/blob/master/Documentation/x86/boot.rst)
-- GNU Make [Single-Page HTML](https://www.gnu.org/software/make/manual/make.html) / [Multi-Page HTML](https://www.gnu.org/software/make/manual/html_node/index.html)
+- GNU Make, HTML manual: [Single-Page](https://www.gnu.org/software/make/manual/make.html) / [Multi-Page](https://www.gnu.org/software/make/manual/html_node/index.html)
 - https://zhuanlan.zhihu.com/p/73077391
 - https://en.wikipedia.org/wiki/Vmlinux
 
