@@ -3,6 +3,7 @@ ref:
 - https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 - https://en.wikipedia.org/wiki/16550_UART
 - https://tldp.org/HOWTO/Serial-HOWTO.html#toc18 (v2.27 February 2011)
+- https://tldp.org/HOWTO/Text-Terminal-HOWTO.html (2013)
 - https://www.linusakesson.net/programming/tty/
 - https://processors.wiki.ti.com/index.php/Linux_Core_UART_User%27s_Guide
 - https://wiki.st.com/stm32mpu/wiki/Serial_TTY_overview
