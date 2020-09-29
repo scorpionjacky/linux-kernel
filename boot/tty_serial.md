@@ -4,6 +4,7 @@ ref:
 - https://en.wikipedia.org/wiki/8250_UART
 - https://en.wikibooks.org/wiki/Serial_Programming/8250_UART_Programming
 - https://en.wikipedia.org/wiki/16550_UART
+- [tty @jesstess/ldd3-examples](https://github.com/jesstess/ldd3-examples/tree/master/examples/), [ldd4](https://github.com/jesstess/ldd4)
 - https://tldp.org/HOWTO/Serial-HOWTO.html#toc18 (v2.27 February 2011)
 - https://tldp.org/HOWTO/Text-Terminal-HOWTO.html (2013)
 - https://www.linusakesson.net/programming/tty/
@@ -17,9 +18,6 @@ ref:
 
 ---
 
-![](https://en.wikipedia.org/wiki/Linux_console#/media/File:Simplified_Structure_of_the_Linux_Kernel.svg)
-
----
 
 UART means Universal Asynchronous Receiver/Transmitter. This is a chip which receives and transmits data serially; each serial port you have will use one, though it is possible that several may be integrated into one chip. 8250, 16450 and 16550 are all common types of UARTs.
 
