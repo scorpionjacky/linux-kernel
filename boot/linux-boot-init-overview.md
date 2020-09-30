@@ -55,7 +55,8 @@ More detail at [linux-insides](https://0xax.gitbooks.io/linux-insides/content/Bo
 - transition to 64-bit mode
 - Preparing to Decompress the Kernel
 - The final touches before kernel decompression
-- Kernel decompression
+- trampoline ?? somewhere sometime *[for LegoOS](http://lastweek.io/lego/kernel/trampoline/)*
+- Kernel decompression: [`call	extract_kernel`](https://elixir.bootlin.com/linux/latest/source/arch/x86/boot/compressed/misc.c#L340)
 - `jmp *%rax` jump to start_kernel() in init/main.c
 
 ? [`arch/x86/kernel/head64.c`](https://github.com/torvalds/linux/blob/master/arch/x86/kernel/head64.c)
