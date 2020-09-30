@@ -175,9 +175,9 @@ int (*foo)(int); /* a pointer to function, wich take one int param and return in
 
 https://softwareengineering.stackexchange.com/questions/232838/what-is-the-underlying-mechanism-behind-va-list-and-where-is-it-defined
 
-**__attributes__()**
+**\_\_attributes\_\_()**
 
-[C-Extensions](https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/C-Extensions.html#C-Extensions)
+[GNC C-Extensions](https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/C-Extensions.html#C-Extensions)
  - [Function-Attributes](https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Function-Attributes.html#Function-Attributes)
  - [Variable-Attributes](https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Variable-Attributes.html#Variable-Attributes)
  - [Type-Attributes](https://gcc.gnu.org/onlinedocs/gcc-4.0.2/gcc/Type-Attributes.html#Type-Attributes)
