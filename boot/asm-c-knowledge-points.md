@@ -170,3 +170,7 @@ int foo(int); /* a function with one int param and returns int */
 int * foo(int); /* a function with one int param and returns a pointer to int */
 int (*foo)(int); /* a pointer to function, wich take one int param and return int */
 ```
+
+**va_list etc.**
+
+https://softwareengineering.stackexchange.com/questions/232838/what-is-the-underlying-mechanism-behind-va-list-and-where-is-it-defined
