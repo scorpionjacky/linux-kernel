@@ -58,6 +58,31 @@ Note that the /boot directory must be located on a filesystem that is supported 
 
 The function of GRUB2 stage 2 is to locate and load a Linux kernel into RAM and turn control of the computer over to the kernel. The kernel and its associated files are located in the /boot directory. The kernel files are identifiable as they are all named starting with vmlinuz.
 
+memory map after Linux kernel is loaded into memory:
+```
+        | Protected-mode kernel  |
+100000  +------------------------+
+        | I/O memory hole        |
+0A0000  +------------------------+
+        | Reserved for BIOS      | Leave as much as possible unused
+        ~                        ~
+        | Command line           | (Can also be below the X+10000 mark)
+X+10000 +------------------------+
+        | Stack/heap             | For use by the kernel real-mode code.
+X+08000 +------------------------+
+        | Kernel setup           | The kernel real-mode code.
+        | Kernel boot sector     | The kernel legacy boot sector.
+      X +------------------------+
+        | Boot loader            | <- Boot sector entry point 0x7C00
+001000  +------------------------+
+        | Reserved for MBR/BIOS  |
+000800  +------------------------+
+        | Typically used by MBR  |
+000600  +------------------------+
+        | BIOS use only          |
+000000  +------------------------+
+```
+
 **Kernel**
 
 All of the kernels are in a self-extracting, compressed format to save space. The kernels are located in the /boot directory, along with an initial RAM disk image, and device maps of the hard drives.
