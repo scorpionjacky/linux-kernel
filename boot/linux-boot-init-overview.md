@@ -11,8 +11,16 @@ ref:
     - [Layout of bzImage](https://zhuanlan.zhihu.com/p/73077391)
   - [MIT6.828-神级OS课程](https://zhuanlan.zhihu.com/p/74028717)
   - https://zhuanlan.zhihu.com/p/161723710 / https://zhuanlan.zhihu.com/p/108084783
+  - [Linux 内核架构分析](https://zhuanlan.zhihu.com/p/113028297)
+  - [Linux 内核的整体架构](https://zhuanlan.zhihu.com/p/250522837)
+  - [浅谈linux系统下C开发之(进程) 内存布局](https://zhuanlan.zhihu.com/p/157794925)
+  - [Linux性能及调优指南之Linux内存架构](https://zhuanlan.zhihu.com/p/228474970)
+  - [Linux 内核的五大创新](https://zhuanlan.zhihu.com/p/158508499)
+  - [linux内核，三十个相关问题](https://zhuanlan.zhihu.com/p/165304889)
+  - [linux内核源码初学者必看之基础准备篇](https://zhuanlan.zhihu.com/p/86317515)
 - https://en.wikipedia.org/wiki/Vmlinux
 - https://www.cnblogs.com/alantu2018/
+  - [三十道linux内核面试题](https://www.cnblogs.com/alantu2018/p/8461068.html)
 
 
 - Memory map after kernel load
