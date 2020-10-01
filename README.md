@@ -28,6 +28,8 @@
   - [illumos](https://illumos.org), [@github](https://github.com/illumos/illumos-gate)
   - [MenuetOS](http://menuetos.net)
   - [KolibriOS](http://kolibrios.org/en/) / [svn](http://websvn.kolibrios.org/listing.php?repname=Kolibri+OS), [Kolibri-N](http://kolibri-n.org), [Unofficial Mirror](https://github.com/Harmon758/kolibrios), [LLVM port](https://github.com/devlato/kolibrios-llvm)
+  - [LegoOS](https://github.com/WukLab/LegoOS): disseminated, distributed OS. Author [home](http://lastweek.io)
+  - [CS452-Codebase](https://github.com/lgo/cs452): real-time microkernel
 - Grub2 [@github](https://github.com/rhboot/grub2)
 
 LXR
