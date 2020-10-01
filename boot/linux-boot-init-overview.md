@@ -16,11 +16,11 @@ ref:
   - [浅谈linux系统下C开发之(进程) 内存布局](https://zhuanlan.zhihu.com/p/157794925)
   - [Linux性能及调优指南之Linux内存架构](https://zhuanlan.zhihu.com/p/228474970)
   - [Linux 内核的五大创新](https://zhuanlan.zhihu.com/p/158508499)
-  - [linux内核，三十个相关问题](https://zhuanlan.zhihu.com/p/165304889)
   - [linux内核源码初学者必看之基础准备篇](https://zhuanlan.zhihu.com/p/86317515)
 - https://en.wikipedia.org/wiki/Vmlinux
 - https://www.cnblogs.com/alantu2018/
   - [三十道linux内核面试题](https://www.cnblogs.com/alantu2018/p/8461068.html)
+  - [Linux驱动面试题总结](https://www.cnblogs.com/alantu2018/archive/2004/01/13/8461074.html)
 
 
 - Memory map after kernel load
