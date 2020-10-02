@@ -135,9 +135,13 @@ More detail at [linux-insides](https://0xax.gitbooks.io/linux-insides/content/Bo
   - `void __init x86_64_start_reservations(char *real_mode_data)`
 - ? [`arch/x86/kernel/head_64.S`](https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/head_64.S)
   - startup_64
+    - `call verify_cpu`
+    - `call __startup_64`
   - secondary_startup_64
   - start_cpu0
   - early_idt_handler_array
+    - `call early_make_pgtable`
+    - `call early_fixup_exception`
 
 initial_code <- [head_64.S using x86_64_start_kernel from head64.c](https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/head_64.S#L265)
 
