@@ -16,6 +16,9 @@ ref:
   - [Linux性能及调优指南之Linux内存架构](https://zhuanlan.zhihu.com/p/228474970)
   - [Linux 内核的五大创新](https://zhuanlan.zhihu.com/p/158508499)
   - [linux内核源码初学者必看之基础准备篇](https://zhuanlan.zhihu.com/p/86317515)
+  - [浅谈Linux 中的进程栈、线程栈、内核栈、中断栈](https://zhuanlan.zhihu.com/p/188577062)
+  - [浅谈Linux线程的线程栈以及线程本地存储TLS](https://zhuanlan.zhihu.com/p/146114471)
+  - [Linux性能及调优指南之Linux内存架构](https://zhuanlan.zhihu.com/p/228474970)
 - https://en.wikipedia.org/wiki/Vmlinux
 - https://www.cnblogs.com/alantu2018/
   - [三十道linux内核面试题](https://www.cnblogs.com/alantu2018/p/8461068.html)
