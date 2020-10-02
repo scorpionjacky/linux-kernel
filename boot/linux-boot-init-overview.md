@@ -5,7 +5,6 @@ ref:
 - [Linux Insides](https://github.com/0xAX/linux-insides) by 0xax  <- [@gitbooks.io](https://0xax.gitbooks.io/linux-insides/content/Booting/)
 - [Linux boot protocol](https://github.com/torvalds/linux/blob/master/Documentation/x86/boot.rst)
 - GNU Make, HTML manual: [Single-Page](https://www.gnu.org/software/make/manual/make.html) / [Multi-Page](https://www.gnu.org/software/make/manual/html_node/index.html) / kbuild [makefile](https://www.kernel.org/doc/html/latest/kbuild/makefiles.html)
-- [Linux-5.6.6 内核引导](https://mp.weixin.qq.com/s/HoxloDfe0wVHZLzEuUqX8Q)
 - 知乎
   - [Linux内核启动](https://www.zhihu.com/column/c_1122808218635739136) by King Wag, 14 articles
     - [Layout of bzImage](https://zhuanlan.zhihu.com/p/73077391)
