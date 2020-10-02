@@ -163,3 +163,5 @@ ref
 read this next:
 
 https://opensource.com/article/17/2/linux-boot-and-startup
+
+https://www.golinuxhub.com/2017/12/step-by-step-linux-boot-process-with/
