@@ -26,6 +26,8 @@ Everything explained here: https://en.wikipedia.org/wiki/Linux_startup_process, 
 
 https://gyires.inf.unideb.hu/GyBITT/20/ch02.html
 
+[Operating System Development Series](http://www.brokenthorn.com/Resources/OSDevIndex.html) @brokenthorn.com
+
 ---
 
 https://github.com/ravexina/linux-notes
