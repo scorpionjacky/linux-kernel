@@ -2,7 +2,7 @@
 
 *by Mike, 2008*
 
-*[original article](view-source:http://www.brokenthorn.com/Resources/OSDev7.html), [original home](http://www.brokenthorn.com/Resources/OSDevIndex.html)*
+*[original article](http://www.brokenthorn.com/Resources/OSDev7.html), [original home](http://www.brokenthorn.com/Resources/OSDevIndex.html)*
 
 This series is intended to demonstrate and teach operating system development from the ground up.
 
